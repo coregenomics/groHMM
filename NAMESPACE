@@ -1,0 +1,8 @@
+useDynLib(groHMM)
+import(MASS, parallel, S4Vectors, IRanges, GenomeInfoDb, GenomicRanges, GenomicAlignments, rtracklayer)
+export(writeWiggle, detectTranscripts, makeConsensusAnnotations,
+    evaluateHMMInAnnotations, windowAnalysis, breakTranscriptsOnGenes,
+    combineTranscripts, getTxDensity, limitToXkb, runMetaGene, metaGene,
+    pausingIndex, polymeraseWave, getCores, averagePlot, countMappableReadsInInterval,
+    expressedGenes, metaGeneMatrix, metaGene_nL, readBed, RgammaMLE, Rnorm,
+    Rnorm.exp, tlsDeming, tlsLoess, tlsSvd)
