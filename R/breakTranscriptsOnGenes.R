@@ -88,6 +88,8 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #' @param gap Numeric.  Gap (bp) between broken transcripts.  Default: 5
 #' @param plot Logical.  If set to TRUE, show each step in a plot. 
 #' Default: FALSE
+#' @param debug Logical.  Whether to print diagnostic messages.
+#' Default: TRUE
 #' @author Minho Chae and Charles G. Danko
 #' @return Returns GRanges object of broken transcripts. 
 #' @examples
@@ -96,7 +98,11 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #'              width=c(10000,10000)), strand="+")
 #' bPlus <- breakTranscriptsOnGenes(tx, annox, strand="+")
 breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000, 
-    threshold=0.8, gap=5, plot=FALSE) {
+    threshold=0.8, gap=5, plot=FALSE, debug=TRUE) {
+    ## Validate inputs
+    tx <- .normArgRanges(tx, errorOnEmpty=TRUE)
+    annox <- .normArgRanges(annox)
+
     tx <- tx[strand(tx) == strand,]
     annox <- annox[strand(annox) == strand,]
     mcols(tx)$status <- "NA"
@@ -147,12 +153,21 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
         }
     }
 
+    okTrans <- setdiff(1:length(tx), dupTrans)
+
+    if (is.null(bT)) {
+        if (debug)
+            message("No join errors detected in transcripts")
+        all <- tx[okTrans, ]
+        return(all[order(as.character(seqnames(all)), start(all)), ])
+    }
+
     mcols(bT)$status <- "broken"
     mcols(bT)$ID <- paste(seqnames(bT), "_", start(bT), strand(bT), sep="")
-    okTrans <- setdiff(1:length(tx), dupTrans)
     all <- c(tx[okTrans,], bT)
-    cat(length(unique(ol.df$trans)), " transcripts are broken into ", 
-        length(bT), "\n")
+    if (debug)
+        message(length(unique(ol.df$trans)),
+                " transcripts are broken into ", length(bT))
 
     return(all[order(as.character(seqnames(all)), start(all)),])
 }
@@ -229,4 +244,18 @@ combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8,
     okTrans <- setdiff(seq_along(tx), ol.df$trans)
     all <- c(tx[okTrans,], cT)
     return(all[order(as.character(seqnames(all)), start(all)),])
+}
+
+## Validate inputs
+.normArgRanges <- function(ranges_, errorOnEmpty=FALSE) {
+    var_ <- deparse(substitute(ranges_))
+    if (is(ranges_, "GRanges") || is(ranges_, "IRanges")) {
+        if (length(ranges_) == 0)
+            if (!errorOnEmpty)
+                warning(paste0("'", var_, "' is empty"))
+            else
+                stop(paste0("'", var_, "' cannot be empty"))
+        return(ranges_)
+    }
+    stop(paste0("'", var_, "' must be a GRanges or an IRanges object"))
 }

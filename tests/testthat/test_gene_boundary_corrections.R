@@ -9,6 +9,20 @@ annox <- GRanges(c("chr7:1000-11000",
 ## Introspect default values
 gap <- formals(breakTranscriptsOnGenes)$gap
 
+test_that("breakTranscriptsOnGenes checks validity of 'tx'", {
+    expect_error(breakTranscriptsOnGenes(NULL, annox),
+                 "'tx'", ignore.case = TRUE)
+    expect_error(breakTranscriptsOnGenes(GRanges(), annox),
+                 "'tx'", ignore.case = TRUE)
+})
+
+test_that("breakTranscriptsOnGenes checks validity of 'annox'", {
+    expect_error(breakTranscriptsOnGenes(tx, NULL),
+                 "'annox'", ignore.case = TRUE)
+    expect_warning(breakTranscriptsOnGenes(tx, GRanges()),
+                   "'annox'", ignore.case = TRUE)
+})
+
 test_that("breakTranscriptsOnGenes returns (gap - 1) sized IRange", {
     expect_equal(
         ranges(
