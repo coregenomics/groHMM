@@ -24,13 +24,9 @@ test_that("breakTranscriptsOnGenes checks validity of 'annox'", {
 test_that("breakTranscriptsOnGenes returns 'gap' sized IRanges", {
     gap <- formals(breakTranscriptsOnGenes)$gap
 
-    expect_equal(
-        ranges(
-            breakTranscriptsOnGenes(tx, annox)[1]),
-        narrow(
-            ranges(
-                GRanges(c("chr7:1000-20000"))),
-            end=-gap - 1))
+    expect_equal(ranges(breakTranscriptsOnGenes(tx, annox)[1]),
+                 narrow(ranges(GRanges(c("chr7:1000-20000"))),
+                        end=-gap - 1))
 })
 
 test_that("breakTranscriptsOnGenes honors 'geneSize'", {
