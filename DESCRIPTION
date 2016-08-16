@@ -15,7 +15,7 @@ Maintainer: Anusha Nagari <anusha.nagari@utsouthwestern.edu>, Venkat Malladi <ve
 Depends: R (>= 3.0.2), MASS, parallel, S4Vectors (>= 0.9.25), IRanges
         (>= 2.5.27), GenomeInfoDb, GenomicRanges (>= 1.23.16),
         GenomicAlignments, rtracklayer
-Suggests: BiocStyle, GenomicFeatures, edgeR, org.Hs.eg.db,
+Suggests: testthat, BiocStyle, GenomicFeatures, edgeR, org.Hs.eg.db,
         TxDb.Hsapiens.UCSC.hg19.knownGene
 Description: A pipeline for the analysis of GRO-seq data.
 URL: https://github.com/Kraus-Lab/groHMM
