@@ -7,17 +7,23 @@ annox <- GRanges(c("chr7:1000-11000",
                    "chr7:20000-30000"), strand="+")
 numTx <- function(annox) length(ranges(breakTranscriptsOnGenes(tx, annox)))
 
-test_that("breakTranscriptsOnGenes checks validity of 'tx'", {
+test_that("Inputs 'tx' and 'annox' are validated", {
     expect_error(breakTranscriptsOnGenes(NULL, annox),
                  "'tx'", ignore.case = TRUE)
     expect_error(breakTranscriptsOnGenes(GRanges(), annox),
                  "'tx'", ignore.case = TRUE)
-})
+    expect_error(combineTranscripts(NULL, annox),
+                 "'tx'", ignore.case = TRUE)
+    expect_error(combineTranscripts(GRanges(), annox),
+                 "'tx'", ignore.case = TRUE)
 
-test_that("breakTranscriptsOnGenes checks validity of 'annox'", {
     expect_error(breakTranscriptsOnGenes(tx, NULL),
                  "'annox'", ignore.case = TRUE)
     expect_warning(breakTranscriptsOnGenes(tx, GRanges()),
+                   "'annox'", ignore.case = TRUE)
+    expect_error(combineTranscripts(tx, NULL),
+                 "'annox'", ignore.case = TRUE)
+    expect_warning(combineTranscripts(tx, GRanges()),
                    "'annox'", ignore.case = TRUE)
 })
 

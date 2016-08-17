@@ -155,7 +155,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 
     okTrans <- setdiff(1:length(tx), dupTrans)
 
-    if (is.null(bT)) {
+    if (length(bT) == 0) {
         if (debug)
             message("No join errors detected in transcripts")
         all <- tx[okTrans, ]
@@ -189,6 +189,8 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' Default: 0.8
 #' @param plot Logical.  If set to TRUE, show easch step in a plot. 
 #' Default: FALSE
+#' @param debug Logical.  Whether to print diagnostic messages.
+#' Default: TRUE
 #' @return Returns GRanges object of combined transcripts. 
 #' @author Minho Chae and Charles G. Danko
 #' @examples
@@ -197,7 +199,11 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' combined <- combineTranscripts(tx, annox)
 combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8, 
-    plot=FALSE) {
+    plot=FALSE, debug=TRUE) {
+    ## Validate inputs
+    tx <- .normArgRanges(tx, errorOnEmpty=TRUE)
+    annox <- .normArgRanges(annox)
+
     annox <- annox[width(annox) > geneSize,]
     ol <- findOverlaps(tx, annox)
     ol.df <- data.frame(trans=queryHits(ol), gene=subjectHits(ol),
@@ -237,11 +243,20 @@ combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8,
         }
     }
 
-    cat(NROW(ol.df), " transcripts are combined to ", NROW(cT), "\n")
+    okTrans <- setdiff(seq_along(tx), ol.df$trans)
+
+    if (length(cT) == 0) {
+        if (debug)
+            message("No break errors detected in transcripts")
+        all <- tx[okTrans, ]
+        return(all[order(as.character(seqnames(all)), start(all)), ])
+    }
+
+    if (debug)
+        message(NROW(ol.df), " transcripts are combined to ", NROW(cT))
     mcols(cT)$ID <- paste(seqnames(cT), "_", start(cT), strand(cT), sep="")
     mcols(cT)$status <- "combined"
 
-    okTrans <- setdiff(seq_along(tx), ol.df$trans)
     all <- c(tx[okTrans,], cT)
     return(all[order(as.character(seqnames(all)), start(all)),])
 }
