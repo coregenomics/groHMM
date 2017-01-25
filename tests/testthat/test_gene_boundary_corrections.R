@@ -63,3 +63,31 @@ test_that("breakTranscriptsOnGenes honors 'threshold'", {
     ## The second gene now does not overlap with the transcript.
     expect_equal(numTxBr(annoxInsuffOverlap), 1)
 })
+
+test_that("breakInterval always returns an S4 GRanges object when bounded", {
+    ## Empty objects
+    expect_s4_class(breakInterval(GRanges(), NULL), "GRanges")
+    expect_s4_class(breakInterval(tx, NULL), "GRanges")
+    expect_s4_class(breakInterval(tx, start(annox[2])), "GRanges")
+    expect_equal(length(breakInterval(GRanges(), NULL)), 0)
+    expect_equal(length(breakInterval(tx, NULL)), 1)
+    expect_equal(length(breakInterval(tx, start(annox[2]))), 2)
+})
+
+test_that("breakInterval errors when 'brPos' is out of 'gr' Range", {
+    expect_error(breakInterval(tx, start(tx) - 500))
+    expect_error(breakInterval(tx, end(tx) + 500))
+})
+
+test_that("breakInterval honors 'strand'", {
+    gap <- formals(breakInterval)$gap
+    brPos <- start(annox[2])
+
+    res <- breakInterval(tx, brPos, strand="+")
+    expect_equal(end(res)[1], brPos - gap)
+    expect_equal(start(res)[2], brPos)
+
+    res <- breakInterval(tx, brPos, strand="-")
+    expect_equal(end(res)[1], brPos)
+    expect_equal(start(res)[2], brPos + gap)
+})
