@@ -56,7 +56,8 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
 
     if (!is.null(chrom))  
         reads <- reads[seqnames(reads) == chrom,]
-
+    
+    seqlevels(reads) <- seqlevelsInUse(reads)
     readsList <- split(reads, seqnames(reads))
     if (limitPCRDups) {
         warning("Using limitPCRDups assumes all reads are the same size!  
@@ -81,7 +82,6 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
     })
 
     H <- mclapply(readsList, function(x) {
-            seqlevels(x) <- seqlevelsInUse(x)
             cov <- coverage(x)[[1]]
             to <- (length(cov) %/% windowSize)*windowSize
             starts <- seq(1, to, stepSize)
