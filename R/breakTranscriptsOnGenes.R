@@ -88,8 +88,6 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #' @param gap Numeric.  Gap (bp) between broken transcripts.  Default: 5
 #' @param plot Logical.  If set to TRUE, show each step in a plot. 
 #' Default: FALSE
-#' @param debug Logical.  Whether to print diagnostic messages.
-#' Default: TRUE
 #' @author Minho Chae and Charles G. Danko
 #' @return Returns GRanges object of broken transcripts. 
 #' @examples
@@ -98,7 +96,7 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #'              width=c(10000,10000)), strand="+")
 #' bPlus <- breakTranscriptsOnGenes(tx, annox, strand="+")
 breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000, 
-    threshold=0.8, gap=5, plot=FALSE, debug=TRUE) {
+    threshold=0.8, gap=5, plot=FALSE) {
     ## Validate inputs
     tx <- .normArgRanges(tx, errorOnEmpty=TRUE)
     annox <- .normArgRanges(annox)
@@ -156,8 +154,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     okTrans <- setdiff(1:length(tx), dupTrans)
 
     if (length(bT) == 0) {
-        if (debug)
-            message("No join errors detected in transcripts")
+        message("No join errors detected in transcripts")
         all <- tx[okTrans, ]
         return(all[order(as.character(seqnames(all)), start(all)), ])
     }
@@ -165,9 +162,8 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     mcols(bT)$status <- "broken"
     mcols(bT)$ID <- paste(seqnames(bT), "_", start(bT), strand(bT), sep="")
     all <- c(tx[okTrans,], bT)
-    if (debug)
-        message(length(unique(ol.df$trans)),
-                " transcripts are broken into ", length(bT))
+    message(length(unique(ol.df$trans)),
+            " transcripts are broken into ", length(bT))
 
     return(all[order(as.character(seqnames(all)), start(all)),])
 }
@@ -189,8 +185,6 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' Default: 0.8
 #' @param plot Logical.  If set to TRUE, show easch step in a plot. 
 #' Default: FALSE
-#' @param debug Logical.  Whether to print diagnostic messages.
-#' Default: TRUE
 #' @return Returns GRanges object of combined transcripts. 
 #' @author Minho Chae and Charles G. Danko
 #' @examples
@@ -199,7 +193,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' combined <- combineTranscripts(tx, annox)
 combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8, 
-    plot=FALSE, debug=TRUE) {
+    plot=FALSE) {
     ## Validate inputs
     tx <- .normArgRanges(tx, errorOnEmpty=TRUE)
     annox <- .normArgRanges(annox)
@@ -246,20 +240,17 @@ combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8,
     okTrans <- setdiff(seq_along(tx), ol.df$trans)
 
     if (length(cT) == 0) {
-        if (debug)
-            message("No break errors detected in transcripts")
+        message("No break errors detected in transcripts")
         all <- tx[okTrans, ]
         return(all[order(as.character(seqnames(all)), start(all)), ])
     }
 
-    if (debug)
-        message(NROW(ol.df), " transcripts are combined to ", NROW(cT))
+    message(NROW(ol.df), " transcripts are combined to ", NROW(cT))
     mcols(cT)$ID <- paste(seqnames(cT), "_", start(cT), strand(cT), sep="")
     mcols(cT)$status <- "combined"
 
     all <- c(tx[okTrans,], cT)
     return(all[order(as.character(seqnames(all)), start(all)),])
-}
 
 ## Validate inputs
 .normArgRanges <- function(ranges_, errorOnEmpty=FALSE) {
