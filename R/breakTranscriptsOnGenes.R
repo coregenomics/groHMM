@@ -251,6 +251,7 @@ combineTranscripts <- function(tx, annox, geneSize=1000, threshold=0.8,
 
     all <- c(tx[okTrans,], cT)
     return(all[order(as.character(seqnames(all)), start(all)),])
+}
 
 ## Validate inputs
 .normArgRanges <- function(ranges_, errorOnEmpty=FALSE) {
