@@ -50,7 +50,7 @@ test_that("Gene repair functions honor 'geneSize'", {
     txShortest <- resize(txC, geneSize + 1)
     txTooShort <- narrow(txShortest, end=-2)
 
-    expect_equal(numTxCb(txShortest), 2)
+    expect_equal(numTxCb(txShortest), 1)
     expect_equal(numTxCb(txTooShort), 1)
 })
 
