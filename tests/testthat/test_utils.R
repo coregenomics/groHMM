@@ -18,7 +18,7 @@ test_that("windowAnalysis returns correct Rle value", {
 
 test_that("windowAnalysis throws error with empty GRanges", {
   reads <- GRanges()
-  #expect_error(windowAnalysis(reads = reads, windowSize = 100), "out of range")
+  expect_error(windowAnalysis(reads = reads, windowSize = 100), "cannot be empty")
 })
 
 test_that("windowAnalysis allows empty seqlevels", {

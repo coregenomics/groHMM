@@ -48,6 +48,8 @@
 #' # Fp <- windowAnalysis(S0mR1, strand="+", windowSize=50)
 windowAnalysis <- function(reads, strand="*", windowSize=stepSize, 
     stepSize=windowSize, chrom=NULL, limitPCRDups=FALSE, ...) {
+    reads <- .normArgRanges(reads, errorOnEmpty=TRUE)
+
     if (!(windowSize > 0 & (windowSize <= max(end(reads)))))
         stop("'windowSize' is out of range!")
 
