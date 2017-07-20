@@ -293,67 +293,6 @@ int *MetaSlidingWindow(int Anchor_Start, const char *Anchor_Strand,
                 // In this case, it should be all 0's.
 }
 
-/*******************************************************************************
- *
- * CountUnMAQableReads -- Returns a vector of counts over the features...
- *
- * Feature*		-> Vector of information on features start and strand.
- * Read*		-> Vector of information on read start, end, and strand.
- * UnMAQ		-> Int vector representing the genomic coordinates (hg18) of 
- *  non-unique 44mers.
- * offset		-> Sum of the size of all proceeding chromosomes ...
- * sizeofchr		-> Number of un-MAQable regions in the chromosome -- prevents 
- *      reading past the chromosome.
- * 
- *****************************************************************************/
-SEXP CountUnMAQableReads(SEXP FeatureStart, SEXP FeatureEnd, SEXP UnMAQ, 
-    SEXP offset, SEXP sizeofchr) {
-
-	int *fSTART = INTEGER(FeatureStart);
-	int *fEND = INTEGER(FeatureEnd);
-	int *MAQ = INTEGER(UnMAQ);
-	int *o = INTEGER(offset);
-	int *s = INTEGER(sizeofchr);
-	int max = o[0]+s[0];
-
-	// Get the dimensions.
-	SEXP DIM1;
-	DIM1 = getAttrib(FeatureStart,R_DimSymbol);
-	int NFEATURES = INTEGER(DIM1)[0];
-
-	// Construct return values.
-	SEXP fID;
-	PROTECT(fID = allocVector(INTSXP,NFEATURES));
-	int *fcID = INTEGER(fID);
-
-	// Assign probes to a feature.  
-	int un_counter;
-	int prev_un_counter_start=o[0]; // Start from offset 'o'.
-	for(int features=0;features<NFEATURES;features++) {
-		fcID[features] = 0;
-
-		// Figure out where to start, w/ some error checking
-		if(fSTART[features] > MAQ[prev_un_counter_start -1]) un_counter = 
-            prev_un_counter_start;
-		else un_counter = o[0];
-
-		while((fSTART[features] > MAQ[un_counter]) && (un_counter <= max)) 
-			un_counter++; // Find MAQ @ feature start.
-
-		while((  fEND[features] >= MAQ[un_counter]) && (un_counter <= max)) {
-			fcID[features]++; // Detect a decrease.
-			prev_un_counter_start = un_counter; 
-            // Features are in order, so start from here next time.
-			un_counter++;
-		}
-
-	}
-
-	UNPROTECT(1);
-	return(fID);
-}
-
-
 /******************************************************************************
  *
  * HistogramOfReadsByFeature -- Returns a histogram over the feature...

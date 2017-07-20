@@ -52,9 +52,6 @@ SEXP HistogramOfReadsByFeature(SEXP FeatureStart, SEXP FeatureStrand,
                 SEXP ReadStart, SEXP ReadEnd, SEXP ReadStrand, 
                 SEXP size, SEXP up, SEXP down);
 
-SEXP CountUnMAQableReads(SEXP FeatureStart, SEXP FeatureEnd, SEXP UnMAQ, 
-    SEXP offset, SEXP sizeofchr);
-
 SEXP WindowAnalysis(SEXP ProbeStart, SEXP ProbeEnd, SEXP ProbeStrand, 
     SEXP CheckStrand, SEXP windowsize, SEXP stepsize, SEXP startposition, 
     SEXP endposition);
@@ -85,7 +82,6 @@ void R_init_groHMM(DllInfo *info) {
        {"Rviterbi", (DL_FUNC)&Rviterbi, 7},
        {"RBaumWelchEM", (DL_FUNC)&RBaumWelchEM, 12},
        {"HistogramOfReadsByFeature", (DL_FUNC)&HistogramOfReadsByFeature, 8},
-       {"CountUnMAQableReads", (DL_FUNC)&CountUnMAQableReads, 5},
        {"WindowAnalysis", (DL_FUNC)&WindowAnalysis, 8},
        {"DecayAlgorithm", (DL_FUNC)&DecayAlgorithm, 2},
        {"getTranscriptPositions", (DL_FUNC)&getTranscriptPositions, 3},

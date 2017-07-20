@@ -3,6 +3,6 @@ import(MASS, parallel, S4Vectors, IRanges, GenomeInfoDb, GenomicRanges, GenomicA
 export(writeWiggle, detectTranscripts, makeConsensusAnnotations,
     evaluateHMMInAnnotations, windowAnalysis, breakTranscriptsOnGenes,
     combineTranscripts, getTxDensity, limitToXkb, runMetaGene, metaGene,
-    pausingIndex, polymeraseWave, getCores, averagePlot, countMappableReadsInInterval,
+    pausingIndex, polymeraseWave, getCores, averagePlot,
     expressedGenes, metaGeneMatrix, metaGene_nL, readBed, RgammaMLE, Rnorm,
     Rnorm.exp, tlsDeming, tlsLoess, tlsSvd)

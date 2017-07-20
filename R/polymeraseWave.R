@@ -67,8 +67,6 @@
 #'  Reasonable value: 20; Default: NA (for no smoothing).  Users are encouraged
 #'  to use this parameter ONLY in combination with the normal distribution 
 #'  assumptions.
-#'  @param NonMap Optionally, un-mappable positions are trated as missing data.
-#'  NonMap passes in the list() structure for un-mappable regions.
 #'  @param prefix Optionally, writes out png images of each gene examined for 
 #'  a wave.  'Prefix' denotes the file prefix for image names written to disk.
 #'  Users are encouraged to create a new directory and write in a full path.
@@ -119,7 +117,7 @@
 ## Test with GREB1:     chr2:11,591,693-11,700,363
 ## GREB1 <- data.frame(chr="chr2", start=11591693, end=11700363, str="+")
 polymeraseWave <- function(reads1, reads2, genes, approxDist, size=50, 
-    upstreamDist= 10000, TSmooth=NA, NonMap=NULL, prefix=NULL, 
+    upstreamDist= 10000, TSmooth=NA, prefix=NULL,
     emissionDistAssumption= "gamma", finterWindowSize=10000, 
     limitPCRDups=FALSE, returnVal="simple", debug=TRUE) {
     if(debug) {
@@ -305,31 +303,6 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size=50,
             'normExp', or 'gamma'.")
           stopifnot(FALSE) ## Stop here.
         }
-
-#           print(data.frame(c(iMean, parInt$var, -1),c(shape, scale, -1),
-#           c(meanBas, stdeBas, -1)))
-    ###########################################################################
-    ## Finally, choose non-mappable windows and treat them as missing values.
-        if(!is.null(NonMap)) {
-            windowStarts <- seq(start, end, size) 
-            ## Start and end are like chromStart and chromEnd -- 
-            ## strand invariant.
-            windowEnds <- windowStarts+size
-            windowsToSurvey <- data.frame(chrom= rep(as.character(genes[i,1]),
-                NROW(windowStarts)), chromStart= as.integer(windowStarts), 
-                chromEnd= as.integer(windowEnds), strand= 
-                    rep("+",NROW(windowStarts)))
-            print(head(windowsToSurvey))
-            print(tail(windowsToSurvey))
-            unmap <- countMappableReadsInInterval(windowsToSurvey, NonMap)
-            if(genes[i,4] == "+") {
-                unmap <- rev(unmap)
-            }
-            gene[unmap/size < 0.10] <- NaN 
-            ## Missing data if more than 90% of the windows are unmappable.
-    }
-
-    ############################################################################
     ## Now run the HMM.
         if(debug) {
             print(ePrVars)
