@@ -19,13 +19,6 @@
 ##
 ##########################################################################
 
-##
-##  TODO: Re-factor to one function, allowing the model version to be specified 
-##  as an argument (Charles).
-##
-##
-##
-
 #'  Given GRO-seq data, identifies the location of the polymerase 'wave' in 
 #'  up- or down- regulated genes.  
 #'
