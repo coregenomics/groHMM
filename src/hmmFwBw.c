@@ -180,14 +180,14 @@ void forward(fwbk_t *data) {
 
   for (i = 0; i < n; ++i) {
     current_sum = m_col[i]-scalefactor;
-    if(!(current_sum <= 0)) {
+    if(!(current_sum <= 0)) {	/* nocov start */
       Rprintf("WARNING: Assertion about to fail in hmmFwBw.cpp (at line ~189).\
         current_sum= %f, m_col[%d]= %f, scalefactor= %f\n", 
         current_sum, i, m_col[i], scalefactor); //likely nan
       error("ERROR: current_sum <= 0 (likely NaN)\n"); 
       // If this fails, likely one of yoru stats is unreachable. 
       // Commented Apr. 10 2010.  Getting ALL rate genes (for NH and LC reps) 
-      // to run through.
+      // to run through.        /* nocov end */
     }
 
     if(-1*(current_sum) < APPROX_EXP_VALUE_THRESHOLD)

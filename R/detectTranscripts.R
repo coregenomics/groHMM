@@ -50,7 +50,6 @@
 #' @param threshold Threshold change in total likelihood, below which EM exits.
 #' @param debug If set to TRUE, provides additional print options. 
 #' Default: FALSE
-#' @param ... Extra argument passed to mclapply
 #' @return Returns a list of emisParams, trnasParams, viterbiStates, and 
 #' transcripts.  The transcript element is a GRanges object representing the 
 #' predicted genomic coordinates of transcripts on both the + and - strand.
@@ -64,7 +63,7 @@
 ## CGD: TODO: Test switch over to gamma, rather than dGamma?!
 
 detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5, 
-    LtProbB=-200, UTS=5, size=50, threshold=0.1, debug=TRUE, ...) {
+    LtProbB=-200, UTS=5, size=50, threshold=0.1, debug=TRUE) {
 
     stopifnot(!is.null(reads)|(!is.null(Fp) & !is.null(Fm)))
 
@@ -74,8 +73,8 @@ detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
     ## Allow equilavent form of Fp and Fm to be spcified in the function 
     ## automatically.
     if(is.null(Fp) & is.null(Fm)) { 
-     Fp <- windowAnalysis(reads=reads, strand="+", windowSize=size, ...)
-     Fm <- windowAnalysis(reads=reads, strand="-", windowSize=size, ...)
+     Fp <- windowAnalysis(reads=reads, strand="+", windowSize=size)
+     Fm <- windowAnalysis(reads=reads, strand="-", windowSize=size)
     }
     
     nFp <- NROW(Fp)

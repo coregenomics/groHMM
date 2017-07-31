@@ -18,7 +18,7 @@
 ##   with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ##########################################################################
-plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) {
+plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) { # nocov start
     height <- 1
     xlim <- c(min(min(start(tr), min(start(gr)))), max(max(end(tr)), 
                 max(end(gr)))) 
@@ -47,7 +47,7 @@ plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) {
     }
     title(main)
     axis(1)
-}
+} # nocov end
     
 
 
