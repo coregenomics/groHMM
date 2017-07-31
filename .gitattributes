@@ -1,0 +1,3 @@
+*.pdf -diff
+inst/doc/groHMM.R -diff
+inst/doc/groHMM.Rnw -diff
