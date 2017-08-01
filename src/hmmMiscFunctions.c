@@ -125,7 +125,7 @@ extern void imatrix_free(int ** matrix, int reverse, int rows) {
  *
  **************/
 extern hmm_t *setupHMM(SEXP nstates, SEXP emiprobDist, SEXP emiprobVars, 
-    SEXP nEmis, SEXP tprob, SEXP iprob) {
+    SEXP nEmis, SEXP tprob, SEXP iprob, SEXP verbose) {
     hmm_t *hmm = (hmm_t*)R_alloc(1, sizeof(hmm_t));
 
     hmm[0].n_states  = INTEGER(nstates)[0];
@@ -137,6 +137,7 @@ extern hmm_t *setupHMM(SEXP nstates, SEXP emiprobDist, SEXP emiprobVars,
     hmm[0].em_args   = (double**)
         R_alloc(hmm[0].n_states*hmm[0].n_emis, sizeof(double*)); 
         // (3 x n_states).
+    hmm[0].verb = INTEGER(verbose)[0];
 
    /***************************************************
     * Set up the transition probability distributions.   
@@ -246,10 +247,7 @@ extern void SStatsGamma(int state, int emis_indx, void* ss, fwbk_t fwbk) {
         SS[0].sumPiXiSq  += PP*data_i*data_i;
         SS[0].sumLogPiXi += PP*log(data_i);
     }
-
   }
-//  Rprintf("[SStatsGamma]: SS.N: %f; SS.sumPiXi: %f; SS.sumLogPiXi: %f\n", 
-//  SS[0].N, SS[0].sumPiXi, SS[0].sumLogPiXi);
 }
 extern void SStatsGamma_p1(int state, int emis_indx, void* ss, fwbk_t fwbk) {
   double PP, logPP;
@@ -275,7 +273,7 @@ extern void UpdateGamma(int state, void* ss, hmm_t *hmm) {
   double *shape= (double*)Calloc(1, double);
   double *scale= (double*)Calloc(1, double);
   int updateRetVal= MLEGamma(SS[0].N, SS[0].sumPiXi, SS[0].sumLogPiXi, 
-                        shape, scale);
+                        shape, scale, hmm[0].verb);
   if(updateRetVal == 0) {
       hmm[0].em_args[state][0] = shape[0];
       hmm[0].em_args[state][1] = scale[0];
@@ -291,20 +289,23 @@ extern void UpdateGamma(int state, void* ss, hmm_t *hmm) {
 // Used to fit a constrained gamma, where E[x] = 1, and shape=1/scale.
 extern void UpdateGamma_SHAPEeq1overSCALE(int state, void* ss, hmm_t *hmm) {
   ssGamma *SS = (ssGamma*)ss;
-  MLEGamma_SHAPEeq1overSCALE(SS[0].N, SS[0].sumPiXi, SS[0].sumLogPiXi, 
-    SS[0].sumPiXiSq, &(hmm[0].em_args[state][0]), &(hmm[0].em_args[state][1]));
-  Rprintf("[UpdateGammaConstrained]\t--> Shape: %f; Scale: %f; \
-    Shape/Scale: %f (shape/scale must be 1!)\n", hmm[0].em_args[state][0], 
-    hmm[0].em_args[state][1], 
-    (hmm[0].em_args[state][0]/hmm[0].em_args[state][1]));
+  MLEGamma_SHAPEeq1overSCALE(SS[0].N, SS[0].sumPiXi, SS[0].sumLogPiXi,
+    SS[0].sumPiXiSq, &(hmm[0].em_args[state][0]), &(hmm[0].em_args[state][1]),
+    hmm[0].verb);
+  if (hmm->verb)
+    Rprintf("[UpdateGammaConstrained]\t--> Shape: %f; Scale: %f; \
+      Shape/Scale: %f (shape/scale must be 1!)\n", hmm[0].em_args[state][0],
+      hmm[0].em_args[state][1],
+      (hmm[0].em_args[state][0]/hmm[0].em_args[state][1]));
 }
 // Used to fit a constrained gamma where E[mean] = E[var].
 extern void UpdateGamma_SCALE1(int state, void* ss, hmm_t *hmm) {
   ssGamma *SS = (ssGamma*)ss;
   MLEGamma_SCALE1(SS[0].N, SS[0].sumPiXi, SS[0].sumLogPiXi, 
     &(hmm[0].em_args[state][0]), &(hmm[0].em_args[state][1]));
-  Rprintf("[UpdateGamma_Scale1]\t--> Shape: %f; Scale: %f\n", 
-    hmm[0].em_args[state][0], hmm[0].em_args[state][1]);
+  if (hmm->verb)
+    Rprintf("[UpdateGamma_Scale1]\t--> Shape: %f; Scale: %f\n",
+      hmm[0].em_args[state][0], hmm[0].em_args[state][1]);
 }
 extern void SSfreeGamma(void* ss) { 
   free((ssGamma*)ss); 
@@ -350,10 +351,6 @@ extern void UpdateNormal(int state, void* ss, hmm_t *hmm) {
 
   // Update mean.  Mean is the first entry in the **em_args matrix.
   stateParams[0] = SS[0].sumPiXi/SS[0].N;
-
-  // Update var= (Sum_i{Xi^2}/N) - (mean^2).
-//  Rprintf("[UpdateNormal]\t--> N: %f; Mean: %f; sumPiXiSq: %f\n", 
-//  SS[0].N, stateParams[0], SS[0].sumPiXiSq);
   stateParams[1] = SS[0].sumPiXiSq/SS[0].N-(stateParams[0]*stateParams[0]);
 
   assert(stateParams[1] > -1); // Rounding error can makes this quantity 
@@ -364,8 +361,9 @@ extern void UpdateNormal(int state, void* ss, hmm_t *hmm) {
     stateParams[1] = epsilon; // Keep the varience >0.
   stateParams[1] = sqrt(stateParams[1]);
 
-  Rprintf("[UpdateNormal]\t--> Mean: %f; Stdev: %f\n", 
-    hmm[0].em_args[state][0], hmm[0].em_args[state][1]);
+  if (hmm->verb)
+    Rprintf("[UpdateNormal]\t--> Mean: %f; Stdev: %f\n",
+      hmm[0].em_args[state][0], hmm[0].em_args[state][1]);
 }
 extern void SSfreeNormal(void* ss) { 
   free((ssNormal*)ss); 
@@ -413,7 +411,7 @@ extern void SStatsNormExp(int state, int emis_indx, void* ss, fwbk_t fwbk) {
   SS[0].containsData = 1; //true;
 }
 extern void UpdateNormExp(int state, void* ss, hmm_t *hmm) {
-  Rprintf("[UpdateNormExp] START");
+  if (hmm->verb) Rprintf("[UpdateNormExp] START");
   ssNormExp *SS = (ssNormExp*)ss;
   double epsilon=0.00001;
   double *stateParams = hmm[0].em_args[state];
@@ -438,9 +436,9 @@ extern void UpdateNormExp(int state, void* ss, hmm_t *hmm) {
   
   stateParams = sp;  
   // POSSIBLE MEMORY LEAK: Does this leak the old 'hmm[0].em_args[state]'??
-  Rprintf("[UpdateNormExp]\t--> Alpha: %f; Mean: %f; Stdev: %f; Lambda: %f\n", 
-    hmm[0].em_args[state][0], hmm[0].em_args[state][1], 
-    hmm[0].em_args[state][2], hmm[0].em_args[state][3]);
+  if (hmm->verb) Rprintf("[UpdateNormExp]\t--> Alpha: %f; Mean: %f; Stdev: %f; Lambda: %f\n",
+      hmm[0].em_args[state][0], hmm[0].em_args[state][1],
+      hmm[0].em_args[state][2], hmm[0].em_args[state][3]);
 }
 extern void SSfreeNormExp(void* ss) { 
   ssNormExp *SS = (ssNormExp*)ss;
@@ -478,7 +476,7 @@ extern void SStatsPoisson(int state, int emis_indx, void* ss, fwbk_t fwbk) {
 extern void UpdatePoisson(int state, void* ss, hmm_t *hmm) {
   ssPoisson *SS = (ssPoisson*)ss;
   hmm[0].em_args[state][0] = SS[0].sumPiXi/SS[0].N;
-  Rprintf("[UpdatePoisson]\t--> Lambda: %f\n", hmm[0].em_args[state][0]);
+  if (hmm->verb) Rprintf("[UpdatePoisson]\t--> Lambda: %f\n", hmm[0].em_args[state][0]);
 }
 extern void SSfreePoisson(void* ss) { 
   free((ssPoisson*)ss); 
@@ -513,7 +511,7 @@ extern void SStatsExp(int state, int emis_indx, void* ss, fwbk_t fwbk) {
 extern void UpdateExp(int state, void* ss, hmm_t *hmm) {
   ssExp *SS = (ssExp*)ss;
   hmm[0].em_args[state][0] = SS[0].N/SS[0].sumPiXi; // Lambda = 1/mean.
-  Rprintf("[UpdateExp]\t--> Lambda: %f\n", hmm[0].em_args[state][0]);
+  if (hmm->verb) Rprintf("[UpdateExp]\t--> Lambda: %f\n", hmm[0].em_args[state][0]);
 }
 extern void SSfreeExp(void* ss) {
   free((ssExp*)ss); 
@@ -579,8 +577,8 @@ extern void  TransUpdate(int state, int sequence, void* ss, emiss_func EMI,
     /* Assign the sum to the proper chromosome in total transitions. */
     SS[0].totalTransK[l][sequence] = log(ChromSum) + scalefactor - fwbk.log_px;
 
-    Rprintf("[TransUpdate]\t--> Chrom: %d; State: %d; ChromSum=%f; Final=%f\n", 
-            sequence, l, ChromSum, SS[0].totalTransK[l][sequence]);
+    if (fwbk.hmm[0].verb) Rprintf("[TransUpdate]\t--> Chrom: %d; State: %d; ChromSum=%f; Final=%f\n",
+              sequence, l, ChromSum, SS[0].totalTransK[l][sequence]);
   }
 }
 
@@ -613,7 +611,7 @@ extern void  TransUpdateP(int state, int nSequences, void* ss, hmm_t *hmm) {
 
     hmm[0].log_tProb[state][l] = CurrentDiff;
 
-    Rprintf("[UpdateTransitionProb]\t--> TP_{%d->%d}: %f\n", state, 
+    if (hmm[0].verb) Rprintf("[UpdateTransitionProb]\t--> TP_{%d->%d}: %f\n", state,
         l, hmm[0].log_tProb[state][l]);
   }
 

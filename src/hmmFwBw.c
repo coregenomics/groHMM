@@ -155,7 +155,7 @@ void forward(fwbk_t *data) {
         if((-1*current_sum) < APPROX_EXP_VALUE_THRESHOLD)
           sum += exp(current_sum);
 
-        if(i>(N-2) || i<2) // Report the first and last case for debuging...
+        if(data->hmm->verb && (i>(N-2) || i<2)) // Report the first and last case for debuging...
             Rprintf("i=%d, l=%d, k=%d, prev[k]=%f, scalefactor=%f, \
                 prod=%f, sum=%f\n", i, l, k, m_col_prev[k], 
                 scalefactor, current_sum, sum);

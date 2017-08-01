@@ -79,18 +79,18 @@ static inline double trigamma(double k) {
  *
  *****************************************************************************/
 extern int MLEGamma(double N, double SumXi, double SumLogXi, double *shape, 
-    double *scale) {
+    double *scale, int verb) {
     double shapeBound= VERY_LARGE_DOUBLE_VALUE;
     int maxIterations= 10000;   
 
     int retVal=0;
-    Rprintf("[MLEGamma] SumXi=%f; SumLogXi=%f; N=%f\n", SumXi, SumLogXi, N);
+    if (verb) Rprintf("[MLEGamma] SumXi=%f; SumLogXi=%f; N=%f\n", SumXi, SumLogXi, N);
 
     // Get initial value of shape (k).
     double s = log(SumXi/N)-SumLogXi/N;
     shape[0] = (3-s+sqrt((s-3)*(s-3)+24*s))/(12*s);
 
-    Rprintf("[MLEGamma] s=%f; shape=%f\n", s, shape[0]);
+    if (verb) Rprintf("[MLEGamma] s=%f; shape=%f\n", s, shape[0]);
 
     // Refine shape (k) using Newton's method.
     // int counter = 0; Unused
@@ -140,7 +140,7 @@ extern int MLEGamma(double N, double SumXi, double SumLogXi, double *shape,
             Shape set to 0, scale set to 1.\n");
     }
 
-    Rprintf("[MLEGamma] shape=%f; scale=%f\n", shape[0], scale[0]);
+    if (verb) Rprintf("[MLEGamma] shape=%f; scale=%f\n", shape[0], scale[0]);
     return(retVal);
 }
 
@@ -159,7 +159,7 @@ SEXP RgammaMLE(SEXP n, SEXP sumxi, SEXP sumlogxi) {
     SET_STRING_ELT(returnNames, 1, mkChar("scale"));
         setAttrib(returnList, R_NamesSymbol, returnNames);
 
-    MLEGamma(N, SumXi, SumLogXi, REAL(shape), REAL(scale));
+    MLEGamma(N, SumXi, SumLogXi, REAL(shape), REAL(scale), 0);
 
     UNPROTECT(2);
     return(returnList);
@@ -208,20 +208,20 @@ extern int MLEGamma_SCALE1(double N, double SumXi, double SumLogXi,
  *
  ******************************************************************************/
 extern int MLEGamma_SHAPEeq1overSCALE(double N, double SumXi, double SumLogXi, 
-    double SumXiSq, double *shape, double *scale) {
+    double SumXiSq, double *shape, double *scale, int verb) {
         int maxIterations= 10000;
 
     // Get initial value of shape (k).
     double s = (SumXi/N)-(SumLogXi/N);
     shape[0] = ((SumXi/N)*(SumXi/N))/( (SumXiSq/N)-((SumXi/N)*(SumXi/N)) );
-    Rprintf("[MLEGamma_SHAPEeq1overSCALE] SumXi=%f; SumLogXi=%f; \
+    if (verb) Rprintf("[MLEGamma_SHAPEeq1overSCALE] SumXi=%f; SumLogXi=%f; \
         SumXiSq=%f; N=%f\n", SumXi, SumLogXi, SumXiSq, N);
 
     // Refine shape (k) using Newton's method.
     // int counter = 0; // Unused
     double kPrime;
     for( int counter=0; counter < maxIterations; counter++) {
-        Rprintf("[MLEGamma_SHAPEeq1overSCALE] shape: %f\n", shape[0]);
+        if (verb) Rprintf("[MLEGamma_SHAPEeq1overSCALE] shape: %f\n", shape[0]);
         kPrime=shape[0]-
             ((digamma(shape[0])+log(1/shape[0])+
                 (shape[0]*shape[0])+s)/(trigamma(shape[0])+3*shape[0]));

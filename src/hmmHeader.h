@@ -60,6 +60,7 @@ typedef struct {
    * store vars. for emission prob. */
   int n_states;     /* number of states (excluding initial state). */
   int n_emis; /* number of columns in emissions matrix **data */
+  int verb; /* Whether to show verbose output */
 } hmm_t;
 
 typedef struct {
@@ -193,7 +194,7 @@ extern fwbk_t * fwbk_alloc(double **data, int N, hmm_t *hmm);
 // This may be converted into the R entry function?!
 extern void fwbk_free(fwbk_t * data);
 extern hmm_t *setupHMM(SEXP nstates, SEXP emiprobDist, 
-    SEXP emiprobVars, SEXP nEmis, SEXP tprob, SEXP iprob);
+    SEXP emiprobVars, SEXP nEmis, SEXP tprob, SEXP iprob, SEXP verb);
 
 /***************************************
  * 
@@ -260,11 +261,11 @@ extern void  TransFree(void* ss);
  *
  *************************************/
 extern int MLEGamma(double N, double SumXi, double SumLogXi, double *shape, 
-    double *scale);
+    double *scale, int verb);
 extern int MLEGamma_SCALE1(double N, double SumXi, double SumLogXi, 
     double *shape, double *scale);
 extern int MLEGamma_SHAPEeq1overSCALE(double N, double SumXi, 
-    double SumLogXi, double SumXiSq, double *shape, double *scale);
+    double SumLogXi, double SumXiSq, double *shape, double *scale, int verb);
 extern void normal_exp_optimgr(int n, double *par, double *gr, void *ex);
 extern double normal_exp_optimfn(int n, double *par, void *ex);
 

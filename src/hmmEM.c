@@ -25,10 +25,6 @@
  *  Baum Welch EM implementation -- Written for the GRO-seq package by 
  *  Charles Danko.
  *
- *  TODO: 
- *    (1) Look into R support for multi-threading.
- *    (2) ...
- *
  *  2009-11-23 Imported and revised Forward/backward implementation 
  *      by Andre Martins.
  *  2009-11-24 Implemented Baum Welch algorthm.
@@ -302,7 +298,7 @@ SEXP RBaumWelchEM(SEXP nstates, SEXP emi, SEXP nEmis, SEXP emiprobDist,
 
     /* transfer info from R vars into hmm struct */
     hmm_t *hmm = setupHMM(nstates, emiprobDist, emiprobVars, nEmis, tprob, 
-        iprob);
+        iprob, verbose);
     em_t *em = setupEM(hmm, emiprobDist, updatetrans, updateemis);
     fwbk_t *fwbk;
 

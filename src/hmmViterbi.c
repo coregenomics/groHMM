@@ -195,7 +195,7 @@ SEXP Rviterbi(SEXP emi, SEXP nEmis, SEXP nstates, SEXP emiprobDist,
 
     // Init hmm_t.
     hmm_t *hmm = setupHMM(nstates, emiprobDist, emiprobVars, nEmis, tprob, 
-        iprob);
+        iprob, 0);
 
     // Set up emissions.
     int maxT = Rf_nrows(VECTOR_ELT(emi, 0));
