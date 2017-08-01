@@ -32,10 +32,44 @@ test_that("Inputs 'tx' and 'annox' are validated", {
 
 test_that("breakTranscriptsOnGenes returns 'gap' sized IRanges", {
     gap <- formals(breakTranscriptsOnGenes)$gap
-
     expect_equal(ranges(breakTranscriptsOnGenes(tx, annox)[1]),
                  narrow(ranges(GRanges(c("chr7:1000-20000"))),
-                        end=-gap - 1))
+                        end = -gap - 1))
+})
+
+test_that("breakTranscriptsOnGenes honors negative strand", {
+    strand_ <- "-"
+    tx_ <- tx
+    annox_ <- annox
+    strand(tx_) <- strand_
+    strand(annox_) <- strand_
+    expect_equal(ranges(breakTranscriptsOnGenes(tx_, annox_,
+                                                strand = strand_)[1]),
+                 narrow(ranges(GRanges(c("chr7:1000-11000")))))
+})
+
+test_that("breakTranscriptsOnGenes honors no annotation breaks", {
+  annox_ <- shift(tx, width(tx))
+  expect_equal(ranges(breakTranscriptsOnGenes(tx, annox_)), ranges(tx))
+})
+
+test_that("breakTranscriptsOnGenes honors multiple annotation breaks", {
+  annox_ <- GRanges(c("chr7:1000-11000",
+                      "chr7:12000-20000",
+                      "chr7:20000-30000"), strand="+")
+  expect_equal(length(breakTranscriptsOnGenes(tx, annox_)), 3)
+})
+
+test_that("breakTranscriptsOnGenes honors multiple transcripts", {
+  tx_ <- GRanges(c("chr7:1000-12000",
+                   "chr7:20000-30000"),
+                 strand="+")
+  annox_ <- GRanges(c("chr7:1000-6000",
+                      "chr7:6000-12000",
+                      "chr7:20000-25000",
+                      "chr7:25000-30000"),
+                    strand="+")
+  expect_equal(length(breakTranscriptsOnGenes(tx_, annox_)), 4)
 })
 
 test_that("Gene repair functions honor 'geneSize'", {
