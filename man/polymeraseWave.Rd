@@ -7,7 +7,7 @@
 \usage{
 polymeraseWave(reads1, reads2, genes, approxDist, size = 50,
   upstreamDist = 10000, TSmooth = NA, emissionDistAssumption = "gamma",
-  finterWindowSize = 10000, ...)
+  finterWindowSize = 10000, progress = TRUE, ...)
 }
 \description{
 The model is a three state hidden Markov model (HMM).  States represent: 
@@ -60,6 +60,7 @@ Arguments:
  each gene to which a wave was fit.  Included in these metrics are several 
  that define a moving window.  The moving window size is specified by 
  filterWindowSize.  Default: 10 kb.
+ @param progress Whether to show progress bar.  Default: TRUE
  @param ... Extra argument passed to mclapply
  @return Returns either a data.frame with Pol II wave end positions, 
  or a List() structure with additional data, as specified by returnVal.
