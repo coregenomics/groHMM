@@ -144,7 +144,7 @@ extern int MLEGamma(double N, double SumXi, double SumLogXi, double *shape,
     return(retVal);
 }
 
-SEXP RgammaMLE(SEXP n, SEXP sumxi, SEXP sumlogxi) {
+SEXP Rgamma(SEXP n, SEXP sumxi, SEXP sumlogxi) {
     double N = REAL(n)[0];
     double SumXi = REAL(sumxi)[0];
     double SumLogXi = REAL(sumlogxi)[0];

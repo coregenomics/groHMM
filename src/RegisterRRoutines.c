@@ -67,7 +67,7 @@ SEXP AssociateRegionWithFeatures(SEXP Feature_Start, SEXP Feature_End,
     SEXP ProbeStart, SEXP ProbeLength);
 
 // In MLEfit
-SEXP RgammaMLE(SEXP n, SEXP sumxi, SEXP sumlogxi);
+SEXP Rgamma(SEXP n, SEXP sumxi, SEXP sumlogxi);
 
 /**************************************************************
  *
@@ -86,7 +86,7 @@ void R_init_groHMM(DllInfo *info) {
        {"DecayAlgorithm", (DL_FUNC)&DecayAlgorithm, 2},
        {"getTranscriptPositions", (DL_FUNC)&getTranscriptPositions, 3},
        {"vect2bed", (DL_FUNC)&vect2bed, 2},
-       {"RgammaMLE", (DL_FUNC)&RgammaMLE, 3},
+       {"Rgamma", (DL_FUNC)&Rgamma, 3},
        {NULL, NULL, 0}
      };
 

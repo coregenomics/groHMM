@@ -50,7 +50,7 @@ RgammaMLE <- function(X) {
     N <- as.double(NROW(X))
     sumxis <- as.double(sum(X))
     sumlogxis <- as.double(sum(log(X)))
-    Fit <- .Call("RgammaMLE", N, sumxis, sumlogxis, PACKAGE = "groHMM")
+    Fit <- .Call("Rgamma", N, sumxis, sumlogxis, PACKAGE = "groHMM")
     return(Fit)
 }
 
