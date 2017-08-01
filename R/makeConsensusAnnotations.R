@@ -46,8 +46,7 @@
 #' ## Not run:
 #' # library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 #' # txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-#' # tx <- transcripts(txdb, columns=c("gene_id", "tx_id", "tx_name"),
-#'                           filter=list(tx_chrom="chr7"))
+#' # tx <- transcripts(txdb, columns=c("gene_id", "tx_id", "tx_name"), filter=list(tx_chrom="chr7"))
 #' # tx <- tx[grep("random", as.character(seqnames(tx)), invert=TRUE),]
 #' # ca <- makeConsensusAnnotations(tx)
 makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
@@ -99,7 +98,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
             mcols(result)$gene_id <- mcols(x)$gene_id[1]
         }
         return(result)
-    }, mc.cores=getCores(10)))
+    }, ...))
     isoforms <- unlist(isoforms)
     message("OK")
 

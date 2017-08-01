@@ -119,6 +119,10 @@ use can be set using \Rcode{mc.cores} option.
 library(groHMM)
 options(mc.cores=getCores(4))
 @
+<<use single core for vignette build, eval=TRUE, echo=FALSE>>=
+options(mc.cores=getCores(1))
+@
+
 
 \Rpackage{groHMM} uses the \Rpackage{GRanges} class from the
 \Rpackage{GenomicRanges} packages to represent a collection of genomic
@@ -261,7 +265,7 @@ calling.
 
 <<make consensus annotations, eval=TRUE, keep.source=TRUE, results=hide>>=
 # Collapse overlapping annotations
-kgConsensus <- makeConsensusAnnotations(kgChr7, keytype="gene_id",
+kgConsensus <- makeConsensusAnnotations(kgChr7,
         mc.cores=getOption("mc.cores"))
 library(org.Hs.eg.db)
 map <- select(org.Hs.eg.db,
