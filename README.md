@@ -1,5 +1,22 @@
 ## groHMM
 
+## Usage
+
+Install the groHMM latest version using:
+
+``` R
+devtools::install_github("coregenomics/groHMM",
+                         ref = "1.99.x",
+                         repos = BiocInstaller::biocinstallRepos())
+```
+
+If the above command fails, install Bioconductor and the `devtools` package.
+
+``` R
+source("https://bioconductor.org/biocLite.R")
+install.packages(devtools)
+```
+
 ## Hacking
 
 Fork or clone the git repository,
