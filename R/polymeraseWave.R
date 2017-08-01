@@ -71,6 +71,7 @@
 #'  each gene to which a wave was fit.  Included in these metrics are several 
 #'  that define a moving window.  The moving window size is specified by 
 #'  filterWindowSize.  Default: 10 kb.
+#'  @param progress Whether to show progress bar.  Default: TRUE
 #'  @param ... Extra argument passed to mclapply
 #'  @return Returns either a data.frame with Pol II wave end positions, 
 #'  or a List() structure with additional data, as specified by returnVal.
@@ -100,9 +101,9 @@
 ##
 ## Test with GREB1:     chr2:11,591,693-11,700,363
 ## GREB1 <- data.frame(chr="chr2", start=11591693, end=11700363, str="+")
-polymeraseWave <- function(reads1, reads2, genes, approxDist, size=50, 
-    upstreamDist= 10000, TSmooth=NA,
-    emissionDistAssumption= "gamma", finterWindowSize=10000, ...) {
+polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
+    upstreamDist = 10000, TSmooth=NA, emissionDistAssumption = "gamma",
+    finterWindowSize = 10000, progress = TRUE, ...) {
 
     genes <- as.data.frame(genes)
     genes <- genes[,c("seqnames", "start", "end", "strand", "SYMBOL", "ID")]
@@ -113,7 +114,13 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size=50,
     Fm2 <- windowAnalysis(reads = reads2, strand = "-", windowSize = size)
 
     ## Run the model separately on each gene.
+    if (progress)
+      pb <- progress::progress_bar$new(
+        total = NROW(genes), format = "  HMM [:bar] :percent eta: :eta",
+        clear = FALSE)
     rows <- mclapply(seq_along(NROW(genes)), function(i) {
+      if (progress)
+        pb$tick()
         ## Define the gene in terms of the windowed size.
         if (genes[i,4] == "+") {
             start <- floor((genes[i,2] - upstreamDist) / size)
@@ -229,7 +236,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size=50,
         ans <- list()
         ans <- tryCatch(.Call("RBaumWelchEM", as.integer(3), g, as.integer(1),
                 ePrDist, ePrVars, tProb, iProb, 0.01, c(TRUE,TRUE,TRUE),
-                c(TRUE, TRUE, TRUE), as.integer(10), TRUE, PACKAGE = "groHMM"),
+                c(TRUE, TRUE, TRUE), as.integer(10), FALSE, PACKAGE = "groHMM"),
                 error = function(e) e)
                                         ##  Update emis...
         if (NROW(ans) < 3) {
