@@ -26,18 +26,13 @@ expected <- data.frame(
   ExternalID = factor(54905)
 )
 
-polyWave <- function(...) {
-  capture.output(suppressMessages(suppressWarnings(pw <- polymeraseWave(...))))
-  pw
-}
-
 test_that("polymeraseWave returns expected data.frame", {
-  pw <- polyWave(reads[[1]], reads[[2]], genes, approxDist)
+  pw <- polymeraseWave(reads[[1]], reads[[2]], genes, approxDist)
   expect_s3_class(pw, "data.frame")
   expect_equal(pw, expected, tolerance = 1e-7)
 })
 
 test_that("countMappableReadsInInterval validates NonMap", {
-  expect_error(polyWave(reads[[1]], reads[[2]], genes,
+  expect_error(polymeraseWave(reads[[1]], reads[[2]], genes,
                         approxDist, NonMap=TRUE), "NonMap")
 })
