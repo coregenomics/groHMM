@@ -91,5 +91,6 @@ void R_init_groHMM(DllInfo *info) {
      };
 
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+    R_useDynamicSymbols(info, TRUE);
 }
 
