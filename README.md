@@ -71,7 +71,7 @@ lines <- function(coverage, pattern = NULL) {
 
 Then run it with:
 
-```
+``` R
 cov <- package_coverage()
 cov
 lines(cov)
