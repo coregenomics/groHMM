@@ -6,7 +6,7 @@
 reads in a moving window.}
 \usage{
 windowAnalysis(reads, strand = "*", windowSize = stepSize,
-  stepSize = windowSize, chrom = NULL, limitPCRDups = FALSE)
+  stepSize = windowSize, chrom = NULL)
 }
 \arguments{
 \item{reads}{GenomicRanges object representing the position of reads 

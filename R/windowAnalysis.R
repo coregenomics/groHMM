@@ -40,7 +40,7 @@
 #' ## Not run:
 #' # Fp <- windowAnalysis(S0mR1, strand="+", windowSize=50)
 windowAnalysis <- function(reads, strand="*", windowSize=stepSize, 
-    stepSize=windowSize, chrom=NULL, limitPCRDups=FALSE) {
+    stepSize=windowSize, chrom=NULL) {
     reads <- .normArgRanges(reads, errorOnEmpty=TRUE)
 
     if (!(windowSize > 0 & (windowSize <= max(end(reads)))))

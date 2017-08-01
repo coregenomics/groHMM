@@ -60,25 +60,25 @@ approx.ratios.CI <- function(num.counts, denom.counts, alpha=0.05) {
 #' Supports parallel processing using mclapply in the 'parallel' package.  
 #' To change the number of processors, use the argument 'mc.cores'.
 #'
-#'  @param features A GRanges object representing a set of genomic coordinates.
-#'  @param reads A GRanges object representing a set of mapped reads.
-#'  @param size The size of the moving window.
-#'  @param up Distance upstream of each f to align and histogram.
-#'  @param down Distance downstream of each f to align and histogram (NULL).
-#'  @param UnMAQ Data structure representing the coordinates of all un-mappable
-#'  regions in the genome.
-#'  @param debug If set to TRUE, provides additional print options. 
-#'  Default: FALSE
-#'  @param ... Extra argument passed to mclapply
-#'  @return Returns a data.frame of the pausing indices for the input genes.
-#'  @author Charles G. Danko and Minho Chae.
-#'  @return Returns the pausing index for different genes.
-#'  @examples
-#'  features <- GRanges("chr7", IRanges(2394474,2420377), strand="+") 
-#'  reads <- as(readGAlignments(system.file("extdata", "S0mR1.bam", 
-#'              package="groHMM")), "GRanges")
-#'  ## Not run:
-#'  # pi <- pausingIndex(features, reads)
+#' @param features A GRanges object representing a set of genomic coordinates.
+#' @param reads A GRanges object representing a set of mapped reads.
+#' @param size The size of the moving window.
+#' @param up Distance upstream of each f to align and histogram.
+#' @param down Distance downstream of each f to align and histogram (NULL).
+#' @param UnMAQ Data structure representing the coordinates of all un-mappable
+#' regions in the genome.
+#' @param debug If set to TRUE, provides additional print options.
+#' Default: FALSE
+#' @param ... Extra argument passed to mclapply
+#' @return Returns a data.frame of the pausing indices for the input genes.
+#' @author Charles G. Danko and Minho Chae.
+#' @return Returns the pausing index for different genes.
+#' @examples
+#' features <- GRanges("chr7", IRanges(2394474,2420377), strand="+")
+#' reads <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
+#'             package="groHMM")), "GRanges")
+#' ## Not run:
+#' # pi <- pausingIndex(features, reads)
 ##
 ##  Arguments:
 ##  f   -> data.frame of: CHR, START, END, STRAND.
