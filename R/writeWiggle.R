@@ -71,11 +71,11 @@ writeWiggle <- function(reads, file, strand="*", fileType="wig", size=50,
             strand=strand, score=normCounts*as.integer(W[[chr]]))
         if (track.type.line & !trackWritten) {
             cat("track type=wiggle_0\n", file=file)
-            append <<- TRUE
+            append <- TRUE
         }
         export(reads_s, file, format="wig", dataFormat="fixedStep", 
             append=append)
-        append <<- TRUE
+        append <- TRUE
     }
     lapply(names(W), writeBlock)
 
