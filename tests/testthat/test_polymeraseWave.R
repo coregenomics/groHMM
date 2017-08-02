@@ -1,19 +1,6 @@
-library(groHMM)
 context("Polymerase wave detection")
 
-## Fixtures (identical to example in man page)
-genes <- GRanges("chr7", IRanges(2394474,2420377), strand="+",
-                 SYMBOL="CYP2W1", ID="54905")
-non_map <- GRanges("chr7", IRanges(2394474,2420377), strand="+")
-read_bams <- function(files) {
-    lapply(files, function(x) {
-        as(readGAlignments(system.file("extdata", x, package="groHMM")),
-           "GRanges")
-        })
-}
-    
-reads <- read_bams(c("S0mR1.bam", "S40mR1.bam"))
-        
+## Fixtures
 approxDist <- 20000
 
 expected <- data.frame(
