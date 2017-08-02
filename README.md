@@ -76,3 +76,10 @@ cov <- package_coverage()
 cov
 lines(cov)
 ```
+
+Run R's standard check followed by BiocCheck:
+
+``` R
+devtools::check()
+BiocCheck::BiocCheck(".")
+```
