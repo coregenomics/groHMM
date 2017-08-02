@@ -38,6 +38,9 @@ genome browser.  Default: TRUE}
 
 \item{...}{Extra argument passed to mclapply.}
 }
+\value{
+Nothing is returned
+}
 \description{
 writeWiggle writes a wiggle track or BigWig file suitable for uploading 
 to the UCSC genome browser.

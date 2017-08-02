@@ -41,6 +41,7 @@
 #' file as a wiggle.  Necessary to upload a custom track to the UCSC 
 #' genome browser.  Default: TRUE
 #' @param ...  Extra argument passed to mclapply.
+#' @return Nothing is returned
 #' @author Minho Chae and Charles G. Danko
 #' @examples
 #' S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam", 
@@ -82,4 +83,6 @@ writeWiggle <- function(reads, file, strand="*", fileType="wig", size=50,
     if (fileType=="BigWig") {
         wigToBigWig(file, seqinfo)
     }
+
+    invisible(NULL)
 }

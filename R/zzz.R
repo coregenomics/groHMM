@@ -22,6 +22,7 @@
 #' Returns the number of cores.
 #'
 #' @param cores the number of cores, it is 1 in windows platform.
+#' @return The validated number of cores
 #' @examples
 #' cores <- getCores(2L)
 getCores <- function(cores)

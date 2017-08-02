@@ -9,6 +9,9 @@ getCores(cores)
 \arguments{
 \item{cores}{the number of cores, it is 1 in windows platform.}
 }
+\value{
+The validated number of cores
+}
 \description{
 Returns the number of cores.
 }
