@@ -8,25 +8,27 @@ Authors@R: c(person("Charles G.", "Danko", role = c("aut"),
                     email="minho.chae@gmail.com"),
              person("Andre", "Martins", role = c("ctb"),
                     email="alm253@cornell.edu"),
-	           person("Pariksheet", "Nanda", role = c("cre"),
-	                  email="pariksheet.nanda@uconn.edu"))
+             person("W. Lee", "Kraus", role = c("ctb"),
+                    email="lee.kraus@utsouthwestern.edu"),
+             person("Pariksheet", "Nanda", role = c("cre"),
+                    email="pariksheet.nanda@uconn.edu"))
 Author: Charles G. Danko, Minho Chae, Andre Martins
 Maintainer: Pariksheet Nanda <pariksheet.nanda@uconn.edu>
 Depends:
     R (>= 3.4.0),
+Imports:
     GenomeInfoDb,
     GenomicAlignments,
     GenomicRanges (>= 1.23.16),
-    IRanges (>= 2.5.27),
-    MASS,
-    parallel,
-    S4Vectors (>= 0.9.25),
-Imports:
     graphics,
     grDevices,
+    IRanges (>= 2.5.27),
+    MASS,
     methods,
+    parallel,
     progress,
     rtracklayer,
+    S4Vectors (>= 0.9.25),
     stats,
     utils,
 Suggests:
