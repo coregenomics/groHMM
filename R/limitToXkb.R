@@ -36,15 +36,16 @@
 limitToXkb <- function(features, offset=1000, size=13000) {
     w <- width(features)
 
-    # 1. do nothing for w < offset 
-    # 2. offset < w and w < size
+    ## 1. do nothing for w < offset 
+    ## 2. offset < w and w < size
     small  <- (offset < w) & (w < size)
     if (any(small)) { 
-        features[small,] <- flank(features[small,], -1*(w[small]-offset), 
-            start=FALSE)
+        features[small,] <-
+            flank(
+                features[small,], -1*(w[small]-offset), start=FALSE)
     }
 
-    # 2. w > size
+    ## 2. w > size
     big  <- w > size 
     if (any(big)) {
         features[big,] <- resize(features[big,], width=size)
@@ -60,7 +61,7 @@ limitToXkb <- function(features, offset=1000, size=13000) {
 
     return(features)
 }
- 
+
 #' readBed Returns a GenomicRanges object constrcuted from the specified bed 
 #' file.
 #'
@@ -76,14 +77,18 @@ limitToXkb <- function(features, offset=1000, size=13000) {
 #' @author Minho Chae and Charles G. Danko.
 readBed <- function(file, ...) {
     df <- read.table(file, ...)
-        if(NCOL(df) == 3) {
-                colnames(df) <- c("seqnames", "start", "end")
-                df <- cbind(df, strand=Rle("*", NROW(df)))
-        }
-        if(NCOL(df) == 4) colnames(df) <- c("seqnames", "start", "end", 
-                                            "strand")
-        if(NCOL(df) == 6) colnames(df) <- c("seqnames", "start", "end", 
-                                            "name", "score", "strand")
-        return( GRanges(seqnames = Rle(df$seqnames), ranges = 
-                IRanges(df$start, df$end), strand = Rle(strand(df$strand))))
+    if(NCOL(df) == 3) {
+        colnames(df) <-
+            c("seqnames", "start", "end")
+        df <- cbind(df, strand=Rle("*", NROW(df)))
+    }
+    if(NCOL(df) == 4)
+        colnames(df) <-
+            c("seqnames", "start", "end", "strand")
+    if(NCOL(df) == 6)
+        colnames(df) <-
+            c("seqnames", "start", "end", "name", "score", "strand")
+    return(GRanges(
+        seqnames=Rle(df$seqnames), ranges=IRanges(df$start, df$end),
+        strand=Rle(strand(df$strand))))
 }

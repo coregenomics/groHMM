@@ -19,9 +19,6 @@
 ##
 ##########################################################################
 
-
-
-
 #' makeConsensusAnnotations Makes a consensus annotation 
 #'
 #' Makes a non-overlapping consensus annotation.  Gene annotations are often 
@@ -54,15 +51,17 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     missing <- elementNROWS(mcols(ar)[,"gene_id"]) == 0 
     if (any(missing)) {
         ar <- ar[!missing,]
-        warning(sum(missing), " ranges do not have gene_id and they are 
-            dropped")
+        warning(
+            sum(missing),
+            " ranges do not have gene_id and they are dropped")
     }
 
     many <- elementNROWS(mcols(ar)[,"gene_id"]) > 1 
     if (any(many)) {
         ar <- ar[!many,]
-        warning(sum(many), " ranges have multiple gene_id and they are 
-            dropped")
+        warning(
+            sum(many),
+            " ranges have multiple gene_id and they are dropped")
     }
 
     ar_list <- split(ar, unlist(mcols(ar)[,"gene_id"]))
@@ -71,19 +70,18 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     
     message("Reduce isoforms(", length(isoforms),") ... ", appendLF=FALSE)
     isoforms <- GRangesList(mclapply(isoforms, function(x) {
-        # For mixed strands or chrom, choose the longest    
+        ## For mixed strands or chrom, choose the longest    
         if ((length(seqlevelsInUse(x)) > 1) || 
-                (length(unique(strand(x))) > 1)) {
+            (length(unique(strand(x))) > 1)) {
             result <- x[which.max(width(x)), "gene_id"]
         } else {
             dx <- disjoin(x)
             mcols(dx)$gene_id <- mcols(x)$gene_id[1]
             olcnt <- countOverlaps(dx, x)
-
-            multi <- dx[olcnt > 1]    # Use the disjoint ranges 
-                                      # covered more than once
-            if (length(multi) == 0) { # For non-overlapping isoforms, 
-                                      # choose the longest
+            ## Use the disjoint ranges covered more than once
+            multi <- dx[olcnt > 1]
+            if (length(multi) == 0) {
+                ## For non-overlapping isoforms, choose the longest
                 result <- x[which.max(width(x)), "gene_id"]
             } else if (length(multi) == 1) {
                 result <- multi
@@ -102,7 +100,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     isoforms <- unlist(isoforms)
     message("OK")
 
-    # Check redundancy 
+    ## Check redundancy 
     isoforms <- removeRedundant(isoforms)
     singles <- removeRedundant(singles)
 
@@ -120,32 +118,31 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
 
     noiso <- sort(c(isoforms, singles[,"gene_id"])) 
     message("Truncate overlapped ranges ... ", appendLF=FALSE)      
-    # with different gene_ids
+    ## with different gene_ids
     while(!isDisjoint(noiso)) { 
         ol <- findOverlaps(noiso, drop.self=TRUE, drop.redundant=TRUE)
         ol_gr <- GRangesList(lapply(1:length(ol), function(x) {
-                        sort(c(noiso[queryHits(ol)[x]], 
-                                noiso[subjectHits(ol)[x]])) 
-                }))
+            sort(c(noiso[queryHits(ol)[x]], noiso[subjectHits(ol)[x]]))
+        }))
 
-        # Truncate 3' end
+        ## Truncate 3' end
         ol_gr <- unlist(endoapply(ol_gr, function(x) {
             if (as.character(strand(x[1,])) == "+") {
                 end(x[1,]) <- start(x[2,]) - minGap     
-                # first range's end is truncated
+                ## first range's end is truncated
             } else {
                 start(x[2,]) <- end(x[1,]) + minGap     
-                # sencond range's end is truncated
+                ## sencond range's end is truncated
             }
             x
         }))
 
-        # Remove any ranges with duplicated names since they already adujsted 
-        # in the previous call
+        ## Remove any ranges with duplicated names since they already
+        ## adujsted in the previous call
         ol_gr <- ol_gr[!duplicated(names(ol_gr)),]
         
         noiso <- noiso[-unique(c(queryHits(ol), subjectHits(ol))),] 
-        # update noiso
+        ## update noiso
         noiso <- c(noiso, ol_gr)
     }
     message("OK")
@@ -155,15 +152,11 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
 }
 
 removeRedundant <- function(annox) {
-    o <- findOverlaps(annox, drop.self=TRUE, type="equal", 
-            drop.redundant=TRUE)
-    if(length(o) != 0)
-        annox <- annox[-subjectHits(o),]
+    o <- findOverlaps(annox, drop.self=TRUE, type="equal", drop.redundant=TRUE)
+    if(length(o) != 0) annox <- annox[-subjectHits(o),]
 
-    o <- findOverlaps(annox, drop.self=TRUE, type="within", 
-            drop.redundant=TRUE)
-    if(length(o) != 0)
-        annox <- annox[-queryHits(o),]
+    o <- findOverlaps(annox, drop.self=TRUE, type="within", drop.redundant=TRUE)
+    if(length(o) != 0) annox <- annox[-queryHits(o),]
 
     return(annox)
 }

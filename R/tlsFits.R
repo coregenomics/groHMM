@@ -19,7 +19,6 @@
 ##
 ##########################################################################
 
-
 #####################################################
 ##
 ## tlsFits.R -- Total least squares fits for several functional forms, 
@@ -37,7 +36,6 @@
 ##
 #####################################################
 
-
 #' A 'total least squares'-like hack for LOESS.  Works by rotating points 
 #' 45 degrees, fitting LOESS, and rotating back.
 #'
@@ -54,32 +52,32 @@
 ## essentially "erros in variables" LOESS.
 ##
 ## Returns x and y values giving information on the fit...
-tlsLoess <- function(x, y, theta= -pi/4, span= 1) {
- mx <- mean(x)
- my <- mean(y)
- x <- x-mx
- y <- y-my
- tx <- x*cos(theta)-y*sin(theta)
- ty <- x*sin(theta)+y*cos(theta)
- 
- lo <- loess(ty~tx, family="gaussian", span = span)
- yp_loess  <- predict(lo,data.frame(x=tx))
+tlsLoess <- function(x, y, theta=-pi/4, span= 1) {
+    mx <- mean(x)
+    my <- mean(y)
+    x <- x-mx
+    y <- y-my
+    tx <- x*cos(theta)-y*sin(theta)
+    ty <- x*sin(theta)+y*cos(theta)
 
- theta <- -theta
- x <- tx*cos(theta)-yp_loess*sin(theta)
- y <- tx*sin(theta)+yp_loess*cos(theta)
- x <- x+mx
- y <- y+my
- 
- ord <- order(x)
- x <- x[ord]
- y <- y[ord]
- 
- retVar <- list()
- retVar$x <- x
- retVar$y <- y
- 
- return(retVar)
+    lo <- loess(ty~tx, family="gaussian", span = span)
+    yp_loess  <- predict(lo,data.frame(x=tx))
+
+    theta <- -theta
+    x <- tx*cos(theta)-yp_loess*sin(theta)
+    y <- tx*sin(theta)+yp_loess*cos(theta)
+    x <- x+mx
+    y <- y+my
+
+    ord <- order(x)
+    x <- x[ord]
+    y <- y[ord]
+
+    retVar <- list()
+    retVar$x <- x
+    retVar$y <- y
+
+    return(retVar)
 }
 
 #' A 'total least squares' implementation using singular value demposition.
@@ -94,14 +92,14 @@ tlsLoess <- function(x, y, theta= -pi/4, span= 1) {
 ## b <- c(1,2,-1,4,8)
 ## 
 tlsSvd <- function(x,y) {
- n <- NCOL(x)
- Cmat <- as.matrix(data.frame(x, y))
- s <- svd(Cmat)
- VAB <- s$v[c(1:n),(1+n):NCOL(s$v)]
- VBB <- s$v[(1+n):NROW(s$v),(1+n):NCOL(s$v)]
- X = -VAB/VBB
- int <- mean(y) - X * mean(x)
- return(c(int,X))
+    n <- NCOL(x)
+    Cmat <- as.matrix(data.frame(x, y))
+    s <- svd(Cmat)
+    VAB <- s$v[c(1:n),(1+n):NCOL(s$v)]
+    VBB <- s$v[(1+n):NROW(s$v),(1+n):NCOL(s$v)]
+    X = -VAB/VBB
+    int <- mean(y) - X * mean(x)
+    return(c(int,X))
 }
 
 #' A 'total least squares' implementation using demming regression.
@@ -113,10 +111,10 @@ tlsSvd <- function(x,y) {
 #' @author Charles G. Danko
 ## linear total least squares by Deming regression.
 tlsDeming <- function(x,y,d=1) {
- sxx <- 1/(NROW(x)-1) * sum((x-mean(x))^2)
- sxy <- 1/(NROW(x)-1) * sum((x-mean(x))*(y-mean(y)))
- syy <- 1/(NROW(y)-1) * sum((y-mean(y))^2)
- X <- (syy-d*sxx+sqrt((syy-d*sxx)^2+4*d*(sxy^2)))/(2*sxy)
- int <- mean(y) - X * mean(x)
- return(c(int,X))
+    sxx <- 1/(NROW(x)-1) * sum((x-mean(x))^2)
+    sxy <- 1/(NROW(x)-1) * sum((x-mean(x))*(y-mean(y)))
+    syy <- 1/(NROW(y)-1) * sum((y-mean(y))^2)
+    X <- (syy-d*sxx+sqrt((syy-d*sxx)^2+4*d*(sxy^2)))/(2*sxy)
+    int <- mean(y) - X * mean(x)
+    return(c(int,X))
 }

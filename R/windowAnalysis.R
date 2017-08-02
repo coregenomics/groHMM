@@ -65,10 +65,10 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
     })
 
     lapply(readsList, function(x) {
-      cov <- coverage(x)[[1]]
-      to <- (length(cov) %/% windowSize)*windowSize
-      starts <- seq(1, to, stepSize)
-      vi <- Views(cov, start=starts, width=windowSize)
-      Rle(viewSums(vi))
+        cov <- coverage(x)[[1]]
+        to <- (length(cov) %/% windowSize)*windowSize
+        starts <- seq(1, to, stepSize)
+        vi <- Views(cov, start=starts, width=windowSize)
+        Rle(viewSums(vi))
     })
 }

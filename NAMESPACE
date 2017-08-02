@@ -1,15 +1,19 @@
 useDynLib(groHMM, .registration = TRUE)
-import(MASS, parallel, S4Vectors, IRanges, GenomeInfoDb, GenomicRanges, GenomicAlignments, rtracklayer)
+import(
+    MASS, parallel, S4Vectors, IRanges, GenomeInfoDb, GenomicRanges,
+    GenomicAlignments, rtracklayer)
 importFrom("grDevices", "rgb")
-importFrom("graphics", "abline", "axis", "par", "plot.new",
-           "plot.window", "rect", "text", "title")
+importFrom(
+    "graphics", "abline", "axis", "par", "plot.new", "plot.window", "rect",
+    "text", "title")
 importFrom("methods", "is")
-importFrom("stats", "fisher.test", "loess", "ppois", "predict",
-           "qnorm", "smooth")
+importFrom(
+    "stats", "fisher.test", "loess", "ppois", "predict", "qnorm", "smooth")
 importFrom("utils", "read.table")
-export(writeWiggle, detectTranscripts, makeConsensusAnnotations,
+export(
+    writeWiggle, detectTranscripts, makeConsensusAnnotations,
     evaluateHMMInAnnotations, windowAnalysis, breakTranscriptsOnGenes,
     combineTranscripts, getTxDensity, limitToXkb, runMetaGene, metaGene,
-    pausingIndex, polymeraseWave, getCores, averagePlot,
-    expressedGenes, metaGeneMatrix, metaGene_nL, readBed, RgammaMLE, Rnorm,
-    Rnorm.exp, tlsDeming, tlsLoess, tlsSvd)
+    pausingIndex, polymeraseWave, getCores, averagePlot, expressedGenes,
+    metaGeneMatrix, metaGene_nL, readBed, RgammaMLE, Rnorm, Rnorm.exp,
+    tlsDeming, tlsLoess, tlsSvd)

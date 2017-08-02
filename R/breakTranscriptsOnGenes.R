@@ -91,8 +91,8 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #' @return Returns GRanges object of broken transcripts. 
 #' @examples
 #' tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
-#' annox <- GRanges("chr7", IRanges(start=c(1000, 20000), 
-#'              width=c(10000,10000)), strand="+")
+#' annox <- GRanges(
+#'     "chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), strand="+")
 #' bPlus <- breakTranscriptsOnGenes(tx, annox, strand="+")
 breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000, 
     threshold=0.8, gap=5, plot=FALSE) {
@@ -188,7 +188,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' @author Minho Chae and Charles G. Danko
 #' @examples
 #' tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), 
-#' strand="+")
+#'     strand="+")
 #' annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' combined <- combineTranscripts(tx, annox)
 combineTranscripts <- function(tx, annox, geneSize = 1000, threshold = 0.8, 
