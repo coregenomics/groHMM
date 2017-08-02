@@ -13,7 +13,7 @@ Authors@R: c(person("Charles G.", "Danko", role = c("aut"),
 Author: Charles G. Danko, Minho Chae, Andre Martins
 Maintainer: Pariksheet Nanda <pariksheet.nanda@uconn.edu>
 Depends:
-    R (>= 3.0.2),
+    R (>= 3.4.0),
     GenomeInfoDb,
     GenomicAlignments,
     GenomicRanges (>= 1.23.16),
@@ -22,9 +22,13 @@ Depends:
     parallel,
     S4Vectors (>= 0.9.25),
 Imports:
+    graphics,
+    grDevices,
     methods,
     progress,
     rtracklayer,
+    stats,
+    utils,
 Suggests:
     BiocStyle,
     GenomicFeatures,
