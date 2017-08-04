@@ -217,7 +217,6 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         }
         else if (emissionDistAssumption == "gamma") {
             ePrDist <- c("norm", "gamma", "gamma")
-            browser()
             parPsi  <- RgammaMLE(gene[c((uTrans + 1):iTrans)])
             parBas  <- RgammaMLE(gene[c((iTrans + 1):n_gene)])
             ePrVars <- data.frame(
