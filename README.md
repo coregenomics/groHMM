@@ -19,6 +19,8 @@ install.packages(devtools)
 
 ## Hacking
 
+### This repo
+
 Fork or clone the git repository,
 enter the git directory,
 then install the dependencies:
@@ -27,8 +29,10 @@ then install the dependencies:
 source("https://bioconductor.org/biocLite.R")
 install.packages(devtools)
 devtools::install(repos = BiocInstaller::biocinstallRepos(),
-                  dependencies = "Suggests")
+                  dependencies = c("Imports", "Suggests"))
 ```
+
+### Unit tests and coverage
 
 Run the unit tests with:
 
@@ -76,6 +80,8 @@ cov <- package_coverage()
 cov
 lines(cov)
 ```
+
+### Package quality checks
 
 Run R's standard check followed by BiocCheck:
 
