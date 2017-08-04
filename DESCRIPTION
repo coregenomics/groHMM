@@ -17,6 +17,7 @@ Maintainer: Pariksheet Nanda <pariksheet.nanda@uconn.edu>
 Depends:
     R (>= 3.4.0),
 Imports:
+    BiocParallel,
     GenomeInfoDb,
     GenomicAlignments,
     GenomicRanges (>= 1.23.16),

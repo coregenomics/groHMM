@@ -66,12 +66,13 @@
 #' and "norm" works for smooth data.  As a general rule of thumb, "gamma"
 #' is used for libraries made using the direct ligation method, and "norm"
 #' for circular ligation data.  Default: "gamma".
-#' @param finterWindowSize Method returns 'quality' information for
+#' @param filterWindowSize Method returns 'quality' information for
 #' each gene to which a wave was fit.  Included in these metrics are several
 #' that define a moving window.  The moving window size is specified by
 #' filterWindowSize.  Default: 10 kb.
 #' @param progress Whether to show progress bar.  Default: TRUE
-#' @param ... Extra argument passed to mclapply
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns either a data.frame with Pol II wave end positions,
 #' or a List() structure with additional data, as specified by returnVal.
 #' @author Charles G. Danko
@@ -102,7 +103,24 @@
 ## GREB1 <- data.frame(chr="chr2", start=11591693, end=11700363, str="+")
 polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
     upstreamDist = 10000, TSmooth=NA, emissionDistAssumption = "gamma",
-    finterWindowSize = 10000, progress = TRUE, ...) {
+    filterWindowSize = 10000, progress=TRUE,
+    BPPARAM = BiocParallel::bpparam()) {
+    ## Parameter checks.
+    if ((filterWindowSize / size) %% 1 != 0)
+        stop("filterWindowSize must be a multiple of size")
+
+    ## Subset genes to those with reads within the search distances.
+    search <- resize(
+        promoters(genes, upstream=upstreamDist),
+        width=width(genes) + upstreamDist + approxDist)
+    has_reads <-
+        search %over% reads1 |
+        search %over% reads2
+    if (sum(has_reads) < NROW(genes))
+        message(
+            "Dropping ", NROW(genes) - sum(has_reads), " of ", NROW(genes),
+            " genes with no reads within or nearby")
+    genes <- genes[has_reads]
 
     Fp1 <- windowAnalysis(reads = reads1, strand = "+", windowSize = size)
     Fp2 <- windowAnalysis(reads = reads2, strand = "+", windowSize = size)
@@ -110,35 +128,34 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
     Fm2 <- windowAnalysis(reads = reads2, strand = "-", windowSize = size)
 
     ## Run the model separately on each gene.
-    if (progress)
-        pb <-
-            progress::progress_bar$
-            new(
-                total=NROW(genes), format=" HMM [:bar] :percent eta: :eta",
-                clear=FALSE)
-    rows <- mclapply(seq_along(NROW(genes)), function(i) {
-        if (progress)
-            pb$tick()
+    pb <-
+        progress::progress_bar$
+        new(
+            show_after=0, clear=FALSE, total=NROW(genes),
+            format=" HMM [:bar] :percent :current/:total elapsed: :elapsed eta: :eta")
+    pb$tick(0)
+    ##    rows <-lapply(seq_along(NROW(genes)), function(i) {
+    rows <- data.frame(
+        StartWave=rep(NA, NROW(genes)), EndWave=rep(NA, NROW(genes)),
+        Rate=rep(NA, NROW(genes)), minOfMax=rep(NA, NROW(genes)),
+        minOfAvg=rep(NA, NROW(genes)))
+
+    for (i in seq_along(NROW(genes))) {
         ## Define the gene in terms of the windowed size.
+        chrom <- as.character(seqnames(genes[i]))
         if (all(strand(genes[i]) == "+")) {
             start <- floor((start(genes[i]) - upstreamDist) / size)
             end   <- ceiling(end(genes[i]) / size)
-            emis1  <- 
-                (as.numeric(Fp1[[ as.character(seqnames(genes[i])) ]]))[c(start:end)]
-            emis2  <- 
-                (as.numeric(Fp2[[ as.character(seqnames(genes[i])) ]]))[c(start:end)]
+            emis1  <- Fp1[[chrom]][c(start:end)]
+            emis2  <- Fp2[[chrom]][c(start:end)]
         }
-            else {
-            start <- floor(start(genes[i])/size)
+        else {
+            start <- floor(start(genes[i]) / size)
             end   <- ceiling((end(genes[i]) + upstreamDist) / size)
-            emis1  <- 
-                rev((as.integer(Fm1[[ seqnames(genes[i,1]) ]]))
-                    [c(start:end)])
-            emis2  <- 
-                rev((as.integer(Fm2[[ seqnames(genes[i,1]) ]]))
-                    [c(start:end)])
+            emis1  <- rev(Fm1[[chrom]][c(start:end)])
+            emis2  <- rev(Fm2[[chrom]][c(start:end)])
         }
-    
+
         ## Scale to a minimum of 1 read at each position (for fitting Gamma). 
         gene  <- as.numeric(emis1 - emis2)
         if (emissionDistAssumption == "gamma") { 
@@ -150,7 +167,6 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         if (is.double(TSmooth)) {
             ## Interperts it as a fold over the inter quantile interval to
             ## filter.
-            message("TSmooth is.integer:", TSmooth)
             medGene <- median(gene)
             iqrGene <- IQR(gene)
             gene[(medGene - gene) > (TSmooth*(iqrGene + 1))] <- 
@@ -162,33 +178,13 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         }
 
         ## Make the initial guess +5kb --> approxDist.
-        uTrans <- as.integer(ceiling((upstreamDist - 5000)/size))
-        iTrans <- as.integer(ceiling((upstreamDist + approxDist)/size))
+        uTrans <- as.integer(ceiling((upstreamDist - 5000) / size))
+        iTrans <- as.integer(ceiling((upstreamDist + approxDist) / size))
 
         ## Run Baum-Welch
-        MovMeanSpd <- finterWindowSize#10000
-        Means <- rep(0,NROW(gene))
-        MovMean  <- rep(0,NROW(gene))
-        MovMax   <- rep(0,NROW(gene))
-        dMovMean <- rep(0,NROW(gene))
-
-        for (k in c(2:(NROW(gene) - 2))) {
-            left  <- gene[c(1:k)]
-            right <- gene[c((k + 1):NROW(gene))]
-            Means[k]  <- mean(left, na.rm = TRUE) - mean(right, na.rm = TRUE)
-
-            MovMean[k] <- mean(gene[
-                max((k - (MovMeanSpd/size)),1):
-                min((k + (MovMeanSpd/size)), NROW(gene))], na.rm = TRUE)
-            MovMax[k]  <-  max(gene[
-                max((k - (MovMeanSpd/size)),1):
-                min((k + (MovMeanSpd/size)), NROW(gene))], na.rm = TRUE)
-            dMovMean[k] <- MovMean[k - 1] - MovMean[k]
-        }
-
-        ########################################################################
-        # Set up initial paremeter estimates.
-
+        ##
+        ## Set up initial paremeter estimates.
+        ##
         ## Fit transition and initial probabilities.
         tProb  <- as.list(data.frame(
             log(c((1 - (1/uTrans)),(1/uTrans),0)),
@@ -198,13 +194,14 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
 
         ## Fit initial distribution paremeters for emission probabilities.
         parInt  <- Rnorm(gene[c(1:uTrans)])
-        if (is.na(parInt$var) | parInt$var == 0) parInt$var = 0.00001 
         ## Check that the varience of the intergenic state is NOT 0.
+        if (is.na(parInt$var) | parInt$var == 0) parInt$var = 0.00001
 
+        n_gene <- length(gene)
         if (emissionDistAssumption == "norm") {
             ePrDist <- c("norm", "norm", "norm")
             parPsi  <- Rnorm(gene[c((uTrans + 1):iTrans)])
-            parBas  <- Rnorm(gene[c((iTrans + 1):NROW(gene))])
+            parBas  <- Rnorm(gene[c((iTrans + 1):n_gene)])
             ePrVars <- data.frame(
                 c(parInt$mean, sqrt(parInt$var), -1, -1), 
                 c(parPsi$mean, sqrt(parPsi$var), -1, -1), 
@@ -213,15 +210,16 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         else if (emissionDistAssumption == "normExp") {
             ePrDist <- c("norm", "normexp", "normexp")
             parPsi  <- Rnorm.exp(gene[c((uTrans + 1):iTrans)], tol = 1e-4)
-            parBas  <- Rnorm.exp(gene[c((iTrans + 1):NROW(gene))], tol = 1e-4)
+            parBas  <- Rnorm.exp(gene[c((iTrans + 1):n_gene)], tol = 1e-4)
             ePrVars <- data.frame(
                 c(parInt$mean, sqrt(parInt$var), -1, -1), parPsi$parameters,
                 parBas$parameters)
         }
         else if (emissionDistAssumption == "gamma") {
             ePrDist <- c("norm", "gamma", "gamma")
+            browser()
             parPsi  <- RgammaMLE(gene[c((uTrans + 1):iTrans)])
-            parBas  <- RgammaMLE(gene[c((iTrans + 1):NROW(gene))])
+            parBas  <- RgammaMLE(gene[c((iTrans + 1):n_gene)])
             ePrVars <- data.frame(
                 c(parInt$mean, sqrt(parInt$var), -1), 
                 c(parPsi$shape, parPsi$scale, -1), 
@@ -241,15 +239,18 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             ePrDist, ePrVars, tProb, iProb, 0.01, c(TRUE,TRUE,TRUE),
             c(TRUE, TRUE, TRUE), as.integer(10), FALSE, PACKAGE = "groHMM"),
             error = function(e) e)
+
+        pb$tick()
+
         ##  Update emis...
-        if (NROW(ans) < 3) {
+        if (length(ans) < 3) {
             ## An error will have a length of 2 (is this guaranteed?!).  
-            print("ERROR CAUGHT ON THE C SIDE")
-            print(ans) 
+            message("Error caught on the C side")
+            message(ans)
             ### Will be a previous iteration of ans...?! Generated a new 'ans'
             ans[[1]] <- NA
             ans[[2]] <- NA
-            ans[[3]] <- c(rep(0, NROW(gene) - 2), 1, 2)
+            ans[[3]] <- c(rep(0, n_gene - 2), 1, 2)
             ans[[4]] <- NA
             ans[[5]] <- NA
         }
@@ -258,35 +259,51 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         DTs <- max(which(ansVitervi == 0))
         DTe <- max(which(ansVitervi == 1))
 
-        ### Calculate quality filters... Wrap up.
+        ## Calculate fit quality metrics using moving window.
+        windowScale <- filterWindowSize / size
+        MovMean  <- rep(0, n_gene)
+        MovMax   <- rep(0, n_gene)
+        for (k in 2:(n_gene - 2)) {
+            MovMean[k] <- mean(gene[
+                max((k - windowScale),1):
+                min((k + windowScale), n_gene)], na.rm = TRUE)
+            MovMax[k]  <-  max(gene[
+                max((k - windowScale),1):
+                min((k + windowScale), n_gene)], na.rm = TRUE)
+        }
         if ((DTs >= 1) & (DTe > 1) & (DTs < DTe) &
-            (DTe < NROW(gene)) & (DTs < NROW(gene))) { 
+            (DTe < n_gene) & (DTs < n_gene)) {
             ## iff converges to something useful.
-            ANS <- (DTe - DTs)*size
-            STRTwave <- DTs*size
-            ENDwave <- DTe*size
+            ANS <- (DTe - DTs) * size
+            STRTwave <- DTs * size
+            ENDwave <- DTe * size
             ## Calculates min/max and min/avg filters.
-            medDns <- median(MovMax[c(max(
-            (which(ansVitervi == 1)) +
-            round(MovMeanSpd/size)):NROW(MovMax))])
+            medDns <- median(MovMax[
+                max(which(ansVitervi == 1) + round(windowScale)):
+                length(MovMax)
+            ])
             minMax <- min(MovMax[c(
                 min(which(ansVitervi == 1)):
                 max(which(ansVitervi == 1)))])
             minWindLTMed <- (medDns < minMax)
             ## True if min(wave) > med(wave.upstream)
-            avgDns <- median(MovMean[c(max(
-            (which(ansVitervi == 1)) +
-            round(MovMeanSpd/size)):NROW(MovMean))])
-            minAvg <- min(MovMean[c(
+            avgDns <- median(MovMean[
+                max(which(ansVitervi == 1) + round(windowScale)):
+                length(MovMean)
+            ])
+            minAvg <- min(MovMean[
                 min(which(ansVitervi == 1)):
-                max(which(ansVitervi == 1)))])
+                max(which(ansVitervi == 1))
+            ])
             minMeanWindLTMed <- (avgDns < minAvg)
         }
-        data.frame(
-            StartWave=STRTwave, EndWave=ENDwave, Rate=ANS, minOfMax=minWindLTMed,
-            minOfAvg=minMeanWindLTMed)
-    }, ...)  # Extra args to mclapply.
-    
+
+        ## data.frame(
+        ##     StartWave=STRTwave, EndWave=ENDwave, Rate=ANS, minOfMax=minWindLTMed,
+        ##     minOfAvg=minMeanWindLTMed)
+        rows[i, ] = c(STRTwave, ENDwave, ANS, minWindLTMed, minMeanWindLTMed)
+    }#)#, BPPARAM=BPPARAM)
+
     cbind.data.frame(
         rbind.data.frame(rows),
         as.data.frame(mcols(genes)))
