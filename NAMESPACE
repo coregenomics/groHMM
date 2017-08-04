@@ -1,7 +1,7 @@
 useDynLib(groHMM, .registration = TRUE)
 import(
-    MASS, parallel, S4Vectors, IRanges, GenomeInfoDb, GenomicRanges,
-    GenomicAlignments, rtracklayer)
+    "MASS", "BiocParallel", "S4Vectors", "IRanges", "GenomeInfoDb",
+    "GenomicRanges", "GenomicAlignments", "rtracklayer")
 importFrom("grDevices", "rgb")
 importFrom(
     "graphics", "abline", "axis", "par", "plot.new", "plot.window", "rect",
