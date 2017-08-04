@@ -13,4 +13,4 @@ read_bams <- function(files) {
         as(GenomicAlignments::readGAlignments(file_), "GRanges")
     })
 }
-reads <- read_bams(c("S0mR1.bam", "S40mR1.bam"))
+reads <- GRangesList(read_bams(c("S0mR1.bam", "S40mR1.bam")))
