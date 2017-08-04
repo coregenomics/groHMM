@@ -128,12 +128,14 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
     Fm2 <- windowAnalysis(reads = reads2, strand = "-", windowSize = size)
 
     ## Run the model separately on each gene.
-    pb <-
-        progress::progress_bar$
-        new(
-            show_after=0, clear=FALSE, total=NROW(genes),
-            format=" HMM [:bar] :percent :current/:total elapsed: :elapsed eta: :eta")
-    pb$tick(0)
+    if (progress) {
+        pb <-
+            progress::progress_bar$
+            new(
+                show_after=0, clear=FALSE, total=NROW(genes),
+                format=" HMM [:bar] :percent :current/:total elapsed: :elapsed eta: :eta")
+        pb$tick(0)
+    }
     ##    rows <-lapply(seq_along(NROW(genes)), function(i) {
     rows <- data.frame(
         StartWave=rep(NA, NROW(genes)), EndWave=rep(NA, NROW(genes)),
@@ -239,7 +241,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             c(TRUE, TRUE, TRUE), as.integer(10), FALSE, PACKAGE = "groHMM"),
             error = function(e) e)
 
-        pb$tick()
+        if (progress) pb$tick()
 
         ##  Update emis...
         if (length(ans) < 3) {
