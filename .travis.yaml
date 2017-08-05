@@ -1,0 +1,5 @@
+language: r
+cache: packages
+r:
+  - bioc-release
+  - bioc-devel
