@@ -18,14 +18,15 @@ test_that("windowAnalysis throws error with empty GRanges", {
 })
 
 test_that("windowAnalysis allows empty seqlevels", {
-  # Add empty seqlevels to reads.
+  ## Add empty seqlevels to reads.
   require(TxDb.Hsapiens.UCSC.hg19.knownGene)
   hg19_seqinfo <- seqinfo(TxDb.Hsapiens.UCSC.hg19.knownGene)
   idx_has <- which(names(hg19_seqinfo) %in% names(seqinfo(tx)))
   idx <- union(idx_has, 1:length(hg19_seqinfo))
   seqinfo(tx) <- hg19_seqinfo[names(hg19_seqinfo)[idx]]
-  # Set warnings as errors to catch any mclapply errors.
-  on.exit(options(warn = getOption("warn")))
+  ## Set warnings as errors to catch any mclapply errors.
+  warn = getOption("warn")
+  on.exit(options(warn = warn))
   options(warn = 2)
   expect_is(windowAnalysis(reads = tx, windowSize = 100, strand="-"), "list")
 })
