@@ -27,13 +27,12 @@ author:
     email: "lee.kraus@utsouthwestern.edu"
 date: "`r doc_date()`"
 bibliography: "groHMM.bib"
-#link-citations: true
 package: "groHMM"
 output:
   BiocStyle::html_document2
 vignette: >
   %\VignetteIndexEntry{groHMM Tutorial}
-  %\VignetteEngine{knitr::markdown}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
