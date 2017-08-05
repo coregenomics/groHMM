@@ -374,7 +374,7 @@ getExpressedAnnotations <- function(features, reads) {
 conExpressed <- getExpressedAnnotations(features=kgConsensus,reads=Sall)
 @
 <<fig2plot, eval=TRUE>>=
-td <- getTxDensity(txHMM, conExpressed, mc.cores=getOption("mc.cores"))
+td <- getTxDensity(txHMM, conExpressed, plot=TRUE, mc.cores=getOption("mc.cores"))
 u <- par("usr")
 lines(c(u[1], 0, 0, 1000, 1000, u[2]), c(0,0,u[4]-.04,u[4]-.04,0,0),
       col="red")

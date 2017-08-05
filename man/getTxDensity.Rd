@@ -4,7 +4,7 @@
 \alias{getTxDensity}
 \title{getTxDensity Calculates transcript density.}
 \usage{
-getTxDensity(tx, annox, plot = TRUE, scale = 1000L, nSampling = 0L,
+getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
   samplingRatio = 0.1, ...)
 }
 \arguments{
@@ -12,7 +12,7 @@ getTxDensity(tx, annox, plot = TRUE, scale = 1000L, nSampling = 0L,
 
 \item{annox}{GRanges of non-overlapping annotatoins.}
 
-\item{plot}{Logical.  If TRUE, plot transcript density.  Default: TRUE}
+\item{plot}{Logical.  If TRUE, plot transcript density.  Default: FALSE}
 
 \item{scale}{Numeric. Scaled size of a gene for transcript density 
 calculation. 

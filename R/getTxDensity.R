@@ -32,7 +32,7 @@
 #'
 #' @param tx GRanges of transcripts. 
 #' @param annox GRanges of non-overlapping annotatoins.
-#' @param plot Logical.  If TRUE, plot transcript density.  Default: TRUE
+#' @param plot Logical.  If TRUE, plot transcript density.  Default: FALSE
 #' @param scale Numeric. Scaled size of a gene for transcript density 
 #' calculation. 
 #' Default: 1000L
@@ -50,7 +50,7 @@
 #' width=seq(900, 1200, by=100)), strand=rep("+", 4))
 #' ## Not run:
 #' # density <- getTxDensity(tx, annox) 
-getTxDensity <- function(tx, annox, plot=TRUE, scale=1000L, nSampling=0L, 
+getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     samplingRatio=0.1, ...) {
     ol <- findOverlaps(tx, annox)
 
@@ -158,12 +158,12 @@ getTxDensity <- function(tx, annox, plot=TRUE, scale=1000L, nSampling=0L,
     } else {
         profile <- apply(M, 1, sum)/length(ol)
     }
-    if (plot) {
+    if (plot) {                         # nocov start
         plot(-(up*scale):(down*scale-1), profile, ylim=c(0, 1), type="l", 
             xlab="Relative to TSS", ylab="Density")
         abline(v=0, col="blue", lty=2)
         abline(v=up*scale, col="blue", lty=2)
-    }
+    }                                   # nocov end
 
     trap.rule <- function(x,f) {sum(diff(x)*(f[-1]+f[-length(f)]))/2}
     ## Thanks to: http://tolstoy.newcastle.edu.au/R/help/05/08/9625.html
