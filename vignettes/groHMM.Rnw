@@ -136,6 +136,8 @@ The example data included in this package can be loaded into \software{R}
 using the following commands.
 
 <<load data, eval=TRUE>>=
+library(GenomicAlignments)
+
 S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
         package="groHMM")), "GRanges")
 S0mR2 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
