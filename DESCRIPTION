@@ -34,9 +34,11 @@ Imports:
     utils,
 Suggests:
     BiocStyle,
-    GenomicFeatures,
     edgeR,
+    GenomicFeatures,
+    knitr,
     org.Hs.eg.db,
+    rmarkdown,
     testthat,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
 Description: A pipeline for the analysis of GRO-seq data.
@@ -47,3 +49,4 @@ biocViews: Sequencing, Software
 LazyLoad: yes
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
