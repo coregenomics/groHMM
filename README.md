@@ -17,7 +17,7 @@ If the above command fails, install Bioconductor and the `devtools` package.
 
 ``` R
 source("https://bioconductor.org/biocLite.R")
-install.packages(devtools)
+install.packages("devtools")
 ```
 
 ## Hacking
