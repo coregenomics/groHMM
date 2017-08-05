@@ -38,6 +38,7 @@ Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors, set the option 'mc.cores'.
 }
 \examples{
+library(GenomicRanges)
 features <- GRanges("chr7", IRanges(1000, 1000), strand="+")
 reads <- GRanges("chr7", IRanges(start=c(1000:1004, 1100), 
  width=rep(1, 6)), strand="+")

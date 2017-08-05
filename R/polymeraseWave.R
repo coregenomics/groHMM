@@ -77,6 +77,7 @@
 #' or a List() structure with additional data, as specified by returnVal.
 #' @author Charles G. Danko
 #' @examples
+#' library(GenomicAlignments)
 #' genes <- GRanges("chr7", IRanges(2394474,2420377), strand="+",
 #'                  SYMBOL="CYP2W1", ID="54905")
 #' reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",

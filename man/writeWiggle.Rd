@@ -46,6 +46,7 @@ writeWiggle writes a wiggle track or BigWig file suitable for uploading
 to the UCSC genome browser.
 }
 \examples{
+library(GenomicAlignments)
 S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam", 
 package="groHMM")), "GRanges")
 ## Not run:

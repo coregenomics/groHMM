@@ -43,6 +43,7 @@
 #' @return Returns a list of FTD, TTD, PostTTS, and TUA. 
 #' @author Minho Chae
 #' @examples
+#' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(start=seq(1000,4000, by=1000), 
 #' width=seq(1000, 1300, by=100)), strand=rep("+", 4))
 #' annox <- GRanges("chr7", IRanges(start=seq(1100,4100, by=1000), 
@@ -217,6 +218,7 @@ getLIValues <- function (vals, n) {
 #' total, and rate.
 #' @author Minho Chae
 #' @examples
+#' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(start=seq(100, 1000, by=200), 
 #' width=seq(100, 1000, by=100)), strand="+")
 #' annox <- GRanges("chr7", IRanges(start=seq(110, 1100, by=150), 

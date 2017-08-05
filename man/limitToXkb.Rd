@@ -22,6 +22,7 @@ Returns GRanges object with new genomic coordiates.
 limitToXkb truncates a set of genomic itnervals at a constant, maximum size.
 }
 \examples{
+library(GenomicRanges)
 tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 newTX <- limitToXkb(tx)
 }

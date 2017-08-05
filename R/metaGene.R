@@ -41,6 +41,7 @@
 #' centered on a point of interest.
 #' @author Charles G. Danko and Minho Chae
 #' @examples
+#' library(GenomicRanges)
 #' features <- GRanges("chr7", IRanges(1000, 1000), strand="+")
 #' reads <- GRanges("chr7", IRanges(start=c(1000:1004, 1100), 
 #'  width=rep(1, 6)), strand="+")
@@ -117,6 +118,7 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 #' @return A list of integer-Rle for sense and antisene.
 #' @author Minho Chae
 #' @examples
+#' library(GenomicRanges)
 #' features <- GRanges("chr7", IRanges(start=1000:1001, width=rep(1,2)), 
 #'  strand=c("+", "-"))
 #' reads <- GRanges("chr7", IRanges(start=c(1000:1003, 1100:1101), 

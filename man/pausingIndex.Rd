@@ -37,6 +37,7 @@ Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors, use the argument 'mc.cores'.
 }
 \examples{
+library(GenomicAlignments)
 features <- GRanges("chr7", IRanges(2394474,2420377), strand="+")
 reads <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
             package="groHMM")), "GRanges")

@@ -74,6 +74,7 @@ approx.ratios.CI <- function(num.counts, denom.counts, alpha=0.05) {
 #' @author Charles G. Danko and Minho Chae.
 #' @return Returns the pausing index for different genes.
 #' @examples
+#' library(GenomicAlignments)
 #' features <- GRanges("chr7", IRanges(2394474,2420377), strand="+")
 #' reads <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
 #'             package="groHMM")), "GRanges")

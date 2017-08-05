@@ -40,6 +40,7 @@ To change the number of processors
 set the option 'mc.cores'.
 }
 \examples{
+library(GenomicRanges)
 tx <- GRanges("chr7", IRanges(start=seq(1000,4000, by=1000), 
 width=seq(1000, 1300, by=100)), strand=rep("+", 4))
 annox <- GRanges("chr7", IRanges(start=seq(1100,4100, by=1000), 

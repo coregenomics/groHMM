@@ -90,6 +90,7 @@ breakInterval <- function(gr, brPos, gap=5, strand="+") {
 #' @author Minho Chae and Charles G. Danko
 #' @return Returns GRanges object of broken transcripts. 
 #' @examples
+#' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' annox <- GRanges(
 #'     "chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), strand="+")
@@ -187,6 +188,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' @return Returns GRanges object of combined transcripts. 
 #' @author Minho Chae and Charles G. Danko
 #' @examples
+#' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), 
 #'     strand="+")
 #' annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")

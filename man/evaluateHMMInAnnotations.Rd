@@ -19,6 +19,7 @@ total, and rate.
 Evaluates HMM calling of transripts compared to known annotations.
 }
 \examples{
+library(GenomicRanges)
 tx <- GRanges("chr7", IRanges(start=seq(100, 1000, by=200), 
 width=seq(100, 1000, by=100)), strand="+")
 annox <- GRanges("chr7", IRanges(start=seq(110, 1100, by=150), 

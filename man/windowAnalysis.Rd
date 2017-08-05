@@ -32,6 +32,7 @@ windowAnalysis Returns a vector of integers representing the counts of
 reads in a moving window.
 }
 \examples{
+library(GenomicAlignments)
 S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
      package="groHMM")), "GRanges")
 ## Not run:

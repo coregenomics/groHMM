@@ -35,6 +35,7 @@ Breaks transcripts when they are overlapped with multiple well annotated
 genes.
 }
 \examples{
+library(GenomicRanges)
 tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 annox <- GRanges(
     "chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), strand="+")

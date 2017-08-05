@@ -29,6 +29,7 @@
 #' @return Returns GRanges object with new genomic coordiates.
 #' @author Minho Chae and Charles G. Danko
 #' @examples
+#' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' newTX <- limitToXkb(tx)
 ##  This function limits a genomic range to a samll region relative to the 

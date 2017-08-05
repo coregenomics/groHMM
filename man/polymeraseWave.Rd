@@ -7,7 +7,8 @@ up- or down- regulated genes.}
 \usage{
 polymeraseWave(reads1, reads2, genes, approxDist, size = 50,
   upstreamDist = 10000, TSmooth = NA, emissionDistAssumption = "gamma",
-  finterWindowSize = 10000, progress = TRUE, ...)
+  filterWindowSize = 10000, progress = TRUE,
+  BPPARAM = BiocParallel::bpparam())
 }
 \arguments{
 \item{reads1}{Mapped reads in time point 1.}
@@ -39,14 +40,15 @@ and "norm" works for smooth data.  As a general rule of thumb, "gamma"
 is used for libraries made using the direct ligation method, and "norm"
 for circular ligation data.  Default: "gamma".}
 
-\item{finterWindowSize}{Method returns 'quality' information for
+\item{filterWindowSize}{Method returns 'quality' information for
 each gene to which a wave was fit.  Included in these metrics are several
 that define a moving window.  The moving window size is specified by
 filterWindowSize.  Default: 10 kb.}
 
 \item{progress}{Whether to show progress bar.  Default: TRUE}
 
-\item{...}{Extra argument passed to mclapply}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns either a data.frame with Pol II wave end positions,
@@ -78,6 +80,7 @@ Initiation, Pausing, and Elongation Rate in Cells. Mol Cell.
 2013 Mar 19. doi:pii: S1097-2765(13)00171-8. 10.1016/j.molcel.2013.02.015.
 }
 \examples{
+library(GenomicAlignments)
 genes <- GRanges("chr7", IRanges(2394474,2420377), strand="+",
                  SYMBOL="CYP2W1", ID="54905")
 reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
