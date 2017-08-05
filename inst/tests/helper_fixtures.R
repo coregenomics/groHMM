@@ -7,12 +7,10 @@ annox <- GenomicRanges::GRanges(c("chr7:1000-11000",
 ## Fixtures (identical to example in polymeraseWave man page)
 genes <- GenomicRanges::GRanges("chr7", IRanges::IRanges(2394474,2420377),
                                 strand="+", SYMBOL="CYP2W1", ID="54905")
-path_extdata <- normalizePath(file.path(
-    testthat::test_path(),
-    "../../inst/extdata"))
+
 read_bams <- function(files) {
     lapply(files, function(x) {
-        file_ <- file.path(path_extdata, x)
+        file_ <- system.file("extdata", x, package="groHMM")
         as(GenomicAlignments::readGAlignments(file_), "GRanges")
     })
 }

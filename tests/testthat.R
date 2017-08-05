@@ -1,4 +1,4 @@
 library(testthat)
 library(groHMM)
 
-test_check("groHMM")
+test_package("groHMM")
