@@ -22,6 +22,23 @@ install.packages(devtools)
 
 ## Hacking
 
+The place where groHMM needs the most attention
+is increasing the test coverage
+by adding unit tests to `./inst/tests/`.
+One can see where work is needed from the web reports of
+[codecov](https://codecov.io/gh/coregenomics/groHMM).
+
+Otherwise, one can check
+[Travis CI](https://travis-ci.org/coregenomics/groHMM)
+for notes and warnings to fix.
+
+To tackle this and more,
+it's best not to rely on the web CI services
+(which are very thorough but take an hour to run)
+and to instead
+run the tests, coverage and checks locally (which take tens of seconds)
+as explained below.
+
 ### This repo
 
 Fork or clone the git repository,
@@ -43,52 +60,77 @@ Run the unit tests with:
 devtools::test()
 ```
 
-Check your test coverage with [`covr`](https://github.com/jimhester/covr):
+The web integration reports take about ~1 hour to generate;
+the pacing item being
+[Travis CI](https://travis-ci.org/coregenomics/groHMM).
+
+One can therefore run
+[`covr`](https://github.com/jimhester/covr) and the checks locally:
 
 ``` R
-library(IRanges)
 library(covr)
-
-## Collapse integer ranges in string form.
-## 
-## Show problem lines in a collapsed range form. For example, if
-## indices c(1:3, 9:11) have no coverage, show as 1-3,9-11 instead of
-## 1 2 3 9 10 11.
-str_range <- function(x) {
-	ir <- IRanges::IRanges(start = x, width = rep(1, length(x)))
-	ir <- IRanges::reduce(ir)
-	ranges <- paste(IRanges::start(ir), IRanges::end(ir), sep = "-")
-	single_lines <- IRanges::start(ir) == IRanges::end(ir)
-	ranges[single_lines] <- as.character(IRanges::start(ir)[single_lines])
-	paste(ranges, collapse = ",")
-}
-
-## Collapse coverage output to filenames and lines.
-lines <- function(coverage, pattern = NULL) {
-	df <- zero_coverage(coverage)
-	df_grouped <- dplyr::group_by(df, filename)
-	df <- dplyr::summarise(df_grouped,
-                           lines = str_range(line))
-	if (!is.null(pattern))
-	    df <- dplyr::filter(df, grepl(filename, pattern = pattern))
-    message(paste(df$filename, df$lines, collapse = "\n\n"))
-	invisible(df)
-}
-```
-
-Then run it with:
-
-``` R
 cov <- package_coverage()
 cov
-lines(cov)
+zero_coverage(cov)
 ```
 
 ### Package quality checks
 
-Run R's standard check followed by BiocCheck:
+Besides testing and coverage,
+one can catch a broader range of quality issues using
+R's standard check followed by BiocCheck:
 
 ``` R
-devtools::check()
+devtools::check(build_args="--no-build-vignettes")
 BiocCheck::BiocCheck(".")
 ```
+
+### R daily build
+
+Strictly speaking,
+Bioconductor's development process requires using a recent
+[R daily build](http://bioconductor.org/developers/how-to/useDevel/).
+There are a few different approaches for compiling from source:
+for example one can use the package manager to install build-time dependencies;
+on Debian one could run `apt-get build-dep r-base`.
+However I suggest using `spack` and environmental modules instead
+to allows one to easily switch between R versions
+and keep a separate R library for each installation.
+
+``` bash
+cd
+git clone https://github.com/llnl/spack.git
+spack/bin/spack install r@$(date -d -I yesterday)
+```
+
+Install environmental-modules to load our new r module:
+
+``` bash
+aptitude install environment-modules
+```
+
+Note the version of r that you have loaded.
+We will add the version to our `R-devel` launcher script.
+
+``` bash
+spack/bin/spack find r
+```
+
+Create a file `/usr/local/bin/R-devel`:
+
+``` bash
+#!/bin/bash
+. /etc/profile.d/modules.sh
+. ~/spack/bin/spack/setup-env.sh
+spack load r@2017-08-01  # Change version to match `spack find r`
+exec R "$@"
+```
+
+In emacs `ess-mode`
+as long as `R-devel` is in your PATH,
+one can launch it with `M-x R-devel`
+as your associated `R` shell.
+If you use RStudio or RStudio server,
+to use `R-devel` as your interpreter
+with environmental variables or Rprofile hacks
+you're on your own `(^_~)`
