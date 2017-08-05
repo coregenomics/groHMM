@@ -1,5 +1,8 @@
 ## groHMM
 
+[![Build Status](https://api.travis-ci.org/coregenomics/groHMM.svg)](https://travis-ci.org/coregenomics/groHMM)
+[![codecov.io](https://codecov.io/gh/coregenomics/groHMM/coverage.svg)](https://codecov.io/gh/coregenomics/groHMM)
+
 ## Usage
 
 Install the groHMM latest version using:
