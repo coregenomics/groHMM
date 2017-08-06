@@ -1,7 +1,7 @@
 ## groHMM
 
 [![Build Status](https://api.travis-ci.org/coregenomics/groHMM.svg)](https://travis-ci.org/coregenomics/groHMM)
-[![codecov.io](https://codecov.io/gh/coregenomics/groHMM/coverage.svg)](https://codecov.io/gh/coregenomics/groHMM)
+[![codecov.io](https://codecov.io/gh/coregenomics/groHMM/branch/1.99.x/graphs/badge.svg)](https://codecov.io/gh/coregenomics/groHMM)
 
 ## Usage
 
