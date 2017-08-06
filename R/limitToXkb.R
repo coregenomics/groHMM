@@ -19,20 +19,20 @@
 ##
 ##########################################################################
 
-#' limitToXkb truncates a set of genomic itnervals at a constant, maximum size.
+#' limitToXkb truncates a set of genomic intervals at a constant, maximum size.
 #'
 #' @param features A GRanges object representing a set of genomic coordinates. 
 #' The meta-plot will be centered on the start position.
 #' @param offset Starts the interval from this position relative to the start 
 #' of each genomic features.
 #' @param size Specifies the size of the window.
-#' @return Returns GRanges object with new genomic coordiates.
+#' @return Returns GRanges object with new genomic coordinates.
 #' @author Minho Chae and Charles G. Danko
 #' @examples
 #' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' newTX <- limitToXkb(tx)
-##  This function limits a genomic range to a samll region relative to the 
+## This function limits a genomic range to a small region relative to the
 ## transcription site.
 limitToXkb <- function(features, offset=1000, size=13000) {
     w <- width(features)
@@ -63,14 +63,14 @@ limitToXkb <- function(features, offset=1000, size=13000) {
     return(features)
 }
 
-#' readBed Returns a GenomicRanges object constrcuted from the specified bed 
+#' readBed Returns a GenomicRanges object constructed from the specified bed
 #' file.
 #'
 #' Bed file format is assumed to be either four column: seqnames, start, end, 
 #' strand columns; or six column: seqnames, start, end, name, score, and strand.
 #' Three column format is also possible when there is no strand information.
 #'
-#' Any additional arguments availiable to read.table can be specified.
+#' Any additional arguments available to read.table can be specified.
 #'
 #' @param file Path to the input file.
 #' @param ... Extra argument passed to read.table

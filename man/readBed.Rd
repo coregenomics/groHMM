@@ -2,7 +2,7 @@
 % Please edit documentation in R/limitToXkb.R
 \name{readBed}
 \alias{readBed}
-\title{readBed Returns a GenomicRanges object constrcuted from the specified bed 
+\title{readBed Returns a GenomicRanges object constructed from the specified bed
 file.}
 \usage{
 readBed(file, ...)
@@ -21,7 +21,7 @@ strand columns; or six column: seqnames, start, end, name, score, and strand.
 Three column format is also possible when there is no strand information.
 }
 \details{
-Any additional arguments availiable to read.table can be specified.
+Any additional arguments available to read.table can be specified.
 }
 \author{
 Minho Chae and Charles G. Danko.

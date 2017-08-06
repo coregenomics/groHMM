@@ -9,8 +9,7 @@ expressedGenes(features, reads, Lambda = NULL, ...)
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.
-The meta-plot will be centered on the start position.  
-There can be optional "ID" column for gene ids.}
+The meta-plot will be centered on the start position.}
 
 \item{reads}{A GRanges object representing a set of mapped reads.}
 

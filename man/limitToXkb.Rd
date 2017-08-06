@@ -2,7 +2,7 @@
 % Please edit documentation in R/limitToXkb.R
 \name{limitToXkb}
 \alias{limitToXkb}
-\title{limitToXkb truncates a set of genomic itnervals at a constant, maximum size.}
+\title{limitToXkb truncates a set of genomic intervals at a constant, maximum size.}
 \usage{
 limitToXkb(features, offset = 1000, size = 13000)
 }
@@ -16,10 +16,10 @@ of each genomic features.}
 \item{size}{Specifies the size of the window.}
 }
 \value{
-Returns GRanges object with new genomic coordiates.
+Returns GRanges object with new genomic coordinates.
 }
 \description{
-limitToXkb truncates a set of genomic itnervals at a constant, maximum size.
+limitToXkb truncates a set of genomic intervals at a constant, maximum size.
 }
 \examples{
 library(GenomicRanges)
