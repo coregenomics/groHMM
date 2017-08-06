@@ -102,22 +102,3 @@ Rnorm.exp <- function(xi, wi=rep(1,NROW(xi)), guess=c(0.5, 0, 1, 1),
     Fit <- .Call("RNormExpMLE", xi, wi, guess, tol, as.integer(maxit), 
         PACKAGE = "groHMM")
 }
-
-################################
-##
-## weighted.var -- Computes the weighted varience, where the varience is 
-## weighted by some factor...
-##
-###############################
-weighted.var <- function(x, w, na.rm = FALSE) {
-    if (na.rm) {
-        w <- w[i <- !is.na(x)]
-        x <- x[i]
-    }
-    sum.w <- sum(w)
-    sum.w2 <- sum(w^2)
-    mean.w <- sum(x * w) / sum(w)
-    (sum.w / (sum.w^2 - sum.w2)) * sum(w * (x - mean.w)^2, na.rm = na.rm)
-}
-
-
