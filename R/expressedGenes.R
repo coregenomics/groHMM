@@ -49,8 +49,9 @@
 ##  Function defines expression as in Core, Waterfall, Lis; Science, Dec. 2008.
 expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, 
     debug=FALSE, ...) {
-    # Order -- Make sure, b/c this is one of our main assumptions.  Otherwise 
-    # violated for DBTSS.
+    ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
+    ## violated for DBTSS.
+    reads <- .normArgRanges(reads)
     reads <- reads[order(as.character(seqnames(reads)), start(reads)),] 
     C <- sort(unique(as.character(seqnames(features))))
     if(is.null(Lambda)) Lambda <- 0.04*NROW(reads)/10751533/1000 
