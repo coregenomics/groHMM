@@ -34,8 +34,6 @@
 #' Waterfall, Lis. (2008) Science.).
 #' @param UnMap List object representing the position of un-mappable reads.  
 #' Default: not used.
-#' @param debug If set to true, returns the number of positions.  
-#' Default: FALSE.
 #' @param ... Extra argument passed to mclapply
 #' @return Returns a data.frame representing the expression p.values for 
 #' features of interest.
@@ -47,8 +45,7 @@
 ##      UnMAQ == unmappable regions in the genome of interest.
 ##
 ##  Function defines expression as in Core, Waterfall, Lis; Science, Dec. 2008.
-expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, 
-    debug=FALSE, ...) {
+expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, ...) {
     ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
     ## violated for DBTSS.
     reads <- .normArgRanges(reads)
@@ -59,9 +56,8 @@ expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL,
     
     ## Run parallel version.
     mcp <- mclapply(
-        seq_along(C), expressedGenes_foreachChrom, C=C,
-        features=features, reads=reads, Lambda=Lambda, UnMap=UnMap,
-        debug=debug, ...)
+        seq_along(C), expressedGenes_foreachChrom, C=C, features=features,
+        reads=reads, Lambda=Lambda, UnMap=UnMap, ...)
 
     ## Unlist... 
     ANSgeneid <- rep("char", NROW(features))
@@ -87,12 +83,7 @@ expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL,
             nonMappablePositions=ANSunmapp, size=ANSgsize))
 }
 
-expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap, 
-    debug) {
-    if(debug) {
-        message("Doing chromosome ", C[i])
-    }
-    
+expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap) {
     ## Which KG?  prb?
     indxF   <- which(as.character(seqnames(features)) == C[i])
     indxPrb <- which(as.character(seqnames(reads)) == C[i])
@@ -137,11 +128,6 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap,
                     ]) +1)
             }
 
-            if(debug) {
-                message(C[i],": Counting unMAQable regions.")
-                message("CHRSIZE:", CHRSIZE, "CHRSTART:", CHRSTART)
-            }
-
             ## Count unMAQable regions, and size of everything ... 
             nonmappable <- .Call(
                 "CountUnMAQableReads", FeatureStart, FeatureEnd,
@@ -151,11 +137,6 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap,
             MappablePositions <-
                 (FeatureEnd - FeatureStart) - 
                 nonmappable + 1
-
-            if(debug) {
-                print(summary(nonmappable))
-                print(summary(MappablePositions))
-            }
         }
         else {
             nonmappable <- 1
