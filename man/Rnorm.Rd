@@ -9,11 +9,11 @@ Rnorm(X)
 }
 \arguments{
 \item{X}{A vector of observations, assumed to be real numbers in the 
-inveraval (-Inf,+Inf).}
+interval (-Inf,+Inf).}
 }
 \value{
 Returns a list of parameters for the best-fit normal distribution 
-(mean and varience).
+(mean and variance).
 }
 \description{
 Rnorm fits a normal distribution to a specified data vector using maximum 

@@ -24,7 +24,7 @@
 #'
 #' The model is a three state hidden Markov model (HMM).  States represent:
 #' (1) the 5' end of genes upstream of the transcription start site,
-#' (2) upregulated sequence, and (3) the 3' end of the gene through the
+#' (2) up-regulated sequence, and (3) the 3' end of the gene through the
 #' polyadenylation site.
 #'
 #' The model computes differences in read counts between the two conditions.
@@ -32,13 +32,13 @@
 #' the user (using the emissionDistAssumption argument).
 #' Currently supported functional forms include a normal distribution
 #' (good for GRO-seq data prepared using the circular ligation protocol),
-#' a gamma distribution (good for 'spikey' ligation based GRO-seq data),
+#' a gamma distribution (good for 'spiky' ligation based GRO-seq data),
 #' and a long-tailed normal+exponential distribution was implemented, but
 #' never deployed.
 #'
 #' Initial parameter estimates are based on initial assumptions of
 #' transcription rates taken from the literature.  Subsequently all parameters
-#' are fit using Baum-Welch expetation maximization.
+#' are fit using Baum-Welch expectation maximization.
 #'
 #' Reference: Danko CG, Hah N, Luo X, Martins AL, Core L, Lis JT, Siepel A,
 #' Kraus WL. Signaling Pathways Differentially Affect RNA Polymerase II
@@ -54,7 +54,7 @@
 #' ligation data, and 200 for circular ligation data.  Default: 50.
 #' @param upstreamDist The amount of upstream sequence to include
 #' Default: 10 kb.
-#' @param TSmooth Optimonally, outlying windows are set a maximum value
+#' @param TSmooth Optionally, outlying windows are set a maximum value
 #' over the inter-quantile interval, specified by TSmooth.
 #' Reasonable value: 20; Default: NA (for no smoothing).  Users are encouraged
 #' to use this parameter ONLY in combination with the normal distribution
@@ -62,7 +62,7 @@
 #' @param emissionDistAssumption Takes values "norm", "normExp", and "gamma".
 #' Specifies the functional form of the 'emission' distribution for states
 #' I and II (i.e. 5' of the gene, and inside of the wave).
-#' In our experience, "gamma" works best for highly-variable 'spikey' data,
+#' In our experience, "gamma" works best for highly-variable 'spiky' data,
 #' and "norm" works for smooth data.  As a general rule of thumb, "gamma"
 #' is used for libraries made using the direct ligation method, and "norm"
 #' for circular ligation data.  Default: "gamma".
@@ -92,13 +92,13 @@
 ##  implementation.
 ##
 ##  This is a three state HMM -- initial state representing the intergenic
-##  region 5' of a gene, the second representing the initially upregulated
+##  region 5' of a gene, the second representing the initially up-regulated
 ##  region, and the third representing the remaining sequence of a gene.
 ##
-##  We assume that upstream region is intergenic, and thus its emmission
-##  distriubtion is assumed to be a constant, set based on a representative
-##  intergenic region.  This is accomidated in my [1,*) framework by keeping
-##  the vairence constant, and scaling the mean for each gene.
+##  We assume that upstream region is intergenic, and thus its emission
+##  distribution is assumed to be a constant, set based on a representative
+##  intergenic region.  This is accommodated in my [1,*) framework by keeping
+##  the variance constant, and scaling the mean for each gene.
 ##
 ## Test with GREB1:     chr2:11,591,693-11,700,363
 ## GREB1 <- data.frame(chr="chr2", start=11591693, end=11700363, str="+")
@@ -168,7 +168,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         }
         
         if (is.double(TSmooth)) {
-            ## Interperts it as a fold over the inter quantile interval to
+            ## Interprets it as a fold over the inter quantile interval to
             ## filter.
             medGene <- median(gene)
             iqrGene <- IQR(gene)
@@ -186,7 +186,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
 
         ## Run Baum-Welch
         ##
-        ## Set up initial paremeter estimates.
+        ## Set up initial parameter estimates.
         ##
         ## Fit transition and initial probabilities.
         tProb  <- as.list(data.frame(
@@ -195,9 +195,9 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             log(c(0, 0, 1))))  # Trans. prob.
         iProb  <- as.double(log(c(1, 0, 0))) # iProb.
 
-        ## Fit initial distribution paremeters for emission probabilities.
+        ## Fit initial distribution parameters for emission probabilities.
         parInt  <- Rnorm(gene[c(1:uTrans)])
-        ## Check that the varience of the intergenic state is NOT 0.
+        ## Check that the variance of the intergenic state is NOT 0.
         if (is.na(parInt$var) | parInt$var == 0) parInt$var = 0.00001
 
         n_gene <- length(gene)
@@ -275,7 +275,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         }
         if ((DTs >= 1) & (DTe > 1) & (DTs < DTe) &
             (DTe < n_gene) & (DTs < n_gene)) {
-            ## iff converges to something useful.
+            ## Iff converges to something useful.
             ANS <- (DTe - DTs) * size
             STRTwave <- DTs * size
             ENDwave <- DTe * size

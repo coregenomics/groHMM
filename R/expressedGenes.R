@@ -102,7 +102,7 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
             FeatureEnd, FeatureStr, PROBEStart, PROBEEnd, 
             PROBEStr, PACKAGE="groHMM")
 
-        ## Calculate poisson prob. of each.
+        ## Calculate Poisson prob. of each.
         ANSgsize_c <- FeatureEnd - FeatureStart
         ANSpvalue_c <- ppois(
             NUMReads, Lambda * ANSgsize_c, lower.tail=FALSE)

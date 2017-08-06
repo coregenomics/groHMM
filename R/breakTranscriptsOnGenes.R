@@ -168,7 +168,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     return(all[order(as.character(seqnames(all)), start(all)),])
 }
 
-#' combineTranscripts Combines transnscipts. 
+#' combineTranscripts Combines transcripts.
 #'
 #' Combines transcripts  that are within the same gene annotation, combining 
 #' smaller transcripts for genes
@@ -183,7 +183,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 #' width. 
 #' Transcripts only greater than this threshold are subjected to be combined. 
 #' Default: 0.8
-#' @param plot Logical.  If set to TRUE, show easch step in a plot. 
+#' @param plot Logical.  If set to TRUE, show each step in a plot. 
 #' Default: FALSE
 #' @return Returns GRanges object of combined transcripts. 
 #' @author Minho Chae and Charles G. Danko

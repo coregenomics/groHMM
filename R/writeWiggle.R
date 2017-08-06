@@ -27,12 +27,12 @@
 #' mapping in the genome.
 #' @param file Specifies the filename for output. 
 #' @param strand Takes values of "+", "-", or "*".  Computes Writes a wiggle 
-#' on the speicified strand.  "*" denotes collapsing reads on both strands.  
+#' on the specified strand.  "*" denotes collapsing reads on both strands.  
 #' Default: "*".
 #' @param fileType Takes values of "wig" or "BigWig". Default: "wig".
 #' @param size Size of the moving window.
 #' @param normCounts A normalization factor correcting for library size 
-#' or other effects.  For example, total mappible read counts might be a 
+#' or other effects.  For example, total mappable read counts might be a 
 #' reasonable value.  Default: 1 (i.e. no normalization).
 #' @param reverse If set to TRUE, multiplies values by -1.  
 #' Used for reversing GRO-seq data on the negative (-) strand. Default: FALSE

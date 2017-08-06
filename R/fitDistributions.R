@@ -26,7 +26,7 @@
 ##
 ##  Presently, fits:
 ##      -- Gamma distribution  (RgammaMLE)
-##      -- Normal distrubution (Rnorm)
+##      -- Normal distribution (Rnorm)
 ##
 ##  Todo:
 ##  (1) Add fits for: 
@@ -41,7 +41,7 @@
 #' likelihood.
 #'
 #' @param X A vector of observations, assumed to be real numbers in the 
-#' inveraval [0,+Inf).  
+#' interval [0,+Inf).  
 #' @return Returns a list of parameters for the best-fit gamma 
 #' distribution (shape and scale).
 #' @author Charles G. Danko
@@ -58,9 +58,9 @@ RgammaMLE <- function(X) {
 #' likelihood.
 #'
 #' @param X A vector of observations, assumed to be real numbers in the 
-#' inveraval (-Inf,+Inf).  
+#' interval (-Inf,+Inf).  
 #' @return Returns a list of parameters for the best-fit normal distribution 
-#' (mean and varience).
+#' (mean and variance).
 #' @author Charles G. Danko
 Rnorm <- function(X) {
     returnList      <- list()
@@ -80,22 +80,22 @@ Rnorm <- function(X) {
 #' Rnorm.exp fits a normal+exponential distribution to a specified data 
 #' vector using maximum likelihood.
 #'
-#' Distrubtion function devined by: alpha*Normal(mean, varience)+(1-alpha)
+#' Distrubution function defined by: alpha*Normal(mean, variance)+(1-alpha)
 #' *Exponential(lambda).
 #'
 #' Fits nicely with data types that look normal overall, but have a long 
 #' tail starting for positive values.
 #'
 #' @param xi A vector of observations, assumed to be real numbers in the 
-#' inveraval (-Inf,+Inf).  
+#' interval (-Inf,+Inf).  
 #' @param wi A vector of weights.  Default: vector of repeating 1; indicating 
 #' all observations are weighted equally. (Are these normalized internally?!  
 #' Or do they have to be [0,1]?)
-#' @param guess Initial guess for paremeters.  Default: c(0.5, 0, 1, 1).
+#' @param guess Initial guess for parameters.  Default: c(0.5, 0, 1, 1).
 #' @param tol Convergence tolerance.  Default: sqrt(.Machine$double.eps).
 #' @param maxit  Maximum number of iterations.  Default: 10,000.
 #' @return Returns a list of parameters for the best-fit normal distribution 
-#' (alpha, mean, varience, and lambda).
+#' (alpha, mean, variance, and lambda).
 #' @author Charles G. Danko
 Rnorm.exp <- function(xi, wi=rep(1,NROW(xi)), guess=c(0.5, 0, 1, 1), 
     tol=sqrt(.Machine$double.eps), maxit=10000) {

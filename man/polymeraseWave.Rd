@@ -26,7 +26,7 @@ ligation data, and 200 for circular ligation data.  Default: 50.}
 \item{upstreamDist}{The amount of upstream sequence to include
 Default: 10 kb.}
 
-\item{TSmooth}{Optimonally, outlying windows are set a maximum value
+\item{TSmooth}{Optionally, outlying windows are set a maximum value
 over the inter-quantile interval, specified by TSmooth.
 Reasonable value: 20; Default: NA (for no smoothing).  Users are encouraged
 to use this parameter ONLY in combination with the normal distribution
@@ -35,7 +35,7 @@ assumptions.}
 \item{emissionDistAssumption}{Takes values "norm", "normExp", and "gamma".
 Specifies the functional form of the 'emission' distribution for states
 I and II (i.e. 5' of the gene, and inside of the wave).
-In our experience, "gamma" works best for highly-variable 'spikey' data,
+In our experience, "gamma" works best for highly-variable 'spiky' data,
 and "norm" works for smooth data.  As a general rule of thumb, "gamma"
 is used for libraries made using the direct ligation method, and "norm"
 for circular ligation data.  Default: "gamma".}
@@ -57,7 +57,7 @@ or a List() structure with additional data, as specified by returnVal.
 \description{
 The model is a three state hidden Markov model (HMM).  States represent:
 (1) the 5' end of genes upstream of the transcription start site,
-(2) upregulated sequence, and (3) the 3' end of the gene through the
+(2) up-regulated sequence, and (3) the 3' end of the gene through the
 polyadenylation site.
 }
 \details{
@@ -66,13 +66,13 @@ Differences are assumed fit a functional form which can be specified by
 the user (using the emissionDistAssumption argument).
 Currently supported functional forms include a normal distribution
 (good for GRO-seq data prepared using the circular ligation protocol),
-a gamma distribution (good for 'spikey' ligation based GRO-seq data),
+a gamma distribution (good for 'spiky' ligation based GRO-seq data),
 and a long-tailed normal+exponential distribution was implemented, but
 never deployed.
 
 Initial parameter estimates are based on initial assumptions of
 transcription rates taken from the literature.  Subsequently all parameters
-are fit using Baum-Welch expetation maximization.
+are fit using Baum-Welch expectation maximization.
 
 Reference: Danko CG, Hah N, Luo X, Martins AL, Core L, Lis JT, Siepel A,
 Kraus WL. Signaling Pathways Differentially Affect RNA Polymerase II

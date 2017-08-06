@@ -21,7 +21,7 @@
 
 #' getTxDensity Calculates transcript density.
 #'
-#' Calculates transcript density for transcripts which overlapps with 
+#' Calculates transcript density for transcripts which overlaps with 
 #' annotations.  
 #' For 'run genes together' or 'broken up a single annotation' errors, 
 #' best overlapped transcripts or annotations are used.
@@ -31,12 +31,12 @@
 #' set the option 'mc.cores'.
 #'
 #' @param tx GRanges of transcripts. 
-#' @param annox GRanges of non-overlapping annotatoins.
+#' @param annox GRanges of non-overlapping annotations.
 #' @param plot Logical.  If TRUE, plot transcript density.  Default: FALSE
 #' @param scale Numeric. Scaled size of a gene for transcript density 
 #' calculation. 
 #' Default: 1000L
-#' @param nSampling Numeric. Number of subsampling.  Default: 0L
+#' @param nSampling Numeric. Number of sub-sampling.  Default: 0L
 #' @param samplingRatio Numeric. Ratio of sampling for annotations.  
 #' Default: 0.1
 #' @param ... Extra argument passed to mclapply.
@@ -115,16 +115,16 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
 
     pintx <- pintersect(promo, olTx)
 
-    ## Get theoverlapped coverage
+    ## Get the overlapped coverage
     olcvg <- mclapply(1:length(ol), function(x) {
         t <- olTx[x,]
         p <- promo[x,]
         i <- pintx[x,]
         ## Position is relative to the minimum start 
         minStart <- min(start(t), start(p))
-        t <- shift(t, -minStart+1)
-        p <- shift(p, -minStart+1)
-        i <- shift(i, -minStart+1)
+        t <- shift(t, -minStart + 1)
+        p <- shift(p, -minStart + 1)
+        i <- shift(i, -minStart + 1)
         r <- reduce(c(t, p, ignore.mcols=TRUE))
         rTF <- logical(length=width(r))
         rTF[start(i):end(i)] <- TRUE
@@ -210,10 +210,10 @@ getLIValues <- function (vals, n) {
 
 #' evaluateHMM Evaluates HMM calling. 
 #'
-#' Evaluates HMM calling of transripts compared to known annotations. 
+#' Evaluates HMM calling of transcripts compared to known annotations. 
 #'
 #' @param tx GRanges of transcripts predicted by HMM. 
-#' @param annox GRanges of non-overlapping annotatoins.
+#' @param annox GRanges of non-overlapping annotations.
 #' @return a list of error information; merged annotations, dissociated annotation, 
 #' total, and rate.
 #' @author Minho Chae

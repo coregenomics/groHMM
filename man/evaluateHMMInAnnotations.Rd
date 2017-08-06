@@ -9,14 +9,14 @@ evaluateHMMInAnnotations(tx, annox)
 \arguments{
 \item{tx}{GRanges of transcripts predicted by HMM.}
 
-\item{annox}{GRanges of non-overlapping annotatoins.}
+\item{annox}{GRanges of non-overlapping annotations.}
 }
 \value{
 a list of error information; merged annotations, dissociated annotation, 
 total, and rate.
 }
 \description{
-Evaluates HMM calling of transripts compared to known annotations.
+Evaluates HMM calling of transcripts compared to known annotations.
 }
 \examples{
 library(GenomicRanges)

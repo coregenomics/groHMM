@@ -22,7 +22,7 @@
 #' makeConsensusAnnotations Makes a consensus annotation 
 #'
 #' Makes a non-overlapping consensus annotation.  Gene annotations are often 
-#' overalpping due to #' multiple isoforms for a gene.  
+#' overlapping due to #' multiple isoforms for a gene.  
 #' In consensus annotation, isoforms are first reduced so that only
 #' redundant intervals are used to represent a genomic interval for a gene, 
 #' i.e., a gene id.
@@ -33,9 +33,9 @@
 #' To change the number of processors, use the argument 'mc.cores'.
 #'
 #' @param ar GRanges of annotations to be collapsed. 
-#' @param minGap Minimun gap between overlapped annotations after truncated. 
+#' @param minGap Minimum gap between overlapped annotations after truncated. 
 #' Default: 1L
-#' @param minWidth Minimun width of consensus annotations. Default: 1000L
+#' @param minWidth Minimum width of consensus annotations. Default: 1000L
 #' @param ... Extra argument passed to mclapply.
 #' @return Returns GRanges object of annotations. 
 #' @author Minho Chae
@@ -138,7 +138,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
         }))
 
         ## Remove any ranges with duplicated names since they already
-        ## adujsted in the previous call
+        ## adjusted in the previous call
         ol_gr <- ol_gr[!duplicated(names(ol_gr)),]
         
         noiso <- noiso[-unique(c(queryHits(ol), subjectHits(ol))),] 

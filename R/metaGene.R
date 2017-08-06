@@ -92,7 +92,7 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
     return(Rle(apply(M, 1, sum)))
 }
 
-#' Runs metagene analysis for sense and antisense direction.
+#' Runs meta gene analysis for sense and anti-sense direction.
 #'
 #' Supports parallel processing using mclapply in the 'parallel' package.  
 #' To change the number of processors, set the option 'mc.cores'.
@@ -100,7 +100,7 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 #' @param features GRanges A GRanges object representing a set of genomic 
 #' coordinates, i.e., set of genes.
 #' @param reads GRanges of reads.
-#' @param anchorType Either 'TSS' or 'TTS'.  Metagene will be centered on the 
+#' @param anchorType Either 'TSS' or 'TTS'.  Meta gene will be centered on the 
 #' transcription start site(TSS) or transcription termination site(TTS).  
 #' Default: TSS.
 #' @param size Numeric.  The size of the moving window. Default: 100L
@@ -110,12 +110,12 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 #' Default: 1 kb
 #' @param down Numeric. Distance downstream of each feature to align and 
 #' histogram.  If NULL, down is same as up. Default: NULL
-#' @param sampling Logical.  If TRUE, subsampling of Metagene is used.  
+#' @param sampling Logical.  If TRUE, sub-sampling of meta gene is used.  
 #' Default: FALSE
-#' @param nSampling Numeric. Number of subsampling.  Default: 1000L
+#' @param nSampling Numeric. Number of sub-sampling.  Default: 1000L
 #' @param samplingRatio Numeric. Ratio of sampling for features.  Default: 0.1
 #' @param ... Extra argument passed to mclapply.
-#' @return A list of integer-Rle for sense and antisene.
+#' @return A list of integer-Rle for sense and anti-sense.
 #' @author Minho Chae
 #' @examples
 #' library(GenomicRanges)
@@ -218,7 +218,7 @@ samplingMetaGene <- function(features, plusCVG, minusCVG, size=100L, up=10000L,
 #' @return Returns a vector representing the 'typical' signal across 
 #' genes of different length.
 #' @author Charles G. Danko and Minho Chae
-##  Returns a matrix of counts.  Rows represent different streches of DNA.
+##  Returns a matrix of counts.  Rows represent different stretches of DNA.
 ##  Columns represent positions relative to a certain feature.  Summed together,
 ##  these should be a meta-gene.
 ##
@@ -357,7 +357,7 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
 
             mcpg <- mclapply(c(1:NROW(FeatureStart)), function(iFeatures) {
                 ws <- (FeatureEnd[iFeatures]-FeatureStart[iFeatures])/n_windows 
-                ## This WILL be an interger.
+                ## This WILL be an integer.
                 if(debug) {
                     message(
                         C[i],": Counting reads in specified region:",
@@ -380,7 +380,7 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
                     message("DataByOne size:",NROW(DataByOne))
                 }
 
-                ## This seems almost immeidate on my pentium M machine.
+                ## This seems almost immediate on my Pentium M machine.
                 Hprime <- unlist(lapply(1:NROW(H), function(i) {
                     indx <- ceiling(ws*(i-1)+1):ceiling(ws*i)
                     return(sum(DataByOne[indx]))
@@ -427,17 +427,17 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
 ##
 ##  Arguments:
 ##  Peaks       -> data.frame of: CHR, CENTER, STRAND. 
-##      (note that STRAND is currenly not supported, and does nothing).
+##      (note that STRAND is currently not supported, and does nothing).
 ##  ProbeData   -> data.frame of: CHR, CENTER, VALUE
 ##  bins        -> The bins of the meta gene -- i.e. the number of 
 ##          moving windows to break it into.
 ##
 ##  TODO: 
-##  (1) Implement support for a Peaks$starnd 
+##  (1) Implement support for a Peaks$strand 
 ##  (2) ...
 averagePlot <- function(ProbeData, Peaks, size=50, bins= seq(-1000,1000,size)){
 
-    ## For each chromsome.  
+    ## For each chromosome.  
     ProbeData$minDist <- rep(999)
     for(chr in unique(Peaks[[1]])) {
 
@@ -446,7 +446,7 @@ averagePlot <- function(ProbeData, Peaks, size=50, bins= seq(-1000,1000,size)){
 
         ## The '$' ensures that chrom is end of line.  Otherwise, grep for chr1 
         ## returns chr10-chr19 as well.
-        ## Should work fine, even when chromsome is simply "chrN".
+        ## Should work fine, even when chromosome is simply "chrN".
         indxAffxProbes <- grep(paste(chr,"$", sep=""), ProbeData[[1]], perl=TRUE)
 
         ## Calculate the minimum distance between the probe and the vector 

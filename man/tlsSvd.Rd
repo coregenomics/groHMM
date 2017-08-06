@@ -2,7 +2,7 @@
 % Please edit documentation in R/tlsFits.R
 \name{tlsSvd}
 \alias{tlsSvd}
-\title{A 'total least squares' implementation using singular value demposition.}
+\title{A 'total least squares' implementation using singular value decomposition.}
 \usage{
 tlsSvd(x, y)
 }
@@ -15,7 +15,7 @@ tlsSvd(x, y)
 Parameters for the linear model Y~a*X+e.
 }
 \description{
-A 'total least squares' implementation using singular value demposition.
+A 'total least squares' implementation using singular value decomposition.
 }
 \author{
 Charles G. Danko

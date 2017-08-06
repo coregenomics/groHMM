@@ -10,7 +10,7 @@ getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
 \arguments{
 \item{tx}{GRanges of transcripts.}
 
-\item{annox}{GRanges of non-overlapping annotatoins.}
+\item{annox}{GRanges of non-overlapping annotations.}
 
 \item{plot}{Logical.  If TRUE, plot transcript density.  Default: FALSE}
 
@@ -18,7 +18,7 @@ getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
 calculation. 
 Default: 1000L}
 
-\item{nSampling}{Numeric. Number of subsampling.  Default: 0L}
+\item{nSampling}{Numeric. Number of sub-sampling.  Default: 0L}
 
 \item{samplingRatio}{Numeric. Ratio of sampling for annotations.
 Default: 0.1}
@@ -29,7 +29,7 @@ Default: 0.1}
 Returns a list of FTD, TTD, PostTTS, and TUA.
 }
 \description{
-Calculates transcript density for transcripts which overlapps with 
+Calculates transcript density for transcripts which overlaps with 
 annotations.  
 For 'run genes together' or 'broken up a single annotation' errors, 
 best overlapped transcripts or annotations are used.

@@ -30,7 +30,7 @@
 #' stepSize must be specified.
 #' @param stepSize The number of bp moved with each step.
 #' @param chrom Chromosome for which to return data.  
-#' Default: returns all avaliable data.
+#' Default: returns all available data.
 #' @return Returns a list object, each element of which represents a 
 #' chromosome.
 #' @author Charles G. Danko and Minho Chae

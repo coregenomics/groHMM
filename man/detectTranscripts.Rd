@@ -23,7 +23,7 @@ parameter.}
 
 \item{LtProbB}{Log probability of t... .  Default: -200.}
 
-\item{UTS}{Varience in read counts of the untranscribed sequence.
+\item{UTS}{Variance in read counts of the untranscribed sequence.
 Default: 5.}
 
 \item{size}{Log probability of t... .  Default: -5.}
@@ -34,7 +34,7 @@ Default: 5.}
 Default: FALSE}
 }
 \value{
-Returns a list of emisParams, trnasParams, viterbiStates, and 
+Returns a list of emisParams, transParams, viterbiStates, and 
 transcripts.  The transcript element is a GRanges object representing the 
 predicted genomic coordinates of transcripts on both the + and - strand.
 }

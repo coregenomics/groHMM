@@ -11,7 +11,7 @@ tlsDeming(x, y, d = 1)
 
 \item{y}{Y values.}
 
-\item{d}{Ratio of variences. Default: 1, for orthogonal regression.}
+\item{d}{Ratio of variances. Default: 1, for orthogonal regression.}
 }
 \value{
 Parameters for the linear model.

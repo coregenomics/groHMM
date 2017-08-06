@@ -2,7 +2,7 @@
 % Please edit documentation in R/metaGene.R
 \name{runMetaGene}
 \alias{runMetaGene}
-\title{Runs metagene analysis for sense and antisense direction.}
+\title{Runs meta gene analysis for sense and anti-sense direction.}
 \usage{
 runMetaGene(features, reads, anchorType = "TSS", size = 100L,
   normCounts = 1L, up = 10000L, down = NULL, sampling = FALSE,
@@ -14,7 +14,7 @@ coordinates, i.e., set of genes.}
 
 \item{reads}{GRanges of reads.}
 
-\item{anchorType}{Either 'TSS' or 'TTS'.  Metagene will be centered on the 
+\item{anchorType}{Either 'TSS' or 'TTS'.  Meta gene will be centered on the 
 transcription start site(TSS) or transcription termination site(TTS).  
 Default: TSS.}
 
@@ -29,17 +29,17 @@ Default: 1 kb}
 \item{down}{Numeric. Distance downstream of each feature to align and 
 histogram.  If NULL, down is same as up. Default: NULL}
 
-\item{sampling}{Logical.  If TRUE, subsampling of Metagene is used.
+\item{sampling}{Logical.  If TRUE, sub-sampling of meta gene is used.
 Default: FALSE}
 
-\item{nSampling}{Numeric. Number of subsampling.  Default: 1000L}
+\item{nSampling}{Numeric. Number of sub-sampling.  Default: 1000L}
 
 \item{samplingRatio}{Numeric. Ratio of sampling for features.  Default: 0.1}
 
 \item{...}{Extra argument passed to mclapply.}
 }
 \value{
-A list of integer-Rle for sense and antisene.
+A list of integer-Rle for sense and anti-sense.
 }
 \description{
 Supports parallel processing using mclapply in the 'parallel' package.  

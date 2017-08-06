@@ -9,7 +9,7 @@ RgammaMLE(X)
 }
 \arguments{
 \item{X}{A vector of observations, assumed to be real numbers in the 
-inveraval [0,+Inf).}
+interval [0,+Inf).}
 }
 \value{
 Returns a list of parameters for the best-fit gamma 

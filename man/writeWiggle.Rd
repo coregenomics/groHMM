@@ -16,7 +16,7 @@ mapping in the genome.}
 \item{file}{Specifies the filename for output.}
 
 \item{strand}{Takes values of "+", "-", or "*".  Computes Writes a wiggle 
-on the speicified strand.  "*" denotes collapsing reads on both strands.  
+on the specified strand.  "*" denotes collapsing reads on both strands.  
 Default: "*".}
 
 \item{fileType}{Takes values of "wig" or "BigWig". Default: "wig".}
@@ -24,7 +24,7 @@ Default: "*".}
 \item{size}{Size of the moving window.}
 
 \item{normCounts}{A normalization factor correcting for library size 
-or other effects.  For example, total mappible read counts might be a 
+or other effects.  For example, total mappable read counts might be a 
 reasonable value.  Default: 1 (i.e. no normalization).}
 
 \item{reverse}{If set to TRUE, multiplies values by -1.

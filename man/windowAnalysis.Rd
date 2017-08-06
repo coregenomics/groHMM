@@ -21,7 +21,7 @@ stepSize must be specified.}
 \item{stepSize}{The number of bp moved with each step.}
 
 \item{chrom}{Chromosome for which to return data.
-Default: returns all avaliable data.}
+Default: returns all available data.}
 }
 \value{
 Returns a list object, each element of which represents a 

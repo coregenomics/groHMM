@@ -2,7 +2,7 @@
 % Please edit documentation in R/breakTranscriptsOnGenes.R
 \name{combineTranscripts}
 \alias{combineTranscripts}
-\title{combineTranscripts Combines transnscipts.}
+\title{combineTranscripts Combines transcripts.}
 \usage{
 combineTranscripts(tx, annox, geneSize = 1000, threshold = 0.8,
   plot = FALSE)
@@ -21,7 +21,7 @@ width.
 Transcripts only greater than this threshold are subjected to be combined. 
 Default: 0.8}
 
-\item{plot}{Logical.  If set to TRUE, show easch step in a plot. 
+\item{plot}{Logical.  If set to TRUE, show each step in a plot. 
 Default: FALSE}
 }
 \value{

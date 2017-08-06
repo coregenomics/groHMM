@@ -24,9 +24,9 @@
 ## tlsFits.R -- Total least squares fits for several functional forms, 
 ## including:
 ##  -- Linear; done using Demming regression (tlsDemming), and svd (tlsSvd).
-##  -- LOESS; hacked approximation done by transforming data.  Rotats data so 
+##  -- LOESS; hacked approximation done by transforming data.  Rotates data so 
 ##      that the LOESS fit approximates a given angle (by default 45 degrees; 
-##      assumes varience of two data types is equal). 
+##      assumes variance of two data types is equal). 
 ##
 ##
 ## WARNING -- FUNCTIONS CURRENTLY EXPERIMENTAL!! USE WITH EXTREME CATION!!
@@ -41,7 +41,7 @@
 #'
 #' @param x X values.
 #' @param y Y values.
-#' @param theta Amount to rotate, sets the ratio of variences that are assumed 
+#' @param theta Amount to rotate, sets the ratio of variances that are assumed 
 #' by the hack.  Default: -pi/4 radians (45 degrees) for orthogonal regression.
 #' @param span The LOESS span parameter.  Default: 1
 #' @return List of input values and LOESS predictions.
@@ -49,7 +49,7 @@
 ## Transform and fit LOESS!
 ## 
 ## By transforming X and Y by 45 degrees, we can fit using LOESS and it's 
-## essentially "erros in variables" LOESS.
+## essentially "errors in variables" LOESS.
 ##
 ## Returns x and y values giving information on the fit...
 tlsLoess <- function(x, y, theta=-pi/4, span= 1) {
@@ -80,7 +80,7 @@ tlsLoess <- function(x, y, theta=-pi/4, span= 1) {
     return(retVar)
 }
 
-#' A 'total least squares' implementation using singular value demposition.
+#' A 'total least squares' implementation using singular value decomposition.
 #'
 #' @param x X values.
 #' @param y Y values.
@@ -106,7 +106,7 @@ tlsSvd <- function(x,y) {
 #'
 #' @param x X values.
 #' @param y Y values.
-#' @param d Ratio of variences. Default: 1, for orthogonal regression.
+#' @param d Ratio of variances. Default: 1, for orthogonal regression.
 #' @return Parameters for the linear model.
 #' @author Charles G. Danko
 ## linear total least squares by Deming regression.

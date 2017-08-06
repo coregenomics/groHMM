@@ -10,13 +10,13 @@ Rnorm.exp(xi, wi = rep(1, NROW(xi)), guess = c(0.5, 0, 1, 1),
 }
 \arguments{
 \item{xi}{A vector of observations, assumed to be real numbers in the 
-inveraval (-Inf,+Inf).}
+interval (-Inf,+Inf).}
 
 \item{wi}{A vector of weights.  Default: vector of repeating 1; indicating 
 all observations are weighted equally. (Are these normalized internally?!  
 Or do they have to be [0,1]?)}
 
-\item{guess}{Initial guess for paremeters.  Default: c(0.5, 0, 1, 1).}
+\item{guess}{Initial guess for parameters.  Default: c(0.5, 0, 1, 1).}
 
 \item{tol}{Convergence tolerance.  Default: sqrt(.Machine$double.eps).}
 
@@ -24,10 +24,10 @@ Or do they have to be [0,1]?)}
 }
 \value{
 Returns a list of parameters for the best-fit normal distribution 
-(alpha, mean, varience, and lambda).
+(alpha, mean, variance, and lambda).
 }
 \description{
-Distrubtion function devined by: alpha*Normal(mean, varience)+(1-alpha)
+Distrubution function defined by: alpha*Normal(mean, variance)+(1-alpha)
 *Exponential(lambda).
 }
 \details{

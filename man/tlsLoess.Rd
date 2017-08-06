@@ -12,7 +12,7 @@ tlsLoess(x, y, theta = -pi/4, span = 1)
 
 \item{y}{Y values.}
 
-\item{theta}{Amount to rotate, sets the ratio of variences that are assumed 
+\item{theta}{Amount to rotate, sets the ratio of variances that are assumed 
 by the hack.  Default: -pi/4 radians (45 degrees) for orthogonal regression.}
 
 \item{span}{The LOESS span parameter.  Default: 1}
