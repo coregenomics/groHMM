@@ -1,6 +1,6 @@
 library(groHMM)
-library(GenomicAlignments)
 library(GenomicRanges)
+library(GenomicAlignments)
 
 tx <- GRanges(c("chr7:1000-30000"), strand="+")
 annox <- GRanges(c("chr7:1000-11000",

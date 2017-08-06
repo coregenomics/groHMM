@@ -42,12 +42,15 @@
 #' # Fp <- windowAnalysis(S0mR1, strand="+", windowSize=50)
 windowAnalysis <- function(reads, strand="*", windowSize=stepSize, 
     stepSize=windowSize, chrom=NULL) {
-    reads <- .normArgRanges(reads, errorOnEmpty=TRUE)
+    reads <- .normArgRanges(reads, warnOnEmpty=FALSE)
+
+    if (length(reads) == 0)
+        return(list())
 
     if (!(windowSize > 0 & (windowSize <= max(end(reads)))))
         stop("'windowSize' is out of range!")
 
-    if (!(stepSize > 0 & (stepSize <= max(end(reads)))))
+    if (! stepSize > 0)
         stop("'stepSize' is out of range!")
 
     if (!is.null(chrom))  

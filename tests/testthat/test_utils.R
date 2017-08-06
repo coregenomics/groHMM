@@ -12,9 +12,28 @@ test_that("windowAnalysis returns correct Rle value", {
   expect_equal(expected, result)
 })
 
-test_that("windowAnalysis throws error with empty GRanges", {
+test_that("windowAnalysis subsets by chrom", {
+  seqlevels(tx) <- c("chr7", "chr8")
+  tx_78 <- c(tx, GRanges(c("chr8:1000-30000"), strand="-"))
+  expected <- list(chr7 = Rle(c(0, 1, 100), c(9, 1, 290)))
+  result <- windowAnalysis(reads = tx, windowSize = 100, chrom="chr7")
+  expect_equal(expected, result)
+})
+
+test_that("windowAnalysis returns empty list for empty GRanges", {
   tx <- GRanges()
-  expect_error(windowAnalysis(reads = tx, windowSize = 100), "cannot be empty")
+  expected <- list()
+  result <- windowAnalysis(reads = tx, windowSize = 100)
+  expect_equal(expected, result)
+})
+
+test_that("windowAnalysis throws error for out of bounds windowSize", {
+  expect_error(windowAnalysis(reads = tx, windowSize = 0), "range")
+  expect_error(windowAnalysis(reads = tx, windowSize = end(tx) + 1), "range")
+})
+
+test_that("windowAnalysis throws error for out of bounds stepSize", {
+  expect_error(windowAnalysis(reads = tx, stepSize = 0), "range")
 })
 
 test_that("windowAnalysis allows empty seqlevels", {
