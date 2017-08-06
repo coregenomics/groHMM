@@ -1,5 +1,5 @@
-library(groHMM)
 library(GenomicRanges)
+library(groHMM)
 
 tx <- GRanges(c("chr7:1000-30000"), strand="+")
 annox <- GRanges(
