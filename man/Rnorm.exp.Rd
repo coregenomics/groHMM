@@ -2,18 +2,18 @@
 % Please edit documentation in R/fitDistributions.R
 \name{Rnorm.exp}
 \alias{Rnorm.exp}
-\title{Rnorm.exp fits a normal+exponential distribution to a specified data 
+\title{Rnorm.exp fits a normal+exponential distribution to a specified data
 vector using maximum likelihood.}
 \usage{
 Rnorm.exp(xi, wi = rep(1, NROW(xi)), guess = c(0.5, 0, 1, 1),
   tol = sqrt(.Machine$double.eps), maxit = 10000)
 }
 \arguments{
-\item{xi}{A vector of observations, assumed to be real numbers in the 
+\item{xi}{A vector of observations, assumed to be real numbers in the
 interval (-Inf,+Inf).}
 
-\item{wi}{A vector of weights.  Default: vector of repeating 1; indicating 
-all observations are weighted equally. (Are these normalized internally?!  
+\item{wi}{A vector of weights.  Default: vector of repeating 1; indicating
+all observations are weighted equally. (Are these normalized internally?!
 Or do they have to be [0,1]?)}
 
 \item{guess}{Initial guess for parameters.  Default: c(0.5, 0, 1, 1).}
@@ -23,7 +23,7 @@ Or do they have to be [0,1]?)}
 \item{maxit}{Maximum number of iterations.  Default: 10,000.}
 }
 \value{
-Returns a list of parameters for the best-fit normal distribution 
+Returns a list of parameters for the best-fit normal distribution
 (alpha, mean, variance, and lambda).
 }
 \description{
@@ -31,7 +31,7 @@ Distrubution function defined by: alpha*Normal(mean, variance)+(1-alpha)
 *Exponential(lambda).
 }
 \details{
-Fits nicely with data types that look normal overall, but have a long 
+Fits nicely with data types that look normal overall, but have a long
 tail starting for positive values.
 }
 \author{

@@ -2,20 +2,20 @@
 % Please edit documentation in R/windowAnalysis.R
 \name{windowAnalysis}
 \alias{windowAnalysis}
-\title{windowAnalysis Returns a vector of integers representing the counts of 
+\title{windowAnalysis Returns a vector of integers representing the counts of
 reads in a moving window.}
 \usage{
 windowAnalysis(reads, strand = "*", windowSize = stepSize,
   stepSize = windowSize, chrom = NULL)
 }
 \arguments{
-\item{reads}{GenomicRanges object representing the position of reads 
+\item{reads}{GenomicRanges object representing the position of reads
 mapping in the genome.}
 
-\item{strand}{Takes values of "+", "-", or "*".  "*" denotes collapsing 
+\item{strand}{Takes values of "+", "-", or "*".  "*" denotes collapsing
 reads on both strands.  Default: "*".}
 
-\item{windowSize}{Size of the moving window. Either windowSize or 
+\item{windowSize}{Size of the moving window. Either windowSize or
 stepSize must be specified.}
 
 \item{stepSize}{The number of bp moved with each step.}
@@ -24,11 +24,11 @@ stepSize must be specified.}
 Default: returns all available data.}
 }
 \value{
-Returns a list object, each element of which represents a 
+Returns a list object, each element of which represents a
 chromosome.
 }
 \description{
-windowAnalysis Returns a vector of integers representing the counts of 
+windowAnalysis Returns a vector of integers representing the counts of
 reads in a moving window.
 }
 \examples{

@@ -23,13 +23,13 @@
 ##
 ##  4/24/2012
 ##
-##  Thanks to Andre Martins for the following two functions, useful for 
+##  Thanks to Andre Martins for the following two functions, useful for
 ##  calculating the confidence interval for a ratio of Poisson random variables.
-## 
-##  Based on: Ederer F, Mantel N (1974); Confidence Limits on the Ratio of Two 
+##
+##  Based on: Ederer F, Mantel N (1974); Confidence Limits on the Ratio of Two
 ## Poisson Variables.  AMERICAN JOURNAL OP EPIDEMIOLOGY.
 ##
-############################################################################### 
+###############################################################################
 approx.ratio.CI <- function(x1, x2, alpha=0.05) {
     t <- qnorm(1 - alpha/2)
     n <- x1 + x2
@@ -54,10 +54,10 @@ approx.ratios.CI <- function(num.counts, denom.counts, alpha=0.05) {
     return(result)
 }
 
-#' Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING 
+#' Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
 #' INDEX.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.  
+#' Supports parallel processing using mclapply in the 'parallel' package.
 #' To change the number of processors, use the argument 'mc.cores'.
 #'
 #' @param features A GRanges object representing a set of genomic coordinates.
@@ -87,31 +87,31 @@ approx.ratios.CI <- function(num.counts, denom.counts, alpha=0.05) {
 ##  size    -> The size of the moving window.
 ##  up  -> Distance upstream of each f to align and histogram.
 ##  down    -> Distance downstream of each f to align and histogram (NULL).
-##  UnMAQ   -> Vector of integers representing the coordinates of all 
+##  UnMAQ   -> Vector of integers representing the coordinates of all
 ##  un-MAQable regions in the genome.
 ##
 ##  Assumptions:
-##  (1) 
+##  (1)
 ##
-##  TODO: 
-##  (1) Write C function. 
+##  TODO:
+##  (1) Write C function.
 ##  (2) Implement: ...
 ##      (a)  promWind-> As an alternative to up/down, specify a specific window
 ##      in which to check for the pause-peak.
-##      Uses the same format as "f", expect that features are mapped with 
-##      respect to the start of f, where 0 indicates the start of 
+##      Uses the same format as "f", expect that features are mapped with
+##      respect to the start of f, where 0 indicates the start of
 ##      transcription, and negative numbers specify upstream sequence.
-##      This is likely useful for rate; perhaps for identifying internal 
+##      This is likely useful for rate; perhaps for identifying internal
 ##      paused-peaks...
-pausingIndex <- function(features, reads, size=50, up=1000, down=1000, 
+pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
     UnMAQ=NULL, debug=FALSE, ...) {
     ## make sure reads are sorted
     reads <- reads[order(as.character(seqnames(reads)), start(reads)), ]
-    f <- data.frame(chrom=as.character(seqnames(features)), 
-        start=as.integer(start(features)), end=as.integer(end(features)), 
+    f <- data.frame(chrom=as.character(seqnames(features)),
+        start=as.integer(start(features)), end=as.integer(end(features)),
         strand=as.character(strand(features)))
     if ("symbol" %in% names(mcols(features))){
-        f <- cbind(f, symbol=features$symbol) 
+        f <- cbind(f, symbol=features$symbol)
     } else {
         f <- cbind(f, symbol=GeneID <- as.character(seq_len(NROW(f))))
     }
@@ -143,7 +143,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
 
     ###### Identify TSS -- Start for '+' strand, End for '-' strand.
     if(debug) {
-        message("Calculating TSS and gene ends for each gene based 
+        message("Calculating TSS and gene ends for each gene based
             on strand information.")
     }
     c_tss_indx <- rep(0,NROW(f))
@@ -151,14 +151,14 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
     c_tss_indx[MINU_INDX] <- 3
     c_tss <- unlist(lapply(c(1:NROW(f)), function(x) { f[x, c_tss_indx[x]] }))
 
-    ###### Now calculate left and right position for gene body, based 
+    ###### Now calculate left and right position for gene body, based
     ### on '+' or '-'.
-    ### Calculate gene end.  Gene start is contiguous with the coordinates 
+    ### Calculate gene end.  Gene start is contiguous with the coordinates
     ###for the promoter.
     c_gene_end_indx <- rep(0,NROW(f))
     c_gene_end_indx[PLUS_INDX] <- 3
     c_gene_end_indx[MINU_INDX] <- 2
-    c_gene_end <- unlist(lapply(c(1:NROW(f)), function(x) { 
+    c_gene_end <- unlist(lapply(c(1:NROW(f)), function(x) {
         f[x,c_gene_end_indx[x]] }))
 
     ### Assign left and right.
@@ -186,7 +186,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
             Body[indxF][mcp[[i]][["ord"]]]  <- mcp[[i]][["Body"]]
             Fish[indxF][mcp[[i]][["ord"]]]  <- mcp[[i]][["Fish"]]
             GeneID[indxF][mcp[[i]][["ord"]]]    <- mcp[[i]][["GeneID"]]
-            
+
             PauseCounts[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["PauseCounts"]]
             BodyCounts[indxF][mcp[[i]][["ord"]]]  <- mcp[[i]][["BodyCounts"]]
             UpCounts[indxF][mcp[[i]][["ord"]]]    <- mcp[[i]][["UpCounts"]]
@@ -203,7 +203,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
         uPCounts=UpCounts, uGCounts=UgCounts))
 }
 
-pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size, 
+pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
     up, down, UnMAQ, debug) {
     if(debug) {
         message(C[i])
@@ -214,7 +214,7 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
     indxPrb <- which(as.character(p[[1]]) == C[i])
 
     if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
-        ## Order -- Make sure, b/c this is one of our main assumptions.  
+        ## Order -- Make sure, b/c this is one of our main assumptions.
         ## Otherwise violated for DBTSS.
         Ford <- order(f[indxF,2])
         Pord <- order(p[indxPrb,2])
@@ -257,7 +257,7 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
 
         ## Get size of gene body
         Difference <- FeatureEnd-FeatureStart
-        Difference[Difference < 0] <- 0 
+        Difference[Difference < 0] <- 0
         ## Genes < 1kb, there is no suitable area in the body of the gene.
 
         ## Calculate UN-MAQable regions...
@@ -268,7 +268,7 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
             CHRSIZE <- as.integer(UnMAQ[[1]][[2]][chr_indx])
             CHRSTART <- as.integer(0)
             if(chr_indx > 1) {  ## Running on 1:0 gives c(1, 0)
-                CHRSTART <- as.integer( 
+                CHRSTART <- as.integer(
                     sum(UnMAQ[[1]][[2]][
                         c(1:(chr_indx-1))
                     ]) +1)
@@ -279,13 +279,13 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
                 message("CHRSIZE:", CHRSIZE, "CHRSTART:", CHRSTART)
             }
 
-            ## Count unMAQable regions, and size of everything ... 
+            ## Count unMAQable regions, and size of everything ...
             nonmappable <- .Call(
                 "CountUnMAQableReads", FeatureStart, FeatureEnd,
                 as.integer(UnMAQ[[2]]), CHRSTART, CHRSIZE, PACKAGE="groHMM")
 
             ## Adjust size of gene body.
-            Difference <- Difference - nonmappable + 1 
+            Difference <- Difference - nonmappable + 1
             ## Otherwise, get -1 for some.
 
             if(debug) {
@@ -299,12 +299,12 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
             message(C[i],": Using Fisher's exact.")
         }
         ## Make uniform reads.
-        Up <- round(HPause + HGeneBody)*(size)/(size+Difference) 
-        Ug <- round(HPause + HGeneBody)*(Difference)/(size+Difference) 
+        Up <- round(HPause + HGeneBody)*(size)/(size+Difference)
+        Ug <- round(HPause + HGeneBody)*(Difference)/(size+Difference)
         HFish <- unlist(lapply(c(1:NROW(Ford)), function(x) {
             fisher.test(
                 data.frame(
-                    c(HPause[x], round(Up[x])), 
+                    c(HPause[x], round(Up[x])),
                     c(HGeneBody[x], round(Ug[x]))
                 )
             )$p.value
@@ -312,9 +312,9 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
 
         ## Make return values.
         Pause_c     <- as.double(HPause/size)
-        Body_c  <- as.double((HGeneBody+1)/Difference) 
-        ## 6-5-2012 -- Add a pseudocount here, 
-        ## forcing at least 1 read in the gene body.   
+        Body_c  <- as.double((HGeneBody+1)/Difference)
+        ## 6-5-2012 -- Add a pseudocount here,
+        ## forcing at least 1 read in the gene body.
         Fish_c  <- as.double(HFish)
         GeneID_c    <- as.character(f[indxF,5][Ford])
 

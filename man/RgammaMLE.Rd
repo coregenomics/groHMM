@@ -8,11 +8,11 @@ likelihood.}
 RgammaMLE(X)
 }
 \arguments{
-\item{X}{A vector of observations, assumed to be real numbers in the 
+\item{X}{A vector of observations, assumed to be real numbers in the
 interval [0,+Inf).}
 }
 \value{
-Returns a list of parameters for the best-fit gamma 
+Returns a list of parameters for the best-fit gamma
 distribution (shape and scale).
 }
 \description{

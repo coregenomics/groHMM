@@ -12,7 +12,7 @@ evaluateHMMInAnnotations(tx, annox)
 \item{annox}{GRanges of non-overlapping annotations.}
 }
 \value{
-a list of error information; merged annotations, dissociated annotation, 
+a list of error information; merged annotations, dissociated annotation,
 total, and rate.
 }
 \description{
@@ -20,9 +20,9 @@ Evaluates HMM calling of transcripts compared to known annotations.
 }
 \examples{
 library(GenomicRanges)
-tx <- GRanges("chr7", IRanges(start=seq(100, 1000, by=200), 
+tx <- GRanges("chr7", IRanges(start=seq(100, 1000, by=200),
 width=seq(100, 1000, by=100)), strand="+")
-annox <- GRanges("chr7", IRanges(start=seq(110, 1100, by=150), 
+annox <- GRanges("chr7", IRanges(start=seq(110, 1100, by=150),
 width=seq(100, 1000, by=150)), strand="+")
 error <- evaluateHMMInAnnotations(tx, annox)
 }

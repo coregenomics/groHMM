@@ -159,22 +159,22 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             emis2  <- rev(Fm2[[chrom]][c(start:end)])
         }
 
-        ## Scale to a minimum of 1 read at each position (for fitting Gamma). 
+        ## Scale to a minimum of 1 read at each position (for fitting Gamma).
         gene  <- as.numeric(emis1 - emis2)
-        if (emissionDistAssumption == "gamma") { 
+        if (emissionDistAssumption == "gamma") {
             ## Leave centered on 0 for the norm_exp/norm emission functions
-            gene  <- gene + (-1)*(min(gene)) + 1 
+            gene  <- gene + (-1)*(min(gene)) + 1
             ## Must translate points if gamma distributed (gamma undefined <0).
         }
-        
+
         if (is.double(TSmooth)) {
             ## Interprets it as a fold over the inter quantile interval to
             ## filter.
             medGene <- median(gene)
             iqrGene <- IQR(gene)
-            gene[(medGene - gene) > (TSmooth*(iqrGene + 1))] <- 
+            gene[(medGene - gene) > (TSmooth*(iqrGene + 1))] <-
                 medGene - (TSmooth*(iqrGene + 1))
-            gene[(gene - medGene) > (TSmooth*(iqrGene + 1))] <- 
+            gene[(gene - medGene) > (TSmooth*(iqrGene + 1))] <-
                 medGene + (TSmooth*(iqrGene + 1))
         } else if (!is.na(TSmooth)) {
             gene  <- smooth(gene, kind = TSmooth)
@@ -191,7 +191,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         ## Fit transition and initial probabilities.
         tProb  <- as.list(data.frame(
             log(c((1 - (1/uTrans)),(1/uTrans),0)),
-            log(c(0,(1 - (1/(iTrans - uTrans))),(1/(iTrans - uTrans)))), 
+            log(c(0,(1 - (1/(iTrans - uTrans))),(1/(iTrans - uTrans)))),
             log(c(0, 0, 1))))  # Trans. prob.
         iProb  <- as.double(log(c(1, 0, 0))) # iProb.
 
@@ -206,8 +206,8 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             parPsi  <- Rnorm(gene[c((uTrans + 1):iTrans)])
             parBas  <- Rnorm(gene[c((iTrans + 1):n_gene)])
             ePrVars <- data.frame(
-                c(parInt$mean, sqrt(parInt$var), -1, -1), 
-                c(parPsi$mean, sqrt(parPsi$var), -1, -1), 
+                c(parInt$mean, sqrt(parInt$var), -1, -1),
+                c(parPsi$mean, sqrt(parPsi$var), -1, -1),
                 c(parBas$mean, sqrt(parBas$var), -1, -1))
         }
         else if (emissionDistAssumption == "normExp") {
@@ -223,8 +223,8 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             parPsi  <- RgammaMLE(gene[c((uTrans + 1):iTrans)])
             parBas  <- RgammaMLE(gene[c((iTrans + 1):n_gene)])
             ePrVars <- data.frame(
-                c(parInt$mean, sqrt(parInt$var), -1), 
-                c(parPsi$shape, parPsi$scale, -1), 
+                c(parInt$mean, sqrt(parInt$var), -1),
+                c(parPsi$shape, parPsi$scale, -1),
                 c(parBas$shape, parBas$scale, -1))
         }
         else {
@@ -246,7 +246,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
 
         ##  Update emis...
         if (length(ans) < 3) {
-            ## An error will have a length of 2 (is this guaranteed?!).  
+            ## An error will have a length of 2 (is this guaranteed?!).
             message("Error caught on the C side")
             message(ans)
             ### Will be a previous iteration of ans...?! Generated a new 'ans'
@@ -256,7 +256,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             ans[[4]] <- NA
             ans[[5]] <- NA
         }
-        
+
         ansVitervi <- ans[[3]][[1]]
         DTs <- max(which(ansVitervi == 0))
         DTe <- max(which(ansVitervi == 1))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/writeWiggle.R
 \name{writeWiggle}
 \alias{writeWiggle}
-\title{writeWiggle writes a wiggle track or BigWig file suitable for uploading 
+\title{writeWiggle writes a wiggle track or BigWig file suitable for uploading
 to the UCSC genome browser.}
 \usage{
 writeWiggle(reads, file, strand = "*", fileType = "wig", size = 50,
@@ -10,21 +10,21 @@ writeWiggle(reads, file, strand = "*", fileType = "wig", size = 50,
   track.type.line = FALSE, ...)
 }
 \arguments{
-\item{reads}{GenomicRanges object representing the position of reads 
+\item{reads}{GenomicRanges object representing the position of reads
 mapping in the genome.}
 
 \item{file}{Specifies the filename for output.}
 
-\item{strand}{Takes values of "+", "-", or "*".  Computes Writes a wiggle 
-on the specified strand.  "*" denotes collapsing reads on both strands.  
+\item{strand}{Takes values of "+", "-", or "*".  Computes Writes a wiggle
+on the specified strand.  "*" denotes collapsing reads on both strands.
 Default: "*".}
 
 \item{fileType}{Takes values of "wig" or "BigWig". Default: "wig".}
 
 \item{size}{Size of the moving window.}
 
-\item{normCounts}{A normalization factor correcting for library size 
-or other effects.  For example, total mappable read counts might be a 
+\item{normCounts}{A normalization factor correcting for library size
+or other effects.  For example, total mappable read counts might be a
 reasonable value.  Default: 1 (i.e. no normalization).}
 
 \item{reverse}{If set to TRUE, multiplies values by -1.
@@ -32,8 +32,8 @@ Used for reversing GRO-seq data on the negative (-) strand. Default: FALSE}
 
 \item{seqinfo}{Seqinfo object for reads. Default: NULL.}
 
-\item{track.type.line}{If set to TRUE, prints a header identifying the 
-file as a wiggle.  Necessary to upload a custom track to the UCSC 
+\item{track.type.line}{If set to TRUE, prints a header identifying the
+file as a wiggle.  Necessary to upload a custom track to the UCSC
 genome browser.  Default: TRUE}
 
 \item{...}{Extra argument passed to mclapply.}
@@ -42,15 +42,15 @@ genome browser.  Default: TRUE}
 Nothing is returned
 }
 \description{
-writeWiggle writes a wiggle track or BigWig file suitable for uploading 
+writeWiggle writes a wiggle track or BigWig file suitable for uploading
 to the UCSC genome browser.
 }
 \examples{
 library(GenomicAlignments)
-S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam", 
+S0mR1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
 package="groHMM")), "GRanges")
 ## Not run:
-# writeWiggle(reads=S0mR1, file="S0mR1_Plus.wig", fileType="wig", 
+# writeWiggle(reads=S0mR1, file="S0mR1_Plus.wig", fileType="wig",
 # strand="+", reverse=FALSE)
 }
 \author{

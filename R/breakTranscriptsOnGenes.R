@@ -20,8 +20,8 @@
 ##########################################################################
 plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) { # nocov start
     height <- 1
-    xlim <- c(min(min(start(tr), min(start(gr)))), max(max(end(tr)), 
-                max(end(gr)))) 
+    xlim <- c(min(min(start(tr), min(start(gr)))), max(max(end(tr)),
+                max(end(gr))))
 
     plot.new()
     ybottom <- seq(1, length(tr) + length(gr))
@@ -29,7 +29,7 @@ plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) { # 
 
     if (length(tr) > 0) {
         tbottom <- seq(1,length(tr))
-        rect(start(tr) - sep, tbottom, end(tr) + sep, tbottom + height - sep, 
+        rect(start(tr) - sep, tbottom, end(tr) + sep, tbottom + height - sep,
                 col = "gray", ...)
     }
 
@@ -42,60 +42,60 @@ plot2Ranges <- function(tr, gr, main = "NA", col = "black", sep = 0.5, ...) { # 
         rect(start(gr) - sep, gbottom, end(gr) + sep, gbottom + height - sep,
             col = rgb(red = 255, green = 0, blue = 0, alpha = 150, maxColorValue = 255))
         if (bSymbol)
-            text((start(gr) + end(gr))/2, gbottom + 0.2, 
-                elementMetadata(gr)$symbol) 
+            text((start(gr) + end(gr))/2, gbottom + 0.2,
+                elementMetadata(gr)$symbol)
     }
     title(main)
     axis(1)
 } # nocov end
-    
+
 
 
 #
-# Break an Interval by break points with minimum gap 
+# Break an Interval by break points with minimum gap
 #------------------------------------------------------------------------------
 breakInterval <- function(gr, brPos, gap=5, strand="+") {
     result <- rep(gr, length(brPos) + 1)
     if (strand == "+") {
-        for (i in seq_along(brPos)) { 
-            end(result[i,]) <- brPos[i] - gap   
+        for (i in seq_along(brPos)) {
+            end(result[i,]) <- brPos[i] - gap
             start(result[i + 1,]) <- brPos[i]
         }
     } else {
-        for (i in seq_along(brPos)) { 
-            end(result[i,]) <- brPos[i] 
+        for (i in seq_along(brPos)) {
+            end(result[i,]) <- brPos[i]
             start(result[i + 1,]) <- brPos[i] + gap
         }
     }
     return(result)
 }
 
-#' breakTranscriptsOnGenes Breaks transcripts on genes 
+#' breakTranscriptsOnGenes Breaks transcripts on genes
 #'
-#' Breaks transcripts when they are overlapped with multiple well annotated 
+#' Breaks transcripts when they are overlapped with multiple well annotated
 #' genes.
 #'
 #' @param tx GRanges of transcripts.
 #' @param annox GRanges of non-overlapping annotations for reference.
 #' @param strand Takes "+" or "-" Default: "+"
-#' @param geneSize Numeric. Minimum gene size in annox to be used as reference. 
+#' @param geneSize Numeric. Minimum gene size in annox to be used as reference.
 #' Default: 5000
-#' @param threshold Numeric. Ratio of overlapped region relative to a gene 
-#' width. 
-#' Transcripts only greater than this threshold are subjected to be broken. 
+#' @param threshold Numeric. Ratio of overlapped region relative to a gene
+#' width.
+#' Transcripts only greater than this threshold are subjected to be broken.
 #' Default: 0.8
 #' @param gap Numeric.  Gap (bp) between broken transcripts.  Default: 5
-#' @param plot Logical.  If set to TRUE, show each step in a plot. 
+#' @param plot Logical.  If set to TRUE, show each step in a plot.
 #' Default: FALSE
 #' @author Minho Chae and Charles G. Danko
-#' @return Returns GRanges object of broken transcripts. 
+#' @return Returns GRanges object of broken transcripts.
 #' @examples
 #' library(GenomicRanges)
 #' tx <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' annox <- GRanges(
 #'     "chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), strand="+")
 #' bPlus <- breakTranscriptsOnGenes(tx, annox, strand="+")
-breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000, 
+breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     threshold=0.8, gap=5, plot=FALSE) {
     ## Validate inputs
     tx <- .normArgRanges(tx, errorOnEmpty = TRUE)
@@ -108,7 +108,7 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     annox <- annox[width(annox) > geneSize,]
     ol <- findOverlaps(tx, annox)
 
-    ol.df <- data.frame(trans = queryHits(ol), gene = subjectHits(ol), 
+    ol.df <- data.frame(trans = queryHits(ol), gene = subjectHits(ol),
         ratio = width(pintersect(tx[queryHits(ol),], annox[subjectHits(ol),]))
         / width(annox[subjectHits(ol),]))
 
@@ -130,10 +130,10 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 
         if (strand == "+") {
             # No need of break position for the first annotation
-            brPos <- start(annox[aNo[-1],])        
+            brPos <- start(annox[aNo[-1],])
         } else {
             # No need of break position for the last annotation
-            brPos <- end(annox[aNo[-length(aNo)],])  
+            brPos <- end(annox[aNo[-length(aNo)],])
         }
 
         frags <- breakInterval(tx[txNo,], brPos = brPos, gap = gap, strand = strand)
@@ -170,30 +170,30 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
 
 #' combineTranscripts Combines transcripts.
 #'
-#' Combines transcripts  that are within the same gene annotation, combining 
+#' Combines transcripts  that are within the same gene annotation, combining
 #' smaller transcripts for genes
 #'  with low regulation into a single transcript representing the gene.
 #'
 #' @param tx GRanges of transcripts.
 #' @param annox GRanges of non-overlapping annotations for reference.
-#' @param geneSize Numeric. Minimum gene size in annotations to be used as 
-#' reference. 
+#' @param geneSize Numeric. Minimum gene size in annotations to be used as
+#' reference.
 #' Default: 1000
 #' @param threshold Numeric. Ratio of overlapped region relative to transcript
-#' width. 
-#' Transcripts only greater than this threshold are subjected to be combined. 
+#' width.
+#' Transcripts only greater than this threshold are subjected to be combined.
 #' Default: 0.8
-#' @param plot Logical.  If set to TRUE, show each step in a plot. 
+#' @param plot Logical.  If set to TRUE, show each step in a plot.
 #' Default: FALSE
-#' @return Returns GRanges object of combined transcripts. 
+#' @return Returns GRanges object of combined transcripts.
 #' @author Minho Chae and Charles G. Danko
 #' @examples
 #' library(GenomicRanges)
-#' tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), 
+#' tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)),
 #'     strand="+")
 #' annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 #' combined <- combineTranscripts(tx, annox)
-combineTranscripts <- function(tx, annox, geneSize = 1000, threshold = 0.8, 
+combineTranscripts <- function(tx, annox, geneSize = 1000, threshold = 0.8,
     plot = FALSE) {
     ## Validate inputs
     tx <- .normArgRanges(tx, errorOnEmpty = TRUE)
@@ -229,7 +229,7 @@ combineTranscripts <- function(tx, annox, geneSize = 1000, threshold = 0.8,
         if (plot) { # nocov start
             # plot before and after the combine
             par(mfrow = c(2,1))
-            plot2Ranges(tx[ol.df[ol.df$gene == uniqGene[i], "trans"],], 
+            plot2Ranges(tx[ol.df[ol.df$gene == uniqGene[i], "trans"],],
                 annox[uniqGene[i],], main = "Before")
             plot2Ranges(cT[i,], annox[uniqGene[i],], main = "After")
             Sys.sleep(5)

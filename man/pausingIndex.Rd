@@ -2,7 +2,7 @@
 % Please edit documentation in R/pausingIndex.R
 \name{pausingIndex}
 \alias{pausingIndex}
-\title{Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING 
+\title{Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
 INDEX.}
 \usage{
 pausingIndex(features, reads, size = 50, up = 1000, down = 1000,
@@ -33,7 +33,7 @@ Returns a data.frame of the pausing indices for the input genes.
 Returns the pausing index for different genes.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.  
+Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors, use the argument 'mc.cores'.
 }
 \examples{

@@ -19,19 +19,19 @@
 ##
 ##########################################################################
 
-#' windowAnalysis Returns a vector of integers representing the counts of 
+#' windowAnalysis Returns a vector of integers representing the counts of
 #' reads in a moving window.
 #'
-#' @param reads GenomicRanges object representing the position of reads 
+#' @param reads GenomicRanges object representing the position of reads
 #' mapping in the genome.
-#' @param strand Takes values of "+", "-", or "*".  "*" denotes collapsing 
+#' @param strand Takes values of "+", "-", or "*".  "*" denotes collapsing
 #' reads on both strands.  Default: "*".
-#' @param windowSize Size of the moving window. Either windowSize or 
+#' @param windowSize Size of the moving window. Either windowSize or
 #' stepSize must be specified.
 #' @param stepSize The number of bp moved with each step.
-#' @param chrom Chromosome for which to return data.  
+#' @param chrom Chromosome for which to return data.
 #' Default: returns all available data.
-#' @return Returns a list object, each element of which represents a 
+#' @return Returns a list object, each element of which represents a
 #' chromosome.
 #' @author Charles G. Danko and Minho Chae
 #' @examples
@@ -40,7 +40,7 @@
 #'      package="groHMM")), "GRanges")
 #' ## Not run:
 #' # Fp <- windowAnalysis(S0mR1, strand="+", windowSize=50)
-windowAnalysis <- function(reads, strand="*", windowSize=stepSize, 
+windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
     stepSize=windowSize, chrom=NULL) {
     reads <- .normArgRanges(reads, warnOnEmpty=FALSE)
 
@@ -53,19 +53,19 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
     if (! stepSize > 0)
         stop("'stepSize' is out of range!")
 
-    if (!is.null(chrom))  
+    if (!is.null(chrom))
         reads <- reads[seqnames(reads) == chrom,]
 
     seqlevels(reads) <- seqlevelsInUse(reads)
     readsList <- split(reads, seqnames(reads))
 
-    # Change reads' strand 
+    # Change reads' strand
     readsList <- endoapply(readsList, function(x) {
-            if (strand == "*") 
+            if (strand == "*")
                 strand(x) <- "*"
             else
                 x <- x[strand(x) == strand,]
-            x 
+            x
     })
 
     lapply(readsList, function(x) {

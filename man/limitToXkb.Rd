@@ -9,7 +9,7 @@ limitToXkb(features, offset = 1000, size = 13000)
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.}
 
-\item{offset}{Starts the interval from this position relative to the start 
+\item{offset}{Starts the interval from this position relative to the start
 of each genomic features.}
 
 \item{size}{Specifies the size of the window.}

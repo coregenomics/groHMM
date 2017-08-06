@@ -2,7 +2,7 @@
 % Please edit documentation in R/expressedGenes.R
 \name{expressedGenes}
 \alias{expressedGenes}
-\title{Function identifies expressed features using the methods introduced in 
+\title{Function identifies expressed features using the methods introduced in
 Core, Waterfall, Lis; Science, Dec. 2008.}
 \usage{
 expressedGenes(features, reads, Lambda = NULL, ...)
@@ -13,18 +13,18 @@ The meta-plot will be centered on the start position.}
 
 \item{reads}{A GRanges object representing a set of mapped reads.}
 
-\item{Lambda}{Measurement of assay noise.  Default: 0.04 reads/ kb in a 
-library of 10,751,533 mapped reads. (background computed in Core, 
+\item{Lambda}{Measurement of assay noise.  Default: 0.04 reads/ kb in a
+library of 10,751,533 mapped reads. (background computed in Core,
 Waterfall, Lis. (2008) Science.).}
 
 \item{...}{Extra argument passed to mclapply}
 }
 \value{
-Returns a data.frame representing the expression p.values for 
+Returns a data.frame representing the expression p.values for
 features of interest.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.  
+Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors use the argument 'mc.cores'.
 }
 \author{

@@ -14,8 +14,8 @@ getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
 
 \item{plot}{Logical.  If TRUE, plot transcript density.  Default: FALSE}
 
-\item{scale}{Numeric. Scaled size of a gene for transcript density 
-calculation. 
+\item{scale}{Numeric. Scaled size of a gene for transcript density
+calculation.
 Default: 1000L}
 
 \item{nSampling}{Numeric. Number of sub-sampling.  Default: 0L}
@@ -29,24 +29,24 @@ Default: 0.1}
 Returns a list of FTD, TTD, PostTTS, and TUA.
 }
 \description{
-Calculates transcript density for transcripts which overlaps with 
-annotations.  
-For 'run genes together' or 'broken up a single annotation' errors, 
+Calculates transcript density for transcripts which overlaps with
+annotations.
+For 'run genes together' or 'broken up a single annotation' errors,
 best overlapped transcripts or annotations are used.
 }
 \details{
-Supports parallel processing using mclapply in the 'parallel' package.  
+Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors
 set the option 'mc.cores'.
 }
 \examples{
 library(GenomicRanges)
-tx <- GRanges("chr7", IRanges(start=seq(1000,4000, by=1000), 
+tx <- GRanges("chr7", IRanges(start=seq(1000,4000, by=1000),
 width=seq(1000, 1300, by=100)), strand=rep("+", 4))
-annox <- GRanges("chr7", IRanges(start=seq(1100,4100, by=1000), 
+annox <- GRanges("chr7", IRanges(start=seq(1100,4100, by=1000),
 width=seq(900, 1200, by=100)), strand=rep("+", 4))
 ## Not run:
-# density <- getTxDensity(tx, annox) 
+# density <- getTxDensity(tx, annox)
 }
 \author{
 Minho Chae

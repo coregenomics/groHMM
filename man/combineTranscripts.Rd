@@ -12,29 +12,29 @@ combineTranscripts(tx, annox, geneSize = 1000, threshold = 0.8,
 
 \item{annox}{GRanges of non-overlapping annotations for reference.}
 
-\item{geneSize}{Numeric. Minimum gene size in annotations to be used as 
-reference. 
+\item{geneSize}{Numeric. Minimum gene size in annotations to be used as
+reference.
 Default: 1000}
 
 \item{threshold}{Numeric. Ratio of overlapped region relative to transcript
-width. 
-Transcripts only greater than this threshold are subjected to be combined. 
+width.
+Transcripts only greater than this threshold are subjected to be combined.
 Default: 0.8}
 
-\item{plot}{Logical.  If set to TRUE, show each step in a plot. 
+\item{plot}{Logical.  If set to TRUE, show each step in a plot.
 Default: FALSE}
 }
 \value{
 Returns GRanges object of combined transcripts.
 }
 \description{
-Combines transcripts  that are within the same gene annotation, combining 
+Combines transcripts  that are within the same gene annotation, combining
 smaller transcripts for genes
  with low regulation into a single transcript representing the gene.
 }
 \examples{
 library(GenomicRanges)
-tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)), 
+tx <- GRanges("chr7", IRanges(start=c(1000, 20000), width=c(10000,10000)),
     strand="+")
 annox <- GRanges("chr7", IRanges(1000, 30000), strand="+")
 combined <- combineTranscripts(tx, annox)

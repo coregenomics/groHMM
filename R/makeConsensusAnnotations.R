@@ -19,25 +19,25 @@
 ##
 ##########################################################################
 
-#' makeConsensusAnnotations Makes a consensus annotation 
+#' makeConsensusAnnotations Makes a consensus annotation
 #'
-#' Makes a non-overlapping consensus annotation.  Gene annotations are often 
-#' overlapping due to #' multiple isoforms for a gene.  
+#' Makes a non-overlapping consensus annotation.  Gene annotations are often
+#' overlapping due to #' multiple isoforms for a gene.
 #' In consensus annotation, isoforms are first reduced so that only
-#' redundant intervals are used to represent a genomic interval for a gene, 
+#' redundant intervals are used to represent a genomic interval for a gene,
 #' i.e., a gene id.
-#' Remaining unresolved annotations are further reduced by truncating 3' 
-#' end of annotations. 
+#' Remaining unresolved annotations are further reduced by truncating 3'
+#' end of annotations.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.  
+#' Supports parallel processing using mclapply in the 'parallel' package.
 #' To change the number of processors, use the argument 'mc.cores'.
 #'
-#' @param ar GRanges of annotations to be collapsed. 
-#' @param minGap Minimum gap between overlapped annotations after truncated. 
+#' @param ar GRanges of annotations to be collapsed.
+#' @param minGap Minimum gap between overlapped annotations after truncated.
 #' Default: 1L
 #' @param minWidth Minimum width of consensus annotations. Default: 1000L
 #' @param ... Extra argument passed to mclapply.
-#' @return Returns GRanges object of annotations. 
+#' @return Returns GRanges object of annotations.
 #' @author Minho Chae
 #' @examples
 #' ## Not run:
@@ -48,7 +48,7 @@
 #' # ca <- makeConsensusAnnotations(tx)
 makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     # check missing gene_id
-    missing <- elementNROWS(mcols(ar)[,"gene_id"]) == 0 
+    missing <- elementNROWS(mcols(ar)[,"gene_id"]) == 0
     if (any(missing)) {
         ar <- ar[!missing,]
         warning(
@@ -56,7 +56,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
             " ranges do not have gene_id and they are dropped")
     }
 
-    many <- elementNROWS(mcols(ar)[,"gene_id"]) > 1 
+    many <- elementNROWS(mcols(ar)[,"gene_id"]) > 1
     if (any(many)) {
         ar <- ar[!many,]
         warning(
@@ -67,11 +67,11 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     ar_list <- split(ar, unlist(mcols(ar)[,"gene_id"]))
     singles <- unlist(ar_list[elementNROWS(ar_list) == 1])
     isoforms <- ar_list[elementNROWS(ar_list) > 1]
-    
+
     message("Reduce isoforms(", length(isoforms),") ... ", appendLF=FALSE)
     isoforms <- GRangesList(mclapply(isoforms, function(x) {
-        ## For mixed strands or chrom, choose the longest    
-        if ((length(seqlevelsInUse(x)) > 1) || 
+        ## For mixed strands or chrom, choose the longest
+        if ((length(seqlevelsInUse(x)) > 1) ||
             (length(unique(strand(x))) > 1)) {
             result <- x[which.max(width(x)), "gene_id"]
         } else {
@@ -87,11 +87,11 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
                 result <- multi
             } else {
                 reduced <- reduce(multi)
-                if (length(reduced) == 1) 
+                if (length(reduced) == 1)
                     result <- reduced
-                else (length(reduced) > 1) 
+                else (length(reduced) > 1)
                     result <- reduced[which.max(width(reduced)),]
-                
+
             }
             mcols(result)$gene_id <- mcols(x)$gene_id[1]
         }
@@ -100,7 +100,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     isoforms <- unlist(isoforms)
     message("OK")
 
-    ## Check redundancy 
+    ## Check redundancy
     isoforms <- removeRedundant(isoforms)
     singles <- removeRedundant(singles)
 
@@ -116,10 +116,10 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     if(length(o) != 0)
         isoforms <- isoforms[-queryHits(o),]
 
-    noiso <- sort(c(isoforms, singles[,"gene_id"])) 
-    message("Truncate overlapped ranges ... ", appendLF=FALSE)      
+    noiso <- sort(c(isoforms, singles[,"gene_id"]))
+    message("Truncate overlapped ranges ... ", appendLF=FALSE)
     ## with different gene_ids
-    while(!isDisjoint(noiso)) { 
+    while(!isDisjoint(noiso)) {
         ol <- findOverlaps(noiso, drop.self=TRUE, drop.redundant=TRUE)
         ol_gr <- GRangesList(lapply(1:length(ol), function(x) {
             sort(c(noiso[queryHits(ol)[x]], noiso[subjectHits(ol)[x]]))
@@ -128,10 +128,10 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
         ## Truncate 3' end
         ol_gr <- unlist(endoapply(ol_gr, function(x) {
             if (as.character(strand(x[1,])) == "+") {
-                end(x[1,]) <- start(x[2,]) - minGap     
+                end(x[1,]) <- start(x[2,]) - minGap
                 ## first range's end is truncated
             } else {
-                start(x[2,]) <- end(x[1,]) + minGap     
+                start(x[2,]) <- end(x[1,]) + minGap
                 ## sencond range's end is truncated
             }
             x
@@ -140,8 +140,8 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
         ## Remove any ranges with duplicated names since they already
         ## adjusted in the previous call
         ol_gr <- ol_gr[!duplicated(names(ol_gr)),]
-        
-        noiso <- noiso[-unique(c(queryHits(ol), subjectHits(ol))),] 
+
+        noiso <- noiso[-unique(c(queryHits(ol), subjectHits(ol))),]
         ## update noiso
         noiso <- c(noiso, ol_gr)
     }
@@ -160,4 +160,3 @@ removeRedundant <- function(annox) {
 
     return(annox)
 }
-

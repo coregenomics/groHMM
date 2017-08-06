@@ -9,7 +9,7 @@ makeConsensusAnnotations(ar, minGap = 1L, minWidth = 1000L, ...)
 \arguments{
 \item{ar}{GRanges of annotations to be collapsed.}
 
-\item{minGap}{Minimum gap between overlapped annotations after truncated. 
+\item{minGap}{Minimum gap between overlapped annotations after truncated.
 Default: 1L}
 
 \item{minWidth}{Minimum width of consensus annotations. Default: 1000L}
@@ -20,16 +20,16 @@ Default: 1L}
 Returns GRanges object of annotations.
 }
 \description{
-Makes a non-overlapping consensus annotation.  Gene annotations are often 
-overlapping due to #' multiple isoforms for a gene.  
+Makes a non-overlapping consensus annotation.  Gene annotations are often
+overlapping due to #' multiple isoforms for a gene.
 In consensus annotation, isoforms are first reduced so that only
-redundant intervals are used to represent a genomic interval for a gene, 
+redundant intervals are used to represent a genomic interval for a gene,
 i.e., a gene id.
-Remaining unresolved annotations are further reduced by truncating 3' 
+Remaining unresolved annotations are further reduced by truncating 3'
 end of annotations.
 }
 \details{
-Supports parallel processing using mclapply in the 'parallel' package.  
+Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors, use the argument 'mc.cores'.
 }
 \examples{

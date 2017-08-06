@@ -14,24 +14,24 @@ breakTranscriptsOnGenes(tx, annox, strand = "+", geneSize = 5000,
 
 \item{strand}{Takes "+" or "-" Default: "+"}
 
-\item{geneSize}{Numeric. Minimum gene size in annox to be used as reference. 
+\item{geneSize}{Numeric. Minimum gene size in annox to be used as reference.
 Default: 5000}
 
-\item{threshold}{Numeric. Ratio of overlapped region relative to a gene 
-width. 
-Transcripts only greater than this threshold are subjected to be broken. 
+\item{threshold}{Numeric. Ratio of overlapped region relative to a gene
+width.
+Transcripts only greater than this threshold are subjected to be broken.
 Default: 0.8}
 
 \item{gap}{Numeric.  Gap (bp) between broken transcripts.  Default: 5}
 
-\item{plot}{Logical.  If set to TRUE, show each step in a plot. 
+\item{plot}{Logical.  If set to TRUE, show each step in a plot.
 Default: FALSE}
 }
 \value{
 Returns GRanges object of broken transcripts.
 }
 \description{
-Breaks transcripts when they are overlapped with multiple well annotated 
+Breaks transcripts when they are overlapped with multiple well annotated
 genes.
 }
 \examples{

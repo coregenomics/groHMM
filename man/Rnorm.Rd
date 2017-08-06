@@ -2,21 +2,21 @@
 % Please edit documentation in R/fitDistributions.R
 \name{Rnorm}
 \alias{Rnorm}
-\title{Rnorm fits a normal distribution to a specified data vector using maximum 
+\title{Rnorm fits a normal distribution to a specified data vector using maximum
 likelihood.}
 \usage{
 Rnorm(X)
 }
 \arguments{
-\item{X}{A vector of observations, assumed to be real numbers in the 
+\item{X}{A vector of observations, assumed to be real numbers in the
 interval (-Inf,+Inf).}
 }
 \value{
-Returns a list of parameters for the best-fit normal distribution 
+Returns a list of parameters for the best-fit normal distribution
 (mean and variance).
 }
 \description{
-Rnorm fits a normal distribution to a specified data vector using maximum 
+Rnorm fits a normal distribution to a specified data vector using maximum
 likelihood.
 }
 \author{

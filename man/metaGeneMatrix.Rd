@@ -2,7 +2,7 @@
 % Please edit documentation in R/metaGene.R
 \name{metaGeneMatrix}
 \alias{metaGeneMatrix}
-\title{Returns a matrix, with rows representing read counts across a specified 
+\title{Returns a matrix, with rows representing read counts across a specified
 gene, or other features of interest.}
 \usage{
 metaGeneMatrix(features, reads, size = 50, up = 1000, down = up,
@@ -17,20 +17,20 @@ metaGeneMatrix(features, reads, size = 50, up = 1000, down = up,
 
 \item{up}{Distance upstream of each f to align and histogram Default: 1 kb.}
 
-\item{down}{Distance downstream of each f to align and histogram 
+\item{down}{Distance downstream of each f to align and histogram
 Default: same as up.}
 
-\item{debug}{If set to TRUE, provides additional print options. 
+\item{debug}{If set to TRUE, provides additional print options.
 Default: FALSE}
 
 \item{...}{Extra argument passed to mclapply}
 }
 \value{
-Returns a vector representing the 'typical' signal across 
+Returns a vector representing the 'typical' signal across
 genes of different length.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.  
+Supports parallel processing using mclapply in the 'parallel' package.
 To change the number of processors, use the argument 'mc.cores'.
 }
 \author{
