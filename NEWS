@@ -18,6 +18,7 @@ NEW FEATURES
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    * Drop readBed() reimplementation of rtracklayer::import.bed()
     * Drop broken NonMap argument of polymeraseWave().
     * Verbose flag now works for HMM using C functions.  The large
       volume of C messages can be silenced as originally intended
