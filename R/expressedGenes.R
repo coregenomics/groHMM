@@ -27,7 +27,6 @@
 #'
 #' @param features A GRanges object representing a set of genomic coordinates.
 #' The meta-plot will be centered on the start position.  
-#' There can be optional "ID" column for gene ids.
 #' @param reads A GRanges object representing a set of mapped reads.
 #' @param Lambda Measurement of assay noise.  Default: 0.04 reads/ kb in a 
 #' library of 10,751,533 mapped reads. (background computed in Core, 
@@ -36,12 +35,6 @@
 #' @return Returns a data.frame representing the expression p.values for 
 #' features of interest.
 #' @author Charles G. Danko 
-##  This identifes genes that are expressed in a given cell, based on short 
-##  read data.
-##      f  == genes/annotations; columns represent: Chr, Start, End, Strand, ID.
-##      p  == short reads; columns represent: Chr, Start, End, Strand, ID.
-##
-##  Function defines expression as in Core, Waterfall, Lis; Science, Dec. 2008.
 expressedGenes <- function(features, reads, Lambda=NULL, ...) {
     ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
     ## violated for DBTSS.
@@ -58,7 +51,6 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
         reads=reads, Lambda=Lambda, ...)
 
     ## Unlist... 
-    ANSgeneid <- rep("char", NROW(features))
     ANSpvalue <- rep(0,NROW(features))
     ANScounts <- rep(0,NROW(features))
     ANSgsize  <- rep(0,NROW(features))
@@ -66,7 +58,6 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
         indxF   <- which(as.character(seqnames(features)) == C[i])
         indxPrb   <- which(as.character(seqnames(reads)) == C[i])
         if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
-            ANSgeneid[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSgeneid"]]
             ANSpvalue[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSpvalue"]]
             ANScounts[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANScounts"]]
             ANSgsize[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSgsize"]]
@@ -74,9 +65,10 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
     }
 
     return(
-        data.frame(
-            ID=ANSgeneid, pval=ANSpvalue, readCounts=ANScounts,
-            size=ANSgsize))
+        cbind.data.frame(
+            data.frame(
+                pval=ANSpvalue, readCounts=ANScounts, size=ANSgsize),
+            mcols(features)))
 }
 
 expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
@@ -111,11 +103,6 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
             PROBEStr, PACKAGE="groHMM")
 
         ## Calculate poisson prob. of each.
-        if ("ID" %in% colnames(mcols(features))) {  # there is "ID" column
-            ANSgeneid_c <- elementMetadata(features[indxF,])$ID
-        } else {
-            ANSgeneid_c <- rep(NA, NROW(indxF)) 
-        }
         ANSgsize_c <- FeatureEnd - FeatureStart
         ANSpvalue_c <- ppois(
             NUMReads, Lambda * ANSgsize_c, lower.tail=FALSE)
@@ -124,8 +111,8 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
             
         return(
             list(
-                ANSgeneid=ANSgeneid_c, ANSpvalue=ANSpvalue_c,
-                ANScounts=ANScounts_c, ANSgsize=ANSgsize_c, ord=Ford))
+                ANSpvalue=ANSpvalue_c, ANScounts=ANScounts_c,
+                ANSgsize=ANSgsize_c, ord=Ford))
     }
     return(integer(0))
 }
