@@ -58,10 +58,10 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     runGenes <- unique(queryHits(ol[duplicated(queryHits(ol)),]))
     ## Count annox
     brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)),]))
-    cat("Merged annotations: ", length(runGenes), "\n")
-    cat("Dissociated a single annotation: ", length(brokenUp), "\n")
-    cat("Overlaps between transcript and annotation:", "\n")
-    cat("Total = ", length(ol))
+    message("Merged annotations: ", length(runGenes))
+    message("Dissociated a single annotation: ", length(brokenUp))
+    message("Overlaps between transcript and annotation:")
+    message("Total = ", length(ol))
 
     ## For each annox, find the best matching tx, runGenes case...
     intx_rg <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
@@ -97,7 +97,7 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     if (length(remove_bu) > 0)
         ol <- ol[-remove_bu,]
 
-    cat(" Used for density = ", length(ol), "\n")
+    message(" Used for density = ", length(ol))
 
     olTx <- tx[queryHits(ol),]
     ## Now get the coverage of selected transcripts
