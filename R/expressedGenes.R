@@ -32,8 +32,6 @@
 #' @param Lambda Measurement of assay noise.  Default: 0.04 reads/ kb in a 
 #' library of 10,751,533 mapped reads. (background computed in Core, 
 #' Waterfall, Lis. (2008) Science.).
-#' @param UnMap List object representing the position of un-mappable reads.  
-#' Default: not used.
 #' @param ... Extra argument passed to mclapply
 #' @return Returns a data.frame representing the expression p.values for 
 #' features of interest.
@@ -42,28 +40,27 @@
 ##  read data.
 ##      f  == genes/annotations; columns represent: Chr, Start, End, Strand, ID.
 ##      p  == short reads; columns represent: Chr, Start, End, Strand, ID.
-##      UnMAQ == unmappable regions in the genome of interest.
 ##
 ##  Function defines expression as in Core, Waterfall, Lis; Science, Dec. 2008.
-expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, ...) {
+expressedGenes <- function(features, reads, Lambda=NULL, ...) {
     ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
     ## violated for DBTSS.
     reads <- .normArgRanges(reads)
     reads <- reads[order(as.character(seqnames(reads)), start(reads)),] 
     C <- sort(unique(as.character(seqnames(features))))
-    if(is.null(Lambda)) Lambda <- 0.04*NROW(reads)/10751533/1000 
-    #NROW(reads)/genomeSize
+    if(is.null(Lambda))
+        ## NROW(reads) / genomeSize
+        Lambda <- 0.04 * NROW(reads) / 10751533 / 1000
     
     ## Run parallel version.
     mcp <- mclapply(
         seq_along(C), expressedGenes_foreachChrom, C=C, features=features,
-        reads=reads, Lambda=Lambda, UnMap=UnMap, ...)
+        reads=reads, Lambda=Lambda, ...)
 
     ## Unlist... 
     ANSgeneid <- rep("char", NROW(features))
     ANSpvalue <- rep(0,NROW(features))
     ANScounts <- rep(0,NROW(features))
-    ANSunmapp <- rep(0,NROW(features))
     ANSgsize  <- rep(0,NROW(features))
     for(i in seq_along(C)) {
         indxF   <- which(as.character(seqnames(features)) == C[i])
@@ -72,7 +69,6 @@ expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, ...) {
             ANSgeneid[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSgeneid"]]
             ANSpvalue[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSpvalue"]]
             ANScounts[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANScounts"]]
-            ANSunmapp[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSunmapp"]]
             ANSgsize[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSgsize"]]
         }
     }
@@ -80,10 +76,10 @@ expressedGenes <- function(features, reads, Lambda=NULL, UnMap=NULL, ...) {
     return(
         data.frame(
             ID=ANSgeneid, pval=ANSpvalue, readCounts=ANScounts,
-            nonMappablePositions=ANSunmapp, size=ANSgsize))
+            size=ANSgsize))
 }
 
-expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap) {
+expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
     ## Which KG?  prb?
     indxF   <- which(as.character(seqnames(features)) == C[i])
     indxPrb <- which(as.character(seqnames(reads)) == C[i])
@@ -114,53 +110,22 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda, UnMap) {
             FeatureEnd, FeatureStr, PROBEStart, PROBEEnd, 
             PROBEStr, PACKAGE="groHMM")
 
-        ## Calculate UN-MAQable regions...
-        if(!is.null(UnMap)) {
-
-            ## Count start index.
-            chr_indx <- which(UnMap[[1]][[1]] == C[i])
-            CHRSIZE <- as.integer(UnMap[[1]][[2]][chr_indx])
-            CHRSTART <- as.integer(0)
-            if(chr_indx > 1) {  ## Running on 1:0 gives c(1, 0)
-                CHRSTART <- as.integer( 
-                    sum(UnMap[[1]][[2]][
-                        c(1:(chr_indx-1))
-                    ]) +1)
-            }
-
-            ## Count unMAQable regions, and size of everything ... 
-            nonmappable <- .Call(
-                "CountUnMAQableReads", FeatureStart, FeatureEnd,
-                UnMap[[2]], CHRSTART, CHRSIZE, PACKAGE = "groHMM")
-
-            ## Adjust size of gene body.
-            MappablePositions <-
-                (FeatureEnd - FeatureStart) - 
-                nonmappable + 1
-        }
-        else {
-            nonmappable <- 1
-        }
-            
-        MappablePositions <- (FeatureEnd - FeatureStart) - nonmappable + 1
-
         ## Calculate poisson prob. of each.
         if ("ID" %in% colnames(mcols(features))) {  # there is "ID" column
             ANSgeneid_c <- elementMetadata(features[indxF,])$ID
         } else {
             ANSgeneid_c <- rep(NA, NROW(indxF)) 
         }
+        ANSgsize_c <- FeatureEnd - FeatureStart
         ANSpvalue_c <- ppois(
-            NUMReads, (Lambda*MappablePositions), lower.tail=FALSE)
+            NUMReads, Lambda * ANSgsize_c, lower.tail=FALSE)
         ANScounts_c <- NUMReads
-        ANSunmapp_c <- nonmappable
-        ANSgsize_c <- (FeatureEnd-FeatureStart) #[indxF][Ford]
+
             
         return(
             list(
                 ANSgeneid=ANSgeneid_c, ANSpvalue=ANSpvalue_c,
-                ANScounts=ANScounts_c, ANSunmapp=ANSunmapp_c,
-                ANSgsize=ANSgsize_c, ord=Ford))
+                ANScounts=ANScounts_c, ANSgsize=ANSgsize_c, ord=Ford))
     }
     return(integer(0))
 }

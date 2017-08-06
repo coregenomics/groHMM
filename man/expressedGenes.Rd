@@ -5,8 +5,7 @@
 \title{Function identifies expressed features using the methods introduced in 
 Core, Waterfall, Lis; Science, Dec. 2008.}
 \usage{
-expressedGenes(features, reads, Lambda = NULL, UnMap = NULL,
-  debug = FALSE, ...)
+expressedGenes(features, reads, Lambda = NULL, ...)
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.
@@ -18,12 +17,6 @@ There can be optional "ID" column for gene ids.}
 \item{Lambda}{Measurement of assay noise.  Default: 0.04 reads/ kb in a 
 library of 10,751,533 mapped reads. (background computed in Core, 
 Waterfall, Lis. (2008) Science.).}
-
-\item{UnMap}{List object representing the position of un-mappable reads.
-Default: not used.}
-
-\item{debug}{If set to true, returns the number of positions.
-Default: FALSE.}
 
 \item{...}{Extra argument passed to mclapply}
 }
