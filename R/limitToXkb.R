@@ -34,6 +34,7 @@
 ## This function limits a genomic range to a small region relative to the
 ## transcription site.
 limitToXkb <- function(features, offset=1000, size=13000) {
+    features <- .normArgRanges(features)
     w <- width(features)
 
     ## 1. do nothing for w < offset 

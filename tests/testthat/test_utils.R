@@ -49,3 +49,19 @@ test_that("windowAnalysis allows empty seqlevels", {
   options(warn = 2)
   expect_is(windowAnalysis(reads = tx, windowSize = 100, strand="-"), "list")
 })
+
+test_that("limitToXkb returns GRanges", {
+    expect_s4_class(limitToXkb(annox), "GRanges")
+    expect_warning(limitToXkb(GRanges()))
+})
+
+test_that("limitToXkb truncates based on size and applies offset", {
+    offset <- formals(limitToXkb)$offset
+    size <- formals(limitToXkb)$size
+    size_ok <- size - offset - floor(size / 2)
+    annox_ <- resize(annox, width=c(size_ok, size + 10))
+    expected <- resize(shift(annox, offset),
+                       width=c(size_ok, size) - offset)
+    result <- limitToXkb(annox_)
+    expect_equal(expected, result)
+})
