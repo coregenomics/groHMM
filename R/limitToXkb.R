@@ -22,7 +22,6 @@
 #' limitToXkb truncates a set of genomic intervals at a constant, maximum size.
 #'
 #' @param features A GRanges object representing a set of genomic coordinates. 
-#' The meta-plot will be centered on the start position.
 #' @param offset Starts the interval from this position relative to the start 
 #' of each genomic features.
 #' @param size Specifies the size of the window.
