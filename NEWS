@@ -7,6 +7,9 @@ NEW FEATURES
       - Added BiocParallel support for polymeraseWave().
       - Propagate mcols() from GRanges, remove hard-coded column names,
         and limit use of data.frame objects.
+      - Drop functionality such as readBed() and writeWiggle() already
+        present in the rtracklayer package maintained by the
+        Bioconductor core team.
     * polymeraseWave() now has a progress bar and has faster
       processing from several changes:
       - Multi-core processing.
@@ -18,7 +21,8 @@ NEW FEATURES
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
-    * Drop readBed() reimplementation of rtracklayer::import.bed()
+    * Drop readBed() and writeWiggle() reimplementation of
+      rtracklayer import.bed(), and export.bw() / export.wig().
     * Drop broken NonMap argument of polymeraseWave().
     * Verbose flag now works for HMM using C functions.  The large
       volume of C messages can be silenced as originally intended

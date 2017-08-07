@@ -12,9 +12,8 @@ importFrom(
     "stats", "fisher.test", "loess", "ppois", "predict", "qnorm", "smooth")
 importFrom("utils", "read.table")
 export(
-    writeWiggle, detectTranscripts, makeConsensusAnnotations,
-    evaluateHMMInAnnotations, windowAnalysis, breakTranscriptsOnGenes,
-    combineTranscripts, getTxDensity, limitToXkb, runMetaGene, metaGene,
-    pausingIndex, polymeraseWave, getCores, averagePlot, expressedGenes,
-    metaGeneMatrix, metaGene_nL, RgammaMLE, Rnorm, Rnorm.exp, tlsDeming,
-    tlsLoess, tlsSvd)
+    detectTranscripts, makeConsensusAnnotations, evaluateHMMInAnnotations,
+    windowAnalysis, breakTranscriptsOnGenes, combineTranscripts, getTxDensity,
+    limitToXkb, runMetaGene, metaGene, pausingIndex, polymeraseWave, getCores,
+    averagePlot, expressedGenes, metaGeneMatrix, metaGene_nL, RgammaMLE, Rnorm,
+    Rnorm.exp, tlsDeming, tlsLoess, tlsSvd)

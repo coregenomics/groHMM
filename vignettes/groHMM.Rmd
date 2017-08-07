@@ -86,8 +86,7 @@ in cells [@Danko2013].
 
 In addition to these advanced features,
 `r Rpackage("groHMM")` provides wrapper functions for
-counting raw reads [@PagesGRanges],
-generating wiggle files for visualization [@Michael2009],
+counting raw reads [@PagesGRanges]
 and creating metagene (averaging) plots.
 `r Rpackage("groHMM")` takes over all aspects of analysis
 after reads have been aligned to a reference genome
@@ -179,43 +178,6 @@ S40mR2 <- as(readGAlignments(system.file(
     "extdata", "S40mR1.bam",
     package="groHMM")), "GRanges") # Use R1 as R2
 ```
-
-## Create a Wiggle File
-
-Wiggle files are created for each strand after replicates are combined
-in order to visualize GRO-seq data in the UCSC genome browser.
-Wiggle files can be also normalized by the sequencing depth,
-*i.e.*, average number of reads in the dataset.
-`writeWiggle` function is a wrapper around `export` `r Biocpkg("rtracklayer")`
-for generation of wiggle/bigWig type of files.
-
-```{r combine replicates, eval=TRUE}
-# Combine replicates
-S0m <- c(S0mR1, S0mR2)
-S40m <- c(S40mR1, S40mR2)
-```
-
-```{r write wiggle files, eval=FALSE}
-# Write Wiggle files
-writeWiggle(reads=S0m, file="S0m_Plus.wig", fileType="wig", strand="+",
-        reverse=FALSE)
-writeWiggle(reads=S0m, file="S0m_Minus.wig", fileType="wig", strand="-",
-        reverse=TRUE)
-
-# For BigWig file:
-# library(BSgenome.Hsapiens.UCSC.hg19)
-# si <- seqinfo(BSgenome.Hsapiens.UCSC.hg19)
-# writeWiggle(reads=S0m, file="S0m_Plus.wig", fileType="BigWig", strand="+",#
-#               reverse=FALSE, seqinfo=si)
-
-# Normalized wiggle files
-expCounts <- mean(c(NROW(S0m), NROW(S40m)))
-writeWiggle(reads=S0m, file="S0m_Plus_Norm.wig", fileType="wig", strand="+",
-           normCounts=expCounts/NROW(S0m), reverse=FALSE)
-```
-
-The resulting wiggle files can be uploaded as `custom tracks'
-in the UCSC genome browser, or your visualization software of choice.
 
 ## Transcript Calling
 

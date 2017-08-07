@@ -17,3 +17,11 @@ test_that("expressedGenes propagates mcols(features) to output data.frame", {
     cols_common <- intersect(result, expected)
     expect_equal(expected, cols_common)
 })
+
+test_that("getTxDensity returns list", {
+    expect_type(getTxDensity(tx, annox), "list")
+})
+
+test_that("getTxDensity", {
+    
+})
