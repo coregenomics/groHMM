@@ -22,6 +22,25 @@ test_that("getTxDensity returns list", {
     expect_type(getTxDensity(tx, annox), "list")
 })
 
-test_that("getTxDensity", {
-    
+test_that("getTxDensity joins broken transcript", {
+    result <- getTxDensity(tx, annox)
+    names(result) <- NULL
+    expected <- list(
+        0,                              # No head signal
+        1,                              # Perfect overlap after join
+        1,                              # Tail signal (why is it not 0?)
+        1                               # Perfect overlap after join
+    )
+    expect_equal(result, expected)
+})
+
+test_that("getTxDensity splits combined transcript", {
+    result <- head(getTxDensity(annox, tx), 3)
+    names(result) <- NULL
+    expected <- list(
+        0,                                 # No head signal
+        head(width(annox) / width(tx), 1), # Overlap % of first transcript
+        0                                  # No tail signal
+    )
+    expect_equal(result, expected, tolerance = 1e-3)
 })
