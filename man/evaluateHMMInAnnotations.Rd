@@ -12,8 +12,8 @@ evaluateHMMInAnnotations(tx, annox)
 \item{annox}{GRanges of non-overlapping annotations.}
 }
 \value{
-a list of error information; merged annotations, dissociated annotation,
-total, and rate.
+a list of error information; merged annotations, dissociated
+annotation, total, and rate.
 }
 \description{
 Evaluates HMM calling of transcripts compared to known annotations.

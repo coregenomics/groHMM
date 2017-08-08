@@ -452,7 +452,7 @@ averagePlot <- function(
         ## returns chr10-chr19 as well.
         ## Should work fine, even when chromosome is simply "chrN".
         indxAffxProbes <- grep(
-            apaste(chr, "$", sep=""), ProbeData[[1]], perl=TRUE)
+            paste(chr, "$", sep=""), ProbeData[[1]], perl=TRUE)
 
         ## Calculate the minimum distance between the probe and the vector
         ## over all features ...

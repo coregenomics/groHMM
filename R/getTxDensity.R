@@ -215,8 +215,8 @@ getLIValues <- function (vals, n) {
 #'
 #' @param tx GRanges of transcripts predicted by HMM.
 #' @param annox GRanges of non-overlapping annotations.
-#' @return a list of error information; merged annotations, dissociated annotation,
-#' total, and rate.
+#' @return a list of error information; merged annotations, dissociated
+#' annotation, total, and rate.
 #' @author Minho Chae
 #' @examples
 #' library(GenomicRanges)
