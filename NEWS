@@ -32,6 +32,8 @@ SIGNIFICANT USER-VISIBLE CHANGES
       vignette due to simpler syntax, and fewer obtuse LaTeX errors.
     * Disable default plotting of getTxDensity().  Only functions
       whose names start with 'plot' automatically generate plots.
+    * getTxDensity() is faster and returns exact values instead of
+      trapezoidal approximation.
     * windowAnalysis() now has no upper limit on stepSize.
 
 BUG FIXES AND IMPROVEMENTS
