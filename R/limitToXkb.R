@@ -41,23 +41,23 @@ limitToXkb <- function(features, offset=1000, size=13000) {
     ## 2. offset < w and w < size
     small  <- (offset < w) & (w < size)
     if (any(small)) {
-        features[small,] <-
+        features[small, ] <-
             flank(
-                features[small,], -1*(w[small]-offset), start=FALSE)
+                features[small, ], -1 * (w[small] - offset), start=FALSE)
     }
 
     ## 2. w > size
     big  <- w > size
     if (any(big)) {
-        features[big,] <- resize(features[big,], width=size)
+        features[big, ] <- resize(features[big, ], width=size)
 
         bigPlus <- big & as.character(strand(features))=="+"
         if (any(bigPlus))
-            start(features[bigPlus,]) <- start(features[bigPlus,]) + offset
+            start(features[bigPlus, ]) <- start(features[bigPlus, ]) + offset
 
         bigMinus <- big & as.character(strand(features))=="-"
         if (any(bigMinus))
-            end(features[bigMinus,]) <- end(features[bigMinus,]) - offset
+            end(features[bigMinus, ]) <- end(features[bigMinus, ]) - offset
     }
 
     return(features)

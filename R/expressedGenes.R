@@ -39,9 +39,9 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
     ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
     ## violated for DBTSS.
     reads <- .normArgRanges(reads)
-    reads <- reads[order(as.character(seqnames(reads)), start(reads)),]
+    reads <- reads[order(as.character(seqnames(reads)), start(reads)), ]
     C <- sort(unique(as.character(seqnames(features))))
-    if(is.null(Lambda))
+    if (is.null(Lambda))
         ## NROW(reads) / genomeSize
         Lambda <- 0.04 * NROW(reads) / 10751533 / 1000
 
@@ -51,13 +51,13 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
         reads=reads, Lambda=Lambda, ...)
 
     ## Unlist...
-    ANSpvalue <- rep(0,NROW(features))
-    ANScounts <- rep(0,NROW(features))
-    ANSgsize  <- rep(0,NROW(features))
-    for(i in seq_along(C)) {
+    ANSpvalue <- rep(0, NROW(features))
+    ANScounts <- rep(0, NROW(features))
+    ANSgsize  <- rep(0, NROW(features))
+    for (i in seq_along(C)) {
         indxF   <- which(as.character(seqnames(features)) == C[i])
         indxPrb   <- which(as.character(seqnames(reads)) == C[i])
-        if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+        if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
             ANSpvalue[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSpvalue"]]
             ANScounts[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANScounts"]]
             ANSgsize[indxF][mcp[[i]][["ord"]]] <- mcp[[i]][["ANSgsize"]]
@@ -76,18 +76,18 @@ expressedGenes_foreachChrom <- function(i, C, features, reads, Lambda) {
     indxF   <- which(as.character(seqnames(features)) == C[i])
     indxPrb <- which(as.character(seqnames(reads)) == C[i])
 
-    if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+    if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
         ## Order -- Make sure, b/c this is one of our main assumptions.
         ## Otherwise violated for DBTSS.
-        Ford <- order(start(features[indxF,]))
+        Ford <- order(start(features[indxF, ]))
 
         ## Type coersions.
-        FeatureStart    <- start(features[indxF,][Ford])
-        FeatureEnd  <- end(features[indxF,][Ford])
-        FeatureStr  <- as.character(strand(features[indxF,][Ford]))
-        PROBEStart  <- start(reads[indxPrb,])
-        PROBEEnd    <- end(reads[indxPrb,])
-        PROBEStr    <- as.character(strand(reads[indxPrb,]))
+        FeatureStart    <- start(features[indxF, ][Ford])
+        FeatureEnd  <- end(features[indxF, ][Ford])
+        FeatureStr  <- as.character(strand(features[indxF, ][Ford]))
+        PROBEStart  <- start(reads[indxPrb, ])
+        PROBEEnd    <- end(reads[indxPrb, ])
+        PROBEStr    <- as.character(strand(reads[indxPrb, ]))
 
         ## Set dimensions.
         dim(FeatureStart)   <- c(NROW(FeatureStart), NCOL(FeatureStart))

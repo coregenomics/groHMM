@@ -8,6 +8,6 @@ annox <- GRanges(
 
 ## Fixtures (identical to example in polymeraseWave man page)
 genes <- GRanges(
-    "chr7", IRanges(2394474,2420377), strand="+", SYMBOL="CYP2W1", ID="54905")
+    "chr7", IRanges(2394474, 2420377), strand="+", SYMBOL="CYP2W1", ID="54905")
 load("sr1.rda")
 reads <- sr1

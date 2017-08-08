@@ -38,6 +38,7 @@ Suggests:
     GenomicFeatures,
     gridExtra,
     knitr,
+    lintr,
     org.Hs.eg.db,
     png,
     rmarkdown,

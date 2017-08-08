@@ -45,27 +45,27 @@ test_that("breakTranscriptsOnGenes honors negative strand", {
 })
 
 test_that("breakTranscriptsOnGenes honors no annotation breaks", {
-  annox_ <- shift(tx, width(tx))
-  expect_equal(ranges(breakTranscriptsOnGenes(tx, annox_)), ranges(tx))
+    annox_ <- shift(tx, width(tx))
+    expect_equal(ranges(breakTranscriptsOnGenes(tx, annox_)), ranges(tx))
 })
 
 test_that("breakTranscriptsOnGenes honors multiple annotation breaks", {
-  annox_ <- GRanges(c("chr7:1000-11000",
-                      "chr7:12000-20000",
-                      "chr7:20000-30000"), strand="+")
-  expect_equal(length(breakTranscriptsOnGenes(tx, annox_)), 3)
+    annox_ <- GRanges(c("chr7:1000-11000",
+                        "chr7:12000-20000",
+                        "chr7:20000-30000"), strand="+")
+    expect_equal(length(breakTranscriptsOnGenes(tx, annox_)), 3)
 })
 
 test_that("breakTranscriptsOnGenes honors multiple transcripts", {
-  tx_ <- GRanges(c("chr7:1000-12000",
-                   "chr7:20000-30000"),
-                 strand="+")
-  annox_ <- GRanges(c("chr7:1000-6000",
-                      "chr7:6000-12000",
-                      "chr7:20000-25000",
-                      "chr7:25000-30000"),
-                    strand="+")
-  expect_equal(length(breakTranscriptsOnGenes(tx_, annox_)), 4)
+    tx_ <- GRanges(c("chr7:1000-12000",
+                     "chr7:20000-30000"),
+                   strand="+")
+    annox_ <- GRanges(c("chr7:1000-6000",
+                        "chr7:6000-12000",
+                        "chr7:20000-25000",
+                        "chr7:25000-30000"),
+                      strand="+")
+    expect_equal(length(breakTranscriptsOnGenes(tx_, annox_)), 4)
 })
 
 test_that("Gene repair functions honor 'geneSize'", {

@@ -52,16 +52,16 @@
 ## essentially "errors in variables" LOESS.
 ##
 ## Returns x and y values giving information on the fit...
-tlsLoess <- function(x, y, theta=-pi/4, span= 1) {
+tlsLoess <- function(x, y, theta=-pi/4, span=1) {
     mx <- mean(x)
     my <- mean(y)
     x <- x-mx
     y <- y-my
-    tx <- x*cos(theta)-y*sin(theta)
-    ty <- x*sin(theta)+y*cos(theta)
+    tx <- x*cos(theta) - y * sin(theta)
+    ty <- x*sin(theta) + y * cos(theta) # nolint
 
-    lo <- loess(ty~tx, family="gaussian", span = span)
-    yp_loess  <- predict(lo,data.frame(x=tx))
+    lo <- loess(ty ~ tx, family="gaussian", span=span)
+    yp_loess  <- predict(lo, data.frame(x=tx))
 
     theta <- -theta
     x <- tx*cos(theta)-yp_loess*sin(theta)
@@ -91,15 +91,15 @@ tlsLoess <- function(x, y, theta=-pi/4, span= 1) {
 ## A <- as.matrix(rbind(c(1,1,1), c(2,-1,2), c(-1,4,3), c(4,2,1), c(3,-3,4)))
 ## b <- c(1,2,-1,4,8)
 ##
-tlsSvd <- function(x,y) {
+tlsSvd <- function(x, y) {
     n <- NCOL(x)
     Cmat <- as.matrix(data.frame(x, y))
     s <- svd(Cmat)
-    VAB <- s$v[c(1:n),(1+n):NCOL(s$v)]
-    VBB <- s$v[(1+n):NROW(s$v),(1+n):NCOL(s$v)]
-    X = -VAB/VBB
+    VAB <- s$v[1:n, (1 + n):NCOL(s$v)]
+    VBB <- s$v[(1 + n):NROW(s$v), (1 + n):NCOL(s$v)]
+    X <- -VAB/VBB
     int <- mean(y) - X * mean(x)
-    return(c(int,X))
+    return(c(int, X))
 }
 
 #' A 'total least squares' implementation using demming regression.
@@ -110,11 +110,11 @@ tlsSvd <- function(x,y) {
 #' @return Parameters for the linear model.
 #' @author Charles G. Danko
 ## linear total least squares by Deming regression.
-tlsDeming <- function(x,y,d=1) {
-    sxx <- 1/(NROW(x)-1) * sum((x-mean(x))^2)
-    sxy <- 1/(NROW(x)-1) * sum((x-mean(x))*(y-mean(y)))
-    syy <- 1/(NROW(y)-1) * sum((y-mean(y))^2)
-    X <- (syy-d*sxx+sqrt((syy-d*sxx)^2+4*d*(sxy^2)))/(2*sxy)
+tlsDeming <- function(x, y, d=1) {
+    sxx <- 1 / (NROW(x)-1) * sum( (x-mean(x))^2)
+    sxy <- 1 / (NROW(x)-1) * sum( (x-mean(x)) * (y - mean(y)))
+    syy <- 1 / (NROW(y)-1) * sum( (y-mean(y))^2)
+    X <- (syy-d * sxx + sqrt( (syy - d * sxx)^2 + 4 * d * (sxy^2))) / (2 * sxy)
     int <- mean(y) - X * mean(x)
-    return(c(int,X))
+    return(c(int, X))
 }

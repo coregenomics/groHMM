@@ -55,8 +55,8 @@ metaGene <- function(features, reads=NULL, plusCVG=NULL, minusCVG=NULL,
             stop("Either 'reads' or 'plusCVG' and 'minusCVG' must be used")
     } else {
         seqlevels(reads) <- seqlevelsInUse(reads)
-        plusCVG <- coverage(reads[strand(reads)=="+",])
-        minusCVG <- coverage(reads[strand(reads)=="-",])
+        plusCVG <- coverage(reads[strand(reads)=="+", ])
+        minusCVG <- coverage(reads[strand(reads)=="-", ])
     }
     if (is.null(down)) down <- up
 
@@ -79,7 +79,7 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
     mCVG <- minusCVG[[chrom]]
     offset <- floor(size/2L)
 
-    pro <- promoters(f, upstream=up+offset, downstream=(down+offset-1L))
+    pro <- promoters(f, upstream=up+offset, downstream=down + offset - 1L)
 
     M <- sapply(1:length(pro), function(x) {
         if (as.character(strand(pro)[x]) == "+")
@@ -144,8 +144,8 @@ runMetaGene <- function(features, reads, anchorType="TSS", size=100L,
     fRev <- f
     strand(fRev) <- rev(strand(f))
 
-    plusCVG <- coverage(reads[strand(reads)=="+",])
-    minusCVG <- coverage(reads[strand(reads)=="-",])
+    plusCVG <- coverage(reads[strand(reads)=="+", ])
+    minusCVG <- coverage(reads[strand(reads)=="-", ])
 
     message("sense ... ", appendLF=FALSE)
     if (sampling) {
@@ -184,16 +184,18 @@ samplingMetaGene <- function(features, plusCVG, minusCVG, size=100L, up=10000L,
     samplingSize <- round(length(features)*samplingRatio)
 
     metaList <- mclapply(1:length(features), function(x) {
-        metaGene(features=features[x,], plusCVG=plusCVG, minusCVG=minusCVG,
+        metaGene(features=features[x, ], plusCVG=plusCVG, minusCVG=minusCVG,
         size=size, up=up, down=down)
-    }, ...)
+    }
+    , ...)
 
     allSamples <- mclapply(1:nSampling, function(x) {
         inx <- sample(1:length(features), size=samplingSize, replace=TRUE)
         onesample <- metaList[inx]
         mat <- sapply(onesample, function(x) as.integer(x))
         Rle(apply(mat, 1, sum))
-    }, ...)
+    }
+    , ...)
 
     M <- sapply(allSamples, function(x) as.integer(x))
     return(Rle(apply(M, 1, median)) / samplingSize)
@@ -242,12 +244,12 @@ metaGeneMatrix <- function(features, reads, size= 50, up=1000, down=up,
 
     ## Append data from all chromosomes.
     H <- NULL
-    for(i in seq_along(C)) {
+    for (i in seq_along(C)) {
         # Which KG?  prb?
         indxF   <- which(as.character(seqnames(features)) == C[i])
         indxPrb <- which(as.character(seqnames(reads)) == C[i])
 
-        if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+        if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
             H <- rbind(H, mcp[[i]])
         }
     }
@@ -262,16 +264,16 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
     indxF   <- which(as.character(seqnames(features)) == C[i])
     indxPrb <- which(as.character(seqnames(reads)) == C[i])
 
-    if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+    if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
         ## Order -- Make sure, b/c this is one of our main assumptions.
         ## Otherwise violated for DBTSS.
-        ord <- order(start(features[indxF,]))
+        ord <- order(start(features[indxF, ]))
         ## Type coersions.
-        FeatureStart    <- start(features[indxF,][ord])
-        FeatureStr  <- as.character(strand(features[indxF,][ord]))
-        PROBEStart  <- start(reads[indxPrb,])
-        PROBEEnd    <- end(reads[indxPrb,])
-        PROBEStr    <- as.character(strand(reads[indxPrb,]))
+        FeatureStart    <- start(features[indxF, ][ord])
+        FeatureStr  <- as.character(strand(features[indxF, ][ord]))
+        PROBEStart  <- start(reads[indxPrb, ])
+        PROBEEnd    <- end(reads[indxPrb, ])
+        PROBEStr    <- as.character(strand(reads[indxPrb, ]))
         size        <- as.integer(size)
         up          <- as.integer(up)
         down        <- as.integer(down)
@@ -283,8 +285,8 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
         dim(PROBEEnd)       <- c(NROW(PROBEEnd),     NCOL(PROBEEnd))
         dim(PROBEStr)       <- c(NROW(PROBEStr),     NCOL(PROBEStr))
 
-        if(debug) {
-            message(C[i],": Counting reads in specified region.")
+        if (debug) {
+            message(C[i], ": Counting reads in specified region.")
         }
         Hprime <- .Call(
             "MatrixOfReadsByFeature", FeatureStart, FeatureStr, PROBEStart,
@@ -325,9 +327,9 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
 #
 metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
     C <- sort(unique(as.character(seqnames(features))))
-    H <- rep(0,n_windows)
-    for(i in 1:NROW(C)) {
-        if(debug) {
+    H <- rep(0, n_windows)
+    for (i in 1:NROW(C)) {
+        if (debug) {
             message(C[i])
         }
 
@@ -335,18 +337,18 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
         indxF   <- which(as.character(seqnames(features)) == C[i])
         indxPrb <- which(as.character(seqnames(reads)) == C[i])
 
-        if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+        if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
             ## Order -- Make sure, b/c this is one of our main assumptions.
             ## Otherwise violated for DBTSS.
-            ord <- order(start(features[indxF,]))
+            ord <- order(start(features[indxF, ]))
 
             ## Type coersions.
-            FeatureStart    <- start(features[indxF,][ord])
-            FeatureEnd  <- end(features[indxF,][ord])
-            FeatureStr  <- as.character(strand(features[indxF,][ord]))
-            PROBEStart  <- start(reads[indxPrb,])
-            PROBEEnd    <- end(reads[indxPrb,])
-            PROBEStr    <- as.character(strand(reads[indxPrb,]))
+            FeatureStart    <- start(features[indxF, ][ord])
+            FeatureEnd  <- end(features[indxF, ][ord])
+            FeatureStr  <- as.character(strand(features[indxF, ][ord]))
+            PROBEStart  <- start(reads[indxPrb, ])
+            PROBEEnd    <- end(reads[indxPrb, ])
+            PROBEStr    <- as.character(strand(reads[indxPrb, ]))
 
             ## Set dimensions.
             dim(FeatureStart)   <- c(NROW(FeatureStart), NCOL(FeatureStart))
@@ -358,15 +360,15 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
             mcpg <- mclapply(c(1:NROW(FeatureStart)), function(iFeatures) {
                 ws <- (FeatureEnd[iFeatures]-FeatureStart[iFeatures])/n_windows
                 ## This WILL be an integer.
-                if(debug) {
+                if (debug) {
                     message(
-                        C[i],": Counting reads in specified region:",
-                        FeatureStart[iFeatures],"-",FeatureEnd[iFeatures])
+                        C[i], ": Counting reads in specified region:",
+                        FeatureStart[iFeatures], "-", FeatureEnd[iFeatures])
                     message(
-                        C[i],": Window size:",
-                        FeatureStart[iFeatures],"-",FeatureEnd[iFeatures])
+                        C[i], ": Window size:",
+                        FeatureStart[iFeatures], "-", FeatureEnd[iFeatures])
                     message(
-                        C[i],": End-Start:",
+                        C[i], ": End-Start:",
                         FeatureEnd[iFeatures]-FeatureStart[iFeatures])
                 }
                 DataByOne <-
@@ -376,30 +378,31 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
                         FeatureStart[iFeatures], FeatureEnd[iFeatures],
                         PACKAGE="groHMM")
 
-                if(debug) {
-                    message("DataByOne size:",NROW(DataByOne))
+                if (debug) {
+                    message("DataByOne size:", NROW(DataByOne))
                 }
 
                 ## This seems almost immediate on my Pentium M machine.
                 Hprime <- unlist(lapply(1:NROW(H), function(i) {
-                    indx <- ceiling(ws*(i-1)+1):ceiling(ws*i)
+                    indx <- ceiling(ws * (i - 1) + 1):ceiling(ws * i)
                     return(sum(DataByOne[indx]))
                 }))
 
                 ## Reverse it for "-" strands.
-                if(FeatureStr[iFeatures] == "-")
+                if (FeatureStr[iFeatures] == "-")
                     Hprime <- rev(Hprime)
 
                 return(Hprime/ws)
-            }, ...)
+            }
+            , ...)
 
             ## Add genes from mclapply together.
-            for(iFeatures in 1:NROW(FeatureStart)) {
+            for (iFeatures in 1:NROW(FeatureStart)) {
                 H<- H+mcpg[[i]]
             }
         }
-        if(debug) {
-            message(C[i],": Done!")
+        if (debug) {
+            message(C[i], ": Done!")
         }
     }
 
@@ -435,11 +438,12 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
 ##  TODO:
 ##  (1) Implement support for a Peaks$strand
 ##  (2) ...
-averagePlot <- function(ProbeData, Peaks, size=50, bins= seq(-1000,1000,size)){
+averagePlot <- function(
+    ProbeData, Peaks, size=50, bins=seq(-1000, 1000, size)) {
 
     ## For each chromosome.
     ProbeData$minDist <- rep(999)
-    for(chr in unique(Peaks[[1]])) {
+    for (chr in unique(Peaks[[1]])) {
 
         ## Get the set of data that fits.
         indxPeaks <- which(Peaks[[1]] == chr)
@@ -447,24 +451,29 @@ averagePlot <- function(ProbeData, Peaks, size=50, bins= seq(-1000,1000,size)){
         ## The '$' ensures that chrom is end of line.  Otherwise, grep for chr1
         ## returns chr10-chr19 as well.
         ## Should work fine, even when chromosome is simply "chrN".
-        indxAffxProbes <- grep(paste(chr,"$", sep=""), ProbeData[[1]], perl=TRUE)
+        indxAffxProbes <- grep(
+            apaste(chr, "$", sep=""), ProbeData[[1]], perl=TRUE)
 
         ## Calculate the minimum distance between the probe and the vector
         ## over all features ...
         ProbeData$minDist[indxAffxProbes] <-
             unlist(lapply(indxAffxProbes, function(x) {
                 ## TODO: For strand to switch it, just multiply by strand here.
-                return((
-                    ProbeData[x,2] -
-                    Peaks[indxPeaks,2])[which.min(abs(
-                    ProbeData[x,2] -
-                    Peaks[indxPeaks,2]))])}))
+                return( (
+                    ProbeData[x, 2] -
+                    Peaks[indxPeaks, 2])[which.min(abs(
+                    ProbeData[x, 2] -
+                    Peaks[indxPeaks, 2]))])
+            }
+            ))
     }
 
     ## Make bins.  Take averages and all that...
     means <- unlist(lapply(c(1:NROW(bins)), function(i){
         mean(ProbeData[(
             ProbeData$minDist >=
-            (bins[i]-size) & ProbeData$minDist < bins[i]),3])}))
-    return(data.frame(windowCenter= bins+(size/2), means))
+            (bins[i]-size) & ProbeData$minDist < bins[i]), 3])
+    }
+    ))
+    return(data.frame(windowCenter=bins + size / 2, means))
 }

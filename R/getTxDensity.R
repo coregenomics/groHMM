@@ -55,17 +55,17 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     ol <- findOverlaps(tx, annox)
 
     ## Count tx
-    combinedGenes <- unique(queryHits(ol[duplicated(queryHits(ol)),]))
+    combinedGenes <- unique(queryHits(ol[duplicated(queryHits(ol)), ]))
     ## Count annox
-    brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)),]))
+    brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)), ]))
     message("Merged annotations: ", length(combinedGenes))
     message("Dissociated a single annotation: ", length(brokenUp))
     message("Overlaps between transcript and annotation:")
     message("Total = ", length(ol))
 
     ## For each annox, find the best matching tx, combinedGenes case...
-    intx_rg <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
-    intx_rg_oRatio <- width(intx_rg) / width(tx[queryHits(ol),])
+    intx_rg <- pintersect(tx[queryHits(ol), ], annox[subjectHits(ol), ])
+    intx_rg_oRatio <- width(intx_rg) / width(tx[queryHits(ol), ])
 
     ## Tx matches multiple times on a same annox
     remove_rg <-
@@ -76,13 +76,13 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
         })))
 
     if (length(remove_rg) > 0)
-        ol <- ol[-remove_rg,]
+        ol <- ol[-remove_rg, ]
 
     ## For each transcript, find the best matching annox, brokenUp case...,
-    brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)),]))
+    brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)), ]))
 
-    intx_bu  <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
-    intx_bu_oRatio <- width(intx_bu) / width(annox[subjectHits(ol),])
+    intx_bu  <- pintersect(tx[queryHits(ol), ], annox[subjectHits(ol), ])
+    intx_bu_oRatio <- width(intx_bu) / width(annox[subjectHits(ol), ])
 
     ## Annox matches multiple times on a same transcript
     remove_bu <- unique(unlist(lapply(brokenUp, function(x) {
@@ -91,31 +91,31 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
         inx[-m]
     })))
     if (length(remove_bu) > 0)
-        ol <- ol[-remove_bu,]
+        ol <- ol[-remove_bu, ]
 
     message(" Used for density = ", length(ol))
 
-    olTx <- tx[queryHits(ol),]
+    olTx <- tx[queryHits(ol), ]
     ## Now get the coverage of selected transcripts
-    olStrand <- as.character(strand(tx[queryHits(ol),]))
-    olChrom <- seqnames(tx[queryHits(ol),])
+    olStrand <- as.character(strand(tx[queryHits(ol), ]))
 
     ## Get the extended region for annox
     up <- 1L
     down <- 2L
     message("Calculate overlapping ... ", appendLF=FALSE)
     promo  <- unlist(GRangesList(mclapply(subjectHits(ol), function(x) {
-        w <- width(annox[x,])
-        promoters(annox[x,], upstream=round(w*up), downstream=round(w*down))
-    }, ... )))
+        w <- width(annox[x, ])
+        promoters(annox[x, ], upstream=round(w*up), downstream=round(w*down))
+    }
+    , ... )))
 
     pintx <- pintersect(promo, olTx)
 
     ## Get the overlapped coverage
     olcvg <- mclapply(1:length(ol), function(x) {
-        t <- olTx[x,]
-        p <- promo[x,]
-        i <- pintx[x,]
+        t <- olTx[x, ]
+        p <- promo[x, ]
+        i <- pintx[x, ]
         ## Position is relative to the minimum start
         minStart <- min(start(t), start(p))
         t <- shift(t, -minStart + 1)
@@ -128,7 +128,8 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
             Rle(rTF[start(p):end(p)])
         else
             rev(Rle(rTF[start(p):end(p)]))
-    }, ...)
+    }
+    , ...)
     message("OK")
 
     message("Scale overlapping ... ", appendLF=FALSE)
@@ -136,7 +137,8 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     cvgWidth <- round(up * scale) + round(down * scale)
     sccvg <- mclapply(olcvg, function(x) {
         getLIValues(x, cvgWidth)
-    }, ... )
+    }
+    , ... )
     message("OK")
 
     M <- sapply(sccvg, function(x) as.integer(x))
@@ -145,18 +147,20 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
         message("Sampling ... ", appendLF=FALSE)
         allSamples <- mclapply(1:nSampling, function(x) {
             inx <- sample(1:length(ol), size=sSize, replace=TRUE)
-            onesample <- M[,inx]
+            onesample <- M[, inx]
             Rle(apply(onesample, 1, sum))
-        }, ...)
+        }
+        , ...)
         mat <- sapply(allSamples, function(x) as.integer(x))
         profile <- apply(mat, 1, mean) / sSize
         message("OK")
     } else {
         profile <- apply(M, 1, sum) / length(ol)
     }
-    if (plot) {                         # nocov start
+    if (plot) {
+        ## nocov start
         plot(
-            -(up * scale):(down * scale-1), profile, ylim=c(0, 1), type="l",
+            - (up * scale):(down * scale-1), profile, ylim=c(0, 1), type="l",
             xlab="Relative to TSS", ylab="Density")
         abline(v=0, col="blue", lty=2)
         abline(v=up*scale, col="blue", lty=2)
@@ -174,11 +178,11 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
 }
 
 getWP <- function (lv, lw) {
-    return( ((lv-1)/(lw-1)) * (0:(lw-1)) + 1)
+    return( ( (lv-1) / (lw-1)) * (0:(lw-1)) + 1)
 }
 
 getLIValue <- function (x0, y0, x1, y1, x) {
-    alpha = (x - x0) / (x1 - x0)
+    alpha <- (x - x0) / (x1 - x0)
     return(y0 + alpha * (y1 - y0))
 }
 
@@ -196,7 +200,7 @@ getLIValues <- function (vals, n) {
     result[length(result)] <- vals[length(vals)]
 
     if (n > 2) {
-        for(i in 2:(n-1)) {
+        for (i in 2:(n-1)) {
             x <- wp[i]
             x0 <- floor(x)
             result[i] <- getLIValue(x0, vals[x0], x0+1, vals[x0+1], x)
@@ -224,26 +228,26 @@ getLIValues <- function (vals, n) {
 evaluateHMMInAnnotations <- function (tx, annox) {
     o <- findOverlaps(tx, annox)
     ## count tx
-    merged <- length(unique(queryHits(o[duplicated(queryHits(o)),])))
+    merged <- length(unique(queryHits(o[duplicated(queryHits(o)), ])))
     ## count annox
-    dissociated <- length(unique(subjectHits(o[duplicated(subjectHits(o)),])))
+    dissociated <- length(unique(subjectHits(o[duplicated(subjectHits(o)), ])))
 
     eval <- data.frame(
         merged=merged, dissociated=dissociated,
-        total=(merged+ dissociated),
-        errorRate=(merged + dissociated)/
+        total=merged + dissociated,
+        errorRate=c(merged + dissociated) /
             (length(tx) + length(annox)),
         txSize=length(tx))
 
-    intx <- pintersect(tx[queryHits(o),], annox[subjectHits(o),])
+    intx <- pintersect(tx[queryHits(o), ], annox[subjectHits(o), ])
     overlap <- data.frame(
-        txRatio=width(intx)/width(tx[queryHits(o),]),
-        annoxRatio= width(intx)/width(annox[subjectHits(o),]),
+        txRatio=width(intx)/width(tx[queryHits(o), ]),
+        annoxRatio= width(intx)/width(annox[subjectHits(o), ]),
         overBases=width(intx),
         similarity=width(intx)/
             pmax(
-                width(tx[queryHits(o),]),
-                width(annox[subjectHits(o),])))
+                width(tx[queryHits(o), ]),
+                width(annox[subjectHits(o), ])))
 
     return(list(eval=eval, overlap=overlap))
 }

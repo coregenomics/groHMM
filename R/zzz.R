@@ -25,8 +25,7 @@
 #' @return The validated number of cores
 #' @examples
 #' cores <- getCores(2L)
-getCores <- function(cores)
-{
+getCores <- function(cores) {
     if (.Platform$OS.type =="windows")
         return(1L)
     cores

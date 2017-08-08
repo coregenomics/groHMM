@@ -54,7 +54,7 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
         stop("'stepSize' is out of range!")
 
     if (!is.null(chrom))
-        reads <- reads[seqnames(reads) == chrom,]
+        reads <- reads[seqnames(reads) == chrom, ]
 
     seqlevels(reads) <- seqlevelsInUse(reads)
     readsList <- split(reads, seqnames(reads))
@@ -64,7 +64,7 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
             if (strand == "*")
                 strand(x) <- "*"
             else
-                x <- x[strand(x) == strand,]
+                x <- x[strand(x) == strand, ]
             x
     })
 

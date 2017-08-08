@@ -46,7 +46,7 @@
 #' distribution (shape and scale).
 #' @author Charles G. Danko
 RgammaMLE <- function(X) {
-    if(sum(X<0) > 0) message("Negative values not allowed!")
+    if (sum(X<0) > 0) message("Negative values not allowed!")
     N <- as.double(NROW(X))
     sumxis <- as.double(sum(X))
     sumlogxis <- as.double(sum(log(X)))
@@ -97,7 +97,7 @@ Rnorm <- function(X) {
 #' @return Returns a list of parameters for the best-fit normal distribution
 #' (alpha, mean, variance, and lambda).
 #' @author Charles G. Danko
-Rnorm.exp <- function(xi, wi=rep(1,NROW(xi)), guess=c(0.5, 0, 1, 1),
+Rnorm.exp <- function(xi, wi=rep(1, NROW(xi)), guess=c(0.5, 0, 1, 1),
     tol=sqrt(.Machine$double.eps), maxit=10000) {
     Fit <- .Call("RNormExpMLE", xi, wi, guess, tol, as.integer(maxit),
         PACKAGE = "groHMM")

@@ -30,11 +30,11 @@
 ## Poisson Variables.  AMERICAN JOURNAL OP EPIDEMIOLOGY.
 ##
 ###############################################################################
-approx.ratio.CI <- function(x1, x2, alpha=0.05) {
+approx_ratio_CI <- function(x1, x2, alpha=0.05) {
     t <- qnorm(1 - alpha/2)
     n <- x1 + x2
-    zp <- (t^2/2 + x1 + 1/2)^2 - ((n + t^2)/n) * (x1 + 1/2)^2
-    zn <- (t^2/2 + x1 - 1/2)^2 - ((n + t^2)/n) * (x1 - 1/2)^2
+    zp <- (t^2/2 + x1 + 1/2)^2 - (n + t^2) / n * (x1 + 1/2)^2
+    zn <- (t^2/2 + x1 - 1/2)^2 - (n + t^2) / n * (x1 - 1/2)^2
 
     a <- (t^2/2 + x1 + 1/2 + sqrt(zp)) / (n + t^2/2 - x1 - 1/2 - sqrt(zp))
     b <- (t^2/2 + x1 - 1/2 - sqrt(zn)) / (n + t^2/2 - x1 + 1/2 + sqrt(zn))
@@ -42,14 +42,14 @@ approx.ratio.CI <- function(x1, x2, alpha=0.05) {
     return(c(b, a))
 }
 
-approx.ratios.CI <- function(num.counts, denom.counts, alpha=0.05) {
+approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
     stopifnot(length(num.counts) == length(denom.counts))
     N <- length(num.counts)
 
     result <- matrix(data=0, nrow=N, ncol=2)
 
     for (i in 1:N)
-        result[i, ] <- approx.ratio.CI(num.counts[i], denom.counts[i], alpha)
+        result[i, ] <- approx_ratio_CI(num.counts[i], denom.counts[i], alpha)
 
     return(result)
 }
@@ -120,12 +120,12 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
         end=as.integer(end(reads)), strand=as.character(strand(reads)))
 
     C <- sort(as.character(unique(f[[1]])))
-    Pause <- rep(0,NROW(f))
-    Body  <- rep(0,NROW(f))
-    Fish  <- rep(0,NROW(f))
+    Pause <- rep(0, NROW(f))
+    Body  <- rep(0, NROW(f))
+    Fish  <- rep(0, NROW(f))
     GeneID <- rep("", NROW(f))
-    CIl  <- rep(0,NROW(f))
-    CIu  <- rep(0,NROW(f))
+    CIl  <- rep(0, NROW(f))
+    CIu  <- rep(0, NROW(f))
 
     ## Pass back information for the fisher test...
     PauseCounts <- rep(0, NROW(f))
@@ -142,28 +142,33 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
     MINU_INDX <- which(f[[4]] == "-")
 
     ###### Identify TSS -- Start for '+' strand, End for '-' strand.
-    if(debug) {
+    if (debug) {
         message("Calculating TSS and gene ends for each gene based
             on strand information.")
     }
-    c_tss_indx <- rep(0,NROW(f))
+    c_tss_indx <- rep(0, NROW(f))
     c_tss_indx[PLUS_INDX] <- 2
     c_tss_indx[MINU_INDX] <- 3
-    c_tss <- unlist(lapply(c(1:NROW(f)), function(x) { f[x, c_tss_indx[x]] }))
+    c_tss <- unlist(lapply(c(1:NROW(f)), function(x) {
+        f[x, c_tss_indx[x]]
+    }
+    ))
 
     ###### Now calculate left and right position for gene body, based
     ### on '+' or '-'.
     ### Calculate gene end.  Gene start is contiguous with the coordinates
     ###for the promoter.
-    c_gene_end_indx <- rep(0,NROW(f))
+    c_gene_end_indx <- rep(0, NROW(f))
     c_gene_end_indx[PLUS_INDX] <- 3
     c_gene_end_indx[MINU_INDX] <- 2
     c_gene_end <- unlist(lapply(c(1:NROW(f)), function(x) {
-        f[x,c_gene_end_indx[x]] }))
+        f[x, c_gene_end_indx[x]]
+    }
+    ))
 
     ### Assign left and right.
-    gLEFT   <- rep(0,NROW(c_tss))
-    gRIGHT  <- rep(0,NROW(c_tss))
+    gLEFT   <- rep(0, NROW(c_tss))
+    gRIGHT  <- rep(0, NROW(c_tss))
     gLEFT[PLUS_INDX]    <- c_tss[PLUS_INDX] + down
     gRIGHT[PLUS_INDX]   <- c_gene_end[PLUS_INDX]
     gLEFT[MINU_INDX]    <- c_gene_end[MINU_INDX]
@@ -176,12 +181,12 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
         debug=debug, ...)
 
     ## Unlist and re-order values for printing in a nice data.frame.
-    for(i in 1:NROW(C)) {
+    for (i in 1:NROW(C)) {
         ## Which KG?  prb?
         indxF <- which(as.character(f[[1]]) == C[i])
         indxPrb <- which(as.character(p[[1]]) == C[i])
 
-        if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+        if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
             Pause[indxF][mcp[[i]][["ord"]]]     <- mcp[[i]][["Pause"]]
             Body[indxF][mcp[[i]][["ord"]]]  <- mcp[[i]][["Body"]]
             Fish[indxF][mcp[[i]][["ord"]]]  <- mcp[[i]][["Fish"]]
@@ -205,7 +210,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
 
 pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
     up, down, UnMAQ, debug) {
-    if(debug) {
+    if (debug) {
         message(C[i])
     }
 
@@ -213,21 +218,21 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
     indxF   <- which(as.character(f[[1]]) == C[i])
     indxPrb <- which(as.character(p[[1]]) == C[i])
 
-    if((NROW(indxF) >0) & (NROW(indxPrb) >0)) {
+    if ( (NROW(indxF) >0) & (NROW(indxPrb) >0)) {
         ## Order -- Make sure, b/c this is one of our main assumptions.
         ## Otherwise violated for DBTSS.
-        Ford <- order(f[indxF,2])
-        Pord <- order(p[indxPrb,2])
+        Ford <- order(f[indxF, 2])
+        Pord <- order(p[indxPrb, 2])
 
         ## Type coersions.
         FeatureStart    <- as.integer(gLEFT[indxF][Ford])
         FeatureEnd  <- as.integer(gRIGHT[indxF][Ford])
-        FeatureStr  <- as.character(f[indxF,4][Ford])
+        FeatureStr  <- as.character(f[indxF, 4][Ford])
         FeatureTSS  <- as.integer(c_tss[indxF][Ford])
 
-        PROBEStart  <- as.integer(p[indxPrb,2][Pord])
-        PROBEEnd    <- as.integer(p[indxPrb,3][Pord])
-        PROBEStr    <- as.character(p[indxPrb,4][Pord])
+        PROBEStart  <- as.integer(p[indxPrb, 2][Pord])
+        PROBEEnd    <- as.integer(p[indxPrb, 3][Pord])
+        PROBEStr    <- as.character(p[indxPrb, 4][Pord])
 
         ## Set dimensions.
         dim(FeatureStart)   <- c(NROW(FeatureStart), NCOL(FeatureStart))
@@ -240,16 +245,16 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
 
         ## Run the calculations on the gene.
         ## Calculate the maximal 50 bp window.
-        if(debug) {
-            message(C[i],": Counting reads in pause peak.")
+        if (debug) {
+            message(C[i], ": Counting reads in pause peak.")
         }
         HPause <- .Call(
             "NumberOfReadsInMaximalSlidingWindow", FeatureTSS, FeatureStr,
             PROBEStart, PROBEEnd, PROBEStr, size, up, down, PACKAGE="groHMM")
 
         ## Run the calculate on the gene body...
-        if(debug) {
-            message(C[i],": Counting reads in gene.")
+        if (debug) {
+            message(C[i], ": Counting reads in gene.")
         }
         HGeneBody <- .Call(
             "CountReadsInFeatures", FeatureStart, FeatureEnd, FeatureStr,
@@ -261,21 +266,22 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
         ## Genes < 1kb, there is no suitable area in the body of the gene.
 
         ## Calculate UN-MAQable regions...
-        if(!is.null(UnMAQ)) {
+        if (!is.null(UnMAQ)) {
 
             ## Count start index.
             chr_indx <- which(UnMAQ[[1]][[1]] == C[i])
             CHRSIZE <- as.integer(UnMAQ[[1]][[2]][chr_indx])
             CHRSTART <- as.integer(0)
-            if(chr_indx > 1) {  ## Running on 1:0 gives c(1, 0)
+            if (chr_indx > 1) {
+                ## Running on 1:0 gives c(1, 0)
                 CHRSTART <- as.integer(
                     sum(UnMAQ[[1]][[2]][
                         c(1:(chr_indx-1))
                     ]) +1)
             }
 
-            if(debug) {
-                message(C[i],": Counting unMAQable regions.")
+            if (debug) {
+                message(C[i], ": Counting unMAQable regions.")
                 message("CHRSIZE:", CHRSIZE, "CHRSTART:", CHRSTART)
             }
 
@@ -288,19 +294,19 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
             Difference <- Difference - nonmappable + 1
             ## Otherwise, get -1 for some.
 
-            if(debug) {
+            if (debug) {
                 print(head(nonmappable))
                 print(as.integer(head(Difference)))
             }
         }
 
         ## Now use Fisher's Exact.
-        if(debug) {
-            message(C[i],": Using Fisher's exact.")
+        if (debug) {
+            message(C[i], ": Using Fisher's exact.")
         }
         ## Make uniform reads.
-        Up <- round(HPause + HGeneBody)*(size)/(size+Difference)
-        Ug <- round(HPause + HGeneBody)*(Difference)/(size+Difference)
+        Up <- round(HPause + HGeneBody) * size / (size + Difference)
+        Ug <- round(HPause + HGeneBody) * Difference / (size + Difference)
         HFish <- unlist(lapply(c(1:NROW(Ford)), function(x) {
             fisher.test(
                 data.frame(
@@ -311,22 +317,22 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
         } ))
 
         ## Make return values.
-        Pause_c     <- as.double(HPause/size)
-        Body_c  <- as.double((HGeneBody+1)/Difference)
+        Pause_c     <- as.double(HPause / size)
+        Body_c  <- as.double( (HGeneBody + 1) / Difference)
         ## 6-5-2012 -- Add a pseudocount here,
         ## forcing at least 1 read in the gene body.
         Fish_c  <- as.double(HFish)
-        GeneID_c    <- as.character(f[indxF,5][Ford])
+        GeneID_c    <- as.character(f[indxF, 5][Ford])
 
         PauseCounts_c <- HPause
         BodyCounts_c  <- HGeneBody
         UpCounts_c    <- round(Up)
         UgCounts_c    <- round(Ug)
 
-        aCI <- approx.ratios.CI(HPause, HGeneBody)
+        aCI <- approx_ratios_CI(HPause, HGeneBody)
         scaleFactor <- Difference/size ## Body/ pause, must be 1/ PI units.
-        CIl_c <- as.double(aCI[,1]*scaleFactor)
-        CIu_c <- as.double(aCI[,2]*scaleFactor)
+        CIl_c <- as.double(aCI[, 1]*scaleFactor)
+        CIu_c <- as.double(aCI[, 2]*scaleFactor)
 
         return(list(
             Pause=Pause_c, Body=Body_c, Fish=Fish_c, GeneID=GeneID_c,
