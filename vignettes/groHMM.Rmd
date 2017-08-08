@@ -403,7 +403,7 @@ td <- getTxDensity(
 u <- par("usr")
 lines(
     c(u[1], 0, 0, 1000, 1000, u[2]),
-    c(0, 0, u[4] - .04,u[4] - .04, 0, 0),
+    c(0, 0, u[4] - .04, u[4] - .04, 0, 0),
     col="red")
 legend("topright", lty=c(1,1), col=c(2,1), c("ideal", "groHMM"))
 text(c(-500, 500), c(.05, .5), c("FivePrimeFP", "TP"))
