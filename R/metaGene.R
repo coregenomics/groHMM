@@ -214,8 +214,6 @@ samplingMetaGene <- function(features, plusCVG, minusCVG, size=100L, up=10000L,
 #' @param up Distance upstream of each f to align and histogram Default: 1 kb.
 #' @param down Distance downstream of each f to align and histogram
 #' Default: same as up.
-#' @param debug If set to TRUE, provides additional print options.
-#' Default: FALSE
 #' @param ... Extra argument passed to mclapply
 #' @return Returns a vector representing the 'typical' signal across
 #' genes of different length.
@@ -233,14 +231,14 @@ samplingMetaGene <- function(features, plusCVG, minusCVG, size=100L, up=10000L,
 ##
 ##  Assumptions: Same as MetaGene
 metaGeneMatrix <- function(features, reads, size= 50, up=1000, down=up,
-    debug=FALSE, ...) {
+    ...) {
 
     C <- sort(unique(as.character(seqnames(features))))
 
     ## Run parallel version.
     mcp <- mclapply(
         seq_along(C), metaGeneMatrix_foreachChrom, C=C, features=features,
-        reads=reads, size=size, up=up, down=down, debug=debug, ...)
+        reads=reads, size=size, up=up, down=down, ...)
 
     ## Append data from all chromosomes.
     H <- NULL
@@ -258,8 +256,7 @@ metaGeneMatrix <- function(features, reads, size= 50, up=1000, down=up,
 }
 
 
-metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
-    debug) {
+metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down) {
     ## Which KG?  prb?
     indxF   <- which(as.character(seqnames(features)) == C[i])
     indxPrb <- which(as.character(seqnames(reads)) == C[i])
@@ -285,9 +282,6 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
         dim(PROBEEnd)       <- c(NROW(PROBEEnd),     NCOL(PROBEEnd))
         dim(PROBEStr)       <- c(NROW(PROBEStr),     NCOL(PROBEStr))
 
-        if (debug) {
-            message(C[i], ": Counting reads in specified region.")
-        }
         Hprime <- .Call(
             "MatrixOfReadsByFeature", FeatureStart, FeatureStr, PROBEStart,
             PROBEEnd, PROBEStr, size, up, down, PACKAGE = "groHMM")
@@ -305,8 +299,6 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
 #' @param features A GRanges object representing a set of genomic coordinates.
 #' @param reads A GRanges object representing a set of mapped reads.
 #' @param n_windows The number of windows to break genes into.
-#' @param debug If set to TRUE, provides additional print options.
-#' Default: FALSE
 #' @param ... Extra argument passed to mclapply
 #' @return Returns a vector representing the 'typical' signal across genes of
 #' different length.
@@ -325,14 +317,10 @@ metaGeneMatrix_foreachChrom <- function(i, C, features, reads, size, up, down,
 ##  (2) Gene list should be pretty short, as most of the processing and
 ##  looping over genes is currently done in R.
 #
-metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
+metaGene_nL <- function(features, reads, n_windows=1000, ...) {
     C <- sort(unique(as.character(seqnames(features))))
     H <- rep(0, n_windows)
     for (i in 1:NROW(C)) {
-        if (debug) {
-            message(C[i])
-        }
-
         ## Which KG?  prb?
         indxF   <- which(as.character(seqnames(features)) == C[i])
         indxPrb <- which(as.character(seqnames(reads)) == C[i])
@@ -360,27 +348,12 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
             mcpg <- mclapply(c(1:NROW(FeatureStart)), function(iFeatures) {
                 ws <- (FeatureEnd[iFeatures]-FeatureStart[iFeatures])/n_windows
                 ## This WILL be an integer.
-                if (debug) {
-                    message(
-                        C[i], ": Counting reads in specified region:",
-                        FeatureStart[iFeatures], "-", FeatureEnd[iFeatures])
-                    message(
-                        C[i], ": Window size:",
-                        FeatureStart[iFeatures], "-", FeatureEnd[iFeatures])
-                    message(
-                        C[i], ": End-Start:",
-                        FeatureEnd[iFeatures]-FeatureStart[iFeatures])
-                }
                 DataByOne <-
                     .Call(
                         "WindowAnalysis", PROBEStart, PROBEEnd, PROBEStr,
                         FeatureStr[iFeatures], as.integer(1), as.integer(1),
                         FeatureStart[iFeatures], FeatureEnd[iFeatures],
                         PACKAGE="groHMM")
-
-                if (debug) {
-                    message("DataByOne size:", NROW(DataByOne))
-                }
 
                 ## This seems almost immediate on my Pentium M machine.
                 Hprime <- unlist(lapply(1:NROW(H), function(i) {
@@ -400,9 +373,6 @@ metaGene_nL <- function(features, reads, n_windows=1000, debug=FALSE, ...) {
             for (iFeatures in 1:NROW(FeatureStart)) {
                 H<- H+mcpg[[i]]
             }
-        }
-        if (debug) {
-            message(C[i], ": Done!")
         }
     }
 

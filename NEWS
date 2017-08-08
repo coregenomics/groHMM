@@ -51,6 +51,10 @@ BUG FIXES AND IMPROVEMENTS
     * New maintainer in response to dead upstream.
     * Add contributor instructions in README.
     * Add GitHub continuous integration using Travis-CI, covr, and codecov.
+      - Removed debugging parameters and their corresponding debug print
+        statements from functions.  For troubleshooting faults, it is better to
+        use debugonce(), browser(), etc per adv-r.had.co.nz and improve the now
+        included unit tests.
     * Fix R check errors, warnings and notes:
       - Fix RgammaMLE() namespace collision between R and C functions by
         renaming C function to Rgamma().

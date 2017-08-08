@@ -5,8 +5,7 @@
 \title{Returns a matrix, with rows representing read counts across a specified
 gene, or other features of interest.}
 \usage{
-metaGeneMatrix(features, reads, size = 50, up = 1000, down = up,
-  debug = FALSE, ...)
+metaGeneMatrix(features, reads, size = 50, up = 1000, down = up, ...)
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.}
@@ -19,9 +18,6 @@ metaGeneMatrix(features, reads, size = 50, up = 1000, down = up,
 
 \item{down}{Distance downstream of each f to align and histogram
 Default: same as up.}
-
-\item{debug}{If set to TRUE, provides additional print options.
-Default: FALSE}
 
 \item{...}{Extra argument passed to mclapply}
 }
