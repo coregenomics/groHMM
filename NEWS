@@ -5,60 +5,61 @@ NEW FEATURES
 
     * Better integration with Bioconductor API:
       - Added BiocParallel support for polymeraseWave().
-      - Propagate mcols() from GRanges, remove hard-coded column names,
-        and limit use of data.frame objects.
-      - Drop functionality such as readBed() and writeWiggle() already
-        present in the rtracklayer package maintained by the
-        Bioconductor core team.
-    * polymeraseWave() now has a progress bar and has faster
-      processing from several changes:
+      - Propagate mcols() from GRanges, remove hard-coded column names, and
+        limit use of data.frame objects.
+      - Drop functionality such as readBed() and writeWiggle() already present
+        in the rtracklayer package maintained by the Bioconductor core team.
+    * polymeraseWave() now has a progress bar and has faster processing from
+      several changes:
       - Multi-core processing.
       - Less memory usage.
-      - HMM calculations 10x faster not including muti-core
-        processing.
-      - Genes are ignored if they have no reads within or nearby
-        instead of blindly processing all annotated genes.
+      - HMM calculations 10x faster not including muti-core processing.
+      - Genes are ignored if they have no reads within or nearby instead of
+        blindly processing all annotated genes.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
-    * Drop readBed() and writeWiggle() reimplementation of
-      rtracklayer import.bed(), and export.bw() / export.wig().
+    * Drop readBed() and writeWiggle() reimplementation of rtracklayer
+      import.bed(), and export.bw() / export.wig().
     * Drop broken NonMap argument of polymeraseWave().
-    * Verbose flag now works for HMM using C functions.  The large
-      volume of C messages can be silenced as originally intended
-      instead of always being verbose.
-    * Replace sweave package vignette with Rmd for easier user
-      interaction.  Less effort should be needed to maintain the
-      vignette due to simpler syntax, and fewer obtuse LaTeX errors.
-    * Disable default plotting of getTxDensity().  Only functions
-      whose names start with 'plot' automatically generate plots.
-    * getTxDensity() is faster and returns exact values instead of
-      trapezoidal approximation.
+    * Verbose flag now works for HMM using C functions.  The large volume of C
+      messages can be silenced as originally intended instead of always being
+      verbose.
+    * Replace sweave package vignette with Rmd for easier user interaction.
+      Less effort should be needed to maintain the vignette due to simpler
+      syntax, and fewer obtuse LaTeX errors.
+    * Disable default plotting of getTxDensity().  Only functions whose names
+      start with 'plot' automatically generate plots.
+    * getTxDensity() is faster and returns exact values instead of trapezoidal
+      approximation.
     * windowAnalysis() now has no upper limit on stepSize.
 
 BUG FIXES AND IMPROVEMENTS
 
-    * Fix windowAnalysis() "subscript out of bounds" error, and
-      add corner case of empty ranges.
-    * Fix corner cases of breakTranscriptsOnGenes() and
-      combineTranscripts() failing when no break or join errors are
-      detected.
-    * One can now control makeConsensusAnnotations() multi-core
-      parallelism.  Remove the hard coded 10 CPU cores.
-    * Move all packages from Depends to Imports to fix Travis-CI
-      bootstrap errors.
-    * Added unit test suite using testthat.  All bugs discovered since
-      version 1.7.0 now have corresponding regression tests.
+    * Fix windowAnalysis() "subscript out of bounds" error, and add corner case
+      of empty ranges.
+    * Fix corner cases of breakTranscriptsOnGenes() and combineTranscripts()
+      failing when no break or join errors are detected.
+    * One can now control makeConsensusAnnotations() multi-core parallelism.
+      Remove the hard coded 10 CPU cores.
+    * Move all packages from Depends to Imports to fix Travis-CI bootstrap
+      errors.
+    * Added unit test suite using testthat.  All bugs discovered since version
+      1.7.0 now have corresponding regression tests.
     * New maintainer in response to dead upstream.
     * Add contributor instructions in README.
-    * Add GitHub continuous integration using Travis-CI, covr, and
-      codecov.
+    * Add GitHub continuous integration using Travis-CI, covr, and codecov.
     * Fix R check errors, warnings and notes:
       - Fix RgammaMLE() namespace collision between R and C functions by
-	renaming C function to Rgamma().
-      - Add useDynamicSymbols removed by a previous maintainer in
-        Bioconductor 3.0.
+        renaming C function to Rgamma().
+      - Add useDynamicSymbols removed by a previous maintainer in Bioconductor
+        3.0.
     * Fix BiocCheck errors, warnings and notes:
       - Drop use of <<- from writeWriggle()
       - Indent at multiples of 4 spaces.
       - Wrap lines at 80 columns.
+
+
+;; Local Variables:
+;; mode: org
+;; End:
