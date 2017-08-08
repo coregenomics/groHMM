@@ -44,8 +44,10 @@ BUG FIXES AND IMPROVEMENTS
       Remove the hard coded 10 CPU cores.
     * Move all packages from Depends to Imports to fix Travis-CI bootstrap
       errors.
-    * Added unit test suite using testthat.  All bugs discovered since version
-      1.7.0 now have corresponding regression tests.
+    * Add unit test suite using testthat:
+      - All bugs discovered since version 1.7.0 now have corresponding
+        regression tests.
+      - Add lintr in unit tests to preserve code style.
     * New maintainer in response to dead upstream.
     * Add contributor instructions in README.
     * Add GitHub continuous integration using Travis-CI, covr, and codecov.
