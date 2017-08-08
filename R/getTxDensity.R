@@ -65,15 +65,13 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
 
     ## For each annox, find the best matching tx, combinedGenes case...
     intx_rg <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
-    intx_rg_df <- data.frame(
-        tx=queryHits(ol), annox=subjectHits(ol),
-        oRatio=width(intx_rg)/width(tx[queryHits(ol),]))
+    intx_rg_oRatio <- width(intx_rg) / width(tx[queryHits(ol),])
 
     ## Tx matches multiple times on a same annox
     remove_rg <-
         unique(unlist(lapply(combinedGenes, function(x) {
             inx <- which(queryHits(ol) == x)
-            m <- which.max(intx_rg_df$oRatio[inx])
+            m <- which.max(intx_rg_oRatio[inx])
             inx[-m]
         })))
 
@@ -84,14 +82,12 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)),]))
 
     intx_bu  <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
-    intx_bu_df <- data.frame(tx=queryHits(ol), annox=subjectHits(ol),
-            oRatio=width(intx_bu)/width(annox[subjectHits(ol),]))
-
+    intx_bu_oRatio <- width(intx_bu) / width(annox[subjectHits(ol),])
 
     ## Annox matches multiple times on a same transcript
     remove_bu <- unique(unlist(lapply(brokenUp, function(x) {
         inx <- which(subjectHits(ol) == x)
-        m <- which.max(intx_bu_df$oRatio[inx])
+        m <- which.max(intx_bu_oRatio[inx])
         inx[-m]
     })))
     if (length(remove_bu) > 0)
@@ -137,14 +133,14 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
 
     message("Scale overlapping ... ", appendLF=FALSE)
     ## Get the scaled coverage
-    cvgWidth <- round(up*scale) + round(down*scale)
+    cvgWidth <- round(up * scale) + round(down * scale)
     sccvg <- mclapply(olcvg, function(x) {
         getLIValues(x, cvgWidth)
     }, ... )
     message("OK")
 
     M <- sapply(sccvg, function(x) as.integer(x))
-    sSize <- round(length(ol)*samplingRatio)
+    sSize <- round(length(ol) * samplingRatio)
     if (nSampling > 0) {
         message("Sampling ... ", appendLF=FALSE)
         allSamples <- mclapply(1:nSampling, function(x) {
@@ -153,27 +149,28 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
             Rle(apply(onesample, 1, sum))
         }, ...)
         mat <- sapply(allSamples, function(x) as.integer(x))
-        profile <- apply(mat, 1, mean)/sSize
+        profile <- apply(mat, 1, mean) / sSize
         message("OK")
     } else {
-        profile <- apply(M, 1, sum)/length(ol)
+        profile <- apply(M, 1, sum) / length(ol)
     }
     if (plot) {                         # nocov start
-        plot(-(up*scale):(down*scale-1), profile, ylim=c(0, 1), type="l",
+        plot(
+            -(up * scale):(down * scale-1), profile, ylim=c(0, 1), type="l",
             xlab="Relative to TSS", ylab="Density")
         abline(v=0, col="blue", lty=2)
         abline(v=up*scale, col="blue", lty=2)
     }                                   # nocov end
 
-    trap.rule <- function(x,f) {sum(diff(x)*(f[-1]+f[-length(f)]))/2}
-    ## Thanks to: http://tolstoy.newcastle.edu.au/R/help/05/08/9625.html
-
-    FivePrimeFP <- trap.rule(1:scale, profile[1:scale])/scale
-    TP <- trap.rule(1:scale, profile[(scale+1):(scale*2)])/scale
-    PostTTS <- trap.rule(1:scale, profile[(scale*2+1):(scale*3)])/scale
-    TUA <- (TP + (TP- FivePrimeFP))/(1 + TP)
-    return(list(FivePrimeFP=FivePrimeFP, TP=TP, PostTTS=PostTTS, TUA=TUA))
-
+    FivePrimeFP <- sum(profile[1:scale]) / scale
+    TP <- sum(profile[(scale + 1):(scale * 2)]) / scale
+    PostTTS <- sum(profile[(scale * 2 + 1):(scale * 3)]) / scale
+    TUA <- (TP + (TP - FivePrimeFP)) / (1 + TP)
+    return(list(
+        FivePrimeFalsePositive=FivePrimeFP,
+        TruePositive=TP,
+        PostTranscriptionalTerminationSite=PostTTS,
+        TranscriptionUnitAccuracy=TUA))
 }
 
 getWP <- function (lv, lw) {
