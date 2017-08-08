@@ -177,6 +177,9 @@ S40mR1 <- as(readGAlignments(system.file(
 S40mR2 <- as(readGAlignments(system.file(
     "extdata", "S40mR1.bam",
     package="groHMM")), "GRanges") # Use R1 as R2
+# Combine replicates
+S0m <- c(S0mR1, S0mR2)
+S40m <- c(S40mR1, S40mR2)
 ```
 
 ## Transcript Calling
