@@ -23,7 +23,7 @@
 #'
 #' Calculates transcript density for transcripts which overlaps with
 #' annotations.
-#' For 'run genes together' or 'broken up a single annotation' errors,
+#' For 'combined' or 'broken up' errors,
 #' best overlapped transcripts or annotations are used.
 #'
 #' Supports parallel processing using mclapply in the 'parallel' package.
@@ -55,15 +55,15 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     ol <- findOverlaps(tx, annox)
 
     ## Count tx
-    runGenes <- unique(queryHits(ol[duplicated(queryHits(ol)),]))
+    combinedGenes <- unique(queryHits(ol[duplicated(queryHits(ol)),]))
     ## Count annox
     brokenUp <- unique(subjectHits(ol[duplicated(subjectHits(ol)),]))
-    message("Merged annotations: ", length(runGenes))
+    message("Merged annotations: ", length(combinedGenes))
     message("Dissociated a single annotation: ", length(brokenUp))
     message("Overlaps between transcript and annotation:")
     message("Total = ", length(ol))
 
-    ## For each annox, find the best matching tx, runGenes case...
+    ## For each annox, find the best matching tx, combinedGenes case...
     intx_rg <- pintersect(tx[queryHits(ol),], annox[subjectHits(ol),])
     intx_rg_df <- data.frame(
         tx=queryHits(ol), annox=subjectHits(ol),
@@ -71,7 +71,7 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
 
     ## Tx matches multiple times on a same annox
     remove_rg <-
-        unique(unlist(lapply(runGenes, function(x) {
+        unique(unlist(lapply(combinedGenes, function(x) {
             inx <- which(queryHits(ol) == x)
             m <- which.max(intx_rg_df$oRatio[inx])
             inx[-m]

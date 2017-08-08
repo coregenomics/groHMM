@@ -31,7 +31,7 @@ Returns a list of FTD, TTD, PostTTS, and TUA.
 \description{
 Calculates transcript density for transcripts which overlaps with
 annotations.
-For 'run genes together' or 'broken up a single annotation' errors,
+For 'combined' or 'broken up' errors,
 best overlapped transcripts or annotations are used.
 }
 \details{
