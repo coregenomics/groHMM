@@ -130,6 +130,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
 
     ## Run the model separately on each gene.
     if (progress) {
+        ## nocov start
         pb <-
             progress::progress_bar$
             new(
@@ -138,7 +139,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
                     " HMM [:bar] :percent :current/:total",
                     " elapsed: :elapsed eta: :eta"))
         pb$tick(0)
-    }
+    } ## nocov end
     ##    rows <-lapply(seq_along(NROW(genes)), function(i) {
     rows <- data.frame(
         StartWave=rep(NA, NROW(genes)), EndWave=rep(NA, NROW(genes)),
@@ -244,10 +245,11 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             c(TRUE, TRUE, TRUE), as.integer(10), FALSE, PACKAGE = "groHMM"),
             error = function(e) e)
 
-        if (progress) pb$tick()
+        if (progress) pb$tick()         # nocov
 
         ##  Update emis...
         if (length(ans) < 3) {
+            ## nocov start
             ## An error will have a length of 2 (is this guaranteed?!).
             message("Error caught on the C side")
             message(ans)
@@ -257,7 +259,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             ans[[3]] <- c(rep(0, n_gene - 2), 1, 2)
             ans[[4]] <- NA
             ans[[5]] <- NA
-        }
+        } ## nocov end
 
         ansVitervi <- ans[[3]][[1]]
         DTs <- max(which(ansVitervi == 0))
