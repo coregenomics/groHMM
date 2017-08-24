@@ -74,6 +74,17 @@ cov
 zero_coverage(cov)
 ```
 
+If `package_coverage()` fails with linter errors,
+it's probably trying to install the package in a prefix
+which does not install the `.lintr` configuration file from the root directory.
+You can work around this by creating a symlink in the `inst/` directory.
+That way the `.lintr` file will get copied over to the temporary build directory:
+
+``` sh
+cd inst/
+ln -s ../.lintr .lintr
+```
+
 ### Package quality checks
 
 Besides testing and coverage,
