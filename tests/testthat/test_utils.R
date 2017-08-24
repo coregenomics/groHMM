@@ -38,8 +38,8 @@ test_that("windowAnalysis throws error for out of bounds stepSize", {
 
 test_that("windowAnalysis allows empty seqlevels", {
     ## Add empty seqlevels to reads.
-    require(TxDb.Hsapiens.UCSC.hg19.knownGene)
-    hg19_seqinfo <- seqinfo(TxDb.Hsapiens.UCSC.hg19.knownGene)
+    require(TxDb.Hsapiens.UCSC.hg19.knownGene) # nolint
+    hg19_seqinfo <- seqinfo(TxDb.Hsapiens.UCSC.hg19.knownGene) # nolint
     idx_has <- which(names(hg19_seqinfo) %in% names(seqinfo(tx)))
     idx <- union(idx_has, 1:length(hg19_seqinfo))
     seqinfo(tx) <- hg19_seqinfo[names(hg19_seqinfo)[idx]]
