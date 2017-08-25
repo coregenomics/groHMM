@@ -26,7 +26,9 @@
 #' @examples
 #' cores <- getCores(2L)
 getCores <- function(cores) {
+    ## nocov start
     if (.Platform$OS.type =="windows")
         return(1L)
     cores
+    ## nocov end
 }
