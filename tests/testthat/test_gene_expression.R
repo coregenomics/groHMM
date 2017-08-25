@@ -138,3 +138,7 @@ test_that("metaGene ensures reads or coverage as input", {
     expect_error(metaGene(annox, plusCVG=NULL), "plusCVG")
     expect_error(metaGene(annox, minusCVG=NULL), "minusCVG")
 })
+
+test_that("metaGene accepts 'reads' combined input", {
+    expect_s4_class(metaGene(features, reads_, size=4, up=10), "Rle")
+})
