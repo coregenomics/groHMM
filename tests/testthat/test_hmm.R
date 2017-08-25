@@ -1,4 +1,4 @@
-context("Polymerase wave detection")
+context("HMM transcript and polymerase wave detection")
 
 ## Fixtures
 approxDist <- 20000
@@ -103,4 +103,16 @@ test_that("polymeraseWave normal exponental distribution assumption", {
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
         emissionDistAssumption="normExp")
     expect_equal(pw, expected, tolerance = 1e-7)
+})
+
+test_that("detectTranscripts generates sensible transcripts", {
+    ## Runtime is about a minute :/
+    reads_ <- unlist(endoapply(reads, head, 200))
+    hmm <- detectTranscripts(reads_, threshold=1)
+    result <- granges(hmm$transcripts)
+    ## Finds a single transcript.
+    expected <- GRanges("chr7:564350-568449:+")
+    ## Result is stochastic.
+    expect_equal(start(result), start(expected), tolerance=2)
+    expect_equal(end(result), end(expected), tolerance=2)
 })
