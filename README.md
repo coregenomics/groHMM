@@ -22,12 +22,8 @@ install.packages("devtools")
 
 ## Hacking
 
-The place where groHMM needs the most attention
-is increasing the test coverage
-by adding unit tests to `./inst/tests/`.
-One can see where work is needed from the web reports of
+One can see where more unit test coverage is needed from the web reports of
 [codecov](https://codecov.io/gh/coregenomics/groHMM).
-
 Otherwise, one can check
 [Travis CI](https://travis-ci.org/coregenomics/groHMM)
 for notes and warnings to fix.
