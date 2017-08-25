@@ -56,7 +56,7 @@ Run the unit tests with:
 devtools::test()
 ```
 
-The web integration reports take about ~1 hour to generate;
+The web integration reports take about 20 minutes to generate;
 the pacing item being
 [Travis CI](https://travis-ci.org/coregenomics/groHMM).
 

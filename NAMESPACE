@@ -15,4 +15,4 @@ export(
     detectTranscripts, makeConsensusAnnotations, evaluateHMMInAnnotations,
     windowAnalysis, breakTranscriptsOnGenes, combineTranscripts, getTxDensity,
     limitToXkb, runMetaGene, metaGene, pausingIndex, polymeraseWave, getCores,
-    expressedGenes, RgammaMLE, Rnorm, Rnorm.exp)
+    expressedGenes)
