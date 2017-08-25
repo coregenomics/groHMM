@@ -65,10 +65,6 @@ approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
 #' @param size The size of the moving window.
 #' @param up Distance upstream of each f to align and histogram.
 #' @param down Distance downstream of each f to align and histogram (NULL).
-#' @param UnMAQ Data structure representing the coordinates of all un-mappable
-#' regions in the genome.
-#' @param debug If set to TRUE, provides additional print options.
-#' Default: FALSE
 #' @param ... Extra argument passed to mclapply
 #' @return Returns a data.frame of the pausing indices for the input genes.
 #' @author Charles G. Danko and Minho Chae.
@@ -87,11 +83,6 @@ approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
 ##  size    -> The size of the moving window.
 ##  up  -> Distance upstream of each f to align and histogram.
 ##  down    -> Distance downstream of each f to align and histogram (NULL).
-##  UnMAQ   -> Vector of integers representing the coordinates of all
-##  un-MAQable regions in the genome.
-##
-##  Assumptions:
-##  (1)
 ##
 ##  TODO:
 ##  (1) Write C function.
@@ -103,8 +94,7 @@ approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
 ##      transcription, and negative numbers specify upstream sequence.
 ##      This is likely useful for rate; perhaps for identifying internal
 ##      paused-peaks...
-pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
-    UnMAQ=NULL, debug=FALSE, ...) {
+pausingIndex <- function(features, reads, size=50, up=1000, down=1000, ...) {
     ## make sure reads are sorted
     reads <- reads[order(as.character(seqnames(reads)), start(reads)), ]
     f <- data.frame(chrom=as.character(seqnames(features)),
@@ -142,10 +132,6 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
     MINU_INDX <- which(f[[4]] == "-")
 
     ###### Identify TSS -- Start for '+' strand, End for '-' strand.
-    if (debug) {
-        message("Calculating TSS and gene ends for each gene based
-            on strand information.")
-    }
     c_tss_indx <- rep(0, NROW(f))
     c_tss_indx[PLUS_INDX] <- 2
     c_tss_indx[MINU_INDX] <- 3
@@ -177,8 +163,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
     ## Run parallel version.
     mcp <- mclapply(
         c(1:NROW(C)), pausingIndex_foreachChrom, C=C, f=f, p=p, gLEFT=gLEFT,
-        gRIGHT=gRIGHT, c_tss=c_tss, size=size, up=up, down=down, UnMAQ=UnMAQ,
-        debug=debug, ...)
+        gRIGHT=gRIGHT, c_tss=c_tss, size=size, up=up, down=down, ...)
 
     ## Unlist and re-order values for printing in a nice data.frame.
     for (i in 1:NROW(C)) {
@@ -209,11 +194,7 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
 }
 
 pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
-    up, down, UnMAQ, debug) {
-    if (debug) {
-        message(C[i])
-    }
-
+    up, down) {
     ## Which KG?  prb?
     indxF   <- which(as.character(f[[1]]) == C[i])
     indxPrb <- which(as.character(p[[1]]) == C[i])
@@ -245,17 +226,11 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
 
         ## Run the calculations on the gene.
         ## Calculate the maximal 50 bp window.
-        if (debug) {
-            message(C[i], ": Counting reads in pause peak.")
-        }
         HPause <- .Call(
             "NumberOfReadsInMaximalSlidingWindow", FeatureTSS, FeatureStr,
             PROBEStart, PROBEEnd, PROBEStr, size, up, down, PACKAGE="groHMM")
 
         ## Run the calculate on the gene body...
-        if (debug) {
-            message(C[i], ": Counting reads in gene.")
-        }
         HGeneBody <- .Call(
             "CountReadsInFeatures", FeatureStart, FeatureEnd, FeatureStr,
             PROBEStart, PROBEEnd, PROBEStr, PACKAGE="groHMM")
@@ -265,45 +240,7 @@ pausingIndex_foreachChrom <- function(i, C, f, p, gLEFT, gRIGHT, c_tss, size,
         Difference[Difference < 0] <- 0
         ## Genes < 1kb, there is no suitable area in the body of the gene.
 
-        ## Calculate UN-MAQable regions...
-        if (!is.null(UnMAQ)) {
-
-            ## Count start index.
-            chr_indx <- which(UnMAQ[[1]][[1]] == C[i])
-            CHRSIZE <- as.integer(UnMAQ[[1]][[2]][chr_indx])
-            CHRSTART <- as.integer(0)
-            if (chr_indx > 1) {
-                ## Running on 1:0 gives c(1, 0)
-                CHRSTART <- as.integer(
-                    sum(UnMAQ[[1]][[2]][
-                        c(1:(chr_indx-1))
-                    ]) +1)
-            }
-
-            if (debug) {
-                message(C[i], ": Counting unMAQable regions.")
-                message("CHRSIZE:", CHRSIZE, "CHRSTART:", CHRSTART)
-            }
-
-            ## Count unMAQable regions, and size of everything ...
-            nonmappable <- .Call(
-                "CountUnMAQableReads", FeatureStart, FeatureEnd,
-                as.integer(UnMAQ[[2]]), CHRSTART, CHRSIZE, PACKAGE="groHMM")
-
-            ## Adjust size of gene body.
-            Difference <- Difference - nonmappable + 1
-            ## Otherwise, get -1 for some.
-
-            if (debug) {
-                print(head(nonmappable))
-                print(as.integer(head(Difference)))
-            }
-        }
-
         ## Now use Fisher's Exact.
-        if (debug) {
-            message(C[i], ": Using Fisher's exact.")
-        }
         ## Make uniform reads.
         Up <- round(HPause + HGeneBody) * size / (size + Difference)
         Ug <- round(HPause + HGeneBody) * Difference / (size + Difference)

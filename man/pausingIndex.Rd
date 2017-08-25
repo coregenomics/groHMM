@@ -5,8 +5,7 @@
 \title{Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
 INDEX.}
 \usage{
-pausingIndex(features, reads, size = 50, up = 1000, down = 1000,
-  UnMAQ = NULL, debug = FALSE, ...)
+pausingIndex(features, reads, size = 50, up = 1000, down = 1000, ...)
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.}
@@ -18,12 +17,6 @@ pausingIndex(features, reads, size = 50, up = 1000, down = 1000,
 \item{up}{Distance upstream of each f to align and histogram.}
 
 \item{down}{Distance downstream of each f to align and histogram (NULL).}
-
-\item{UnMAQ}{Data structure representing the coordinates of all un-mappable
-regions in the genome.}
-
-\item{debug}{If set to TRUE, provides additional print options.
-Default: FALSE}
 
 \item{...}{Extra argument passed to mclapply}
 }
