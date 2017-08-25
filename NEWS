@@ -21,6 +21,8 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     * Drop readBed() and writeWiggle() reimplementation of rtracklayer
       import.bed(), and export.bw() / export.wig().
+    * Drop total least squares fit functions which were marked as unreliable and
+      unused: tlsDeming(), tlsLoess(), and tlsSvd().
     * Drop broken NonMap/UnMAQ argument of polymeraseWave() and pausingIndex().
     * Drop buggy resampling arguments of getTxDensity().
     * Verbose flag now works for HMM using C functions.  The large volume of C

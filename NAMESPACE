@@ -16,4 +16,4 @@ export(
     windowAnalysis, breakTranscriptsOnGenes, combineTranscripts, getTxDensity,
     limitToXkb, runMetaGene, metaGene, pausingIndex, polymeraseWave, getCores,
     averagePlot, expressedGenes, metaGeneMatrix, metaGene_nL, RgammaMLE, Rnorm,
-    Rnorm.exp, tlsDeming, tlsLoess, tlsSvd)
+    Rnorm.exp)
