@@ -64,3 +64,47 @@ test_that("evaluateHMMInAnnotations reports dissociated", {
     result <- evaluateHMMInAnnotations(annox, tx)$eval
     expect_true(result$dissociated == 1)
 })
+
+test_that("pausingIndex handles empty inputs", {
+    gr <- tx
+
+    result <- pausingIndex(GRanges(), GRanges())
+    expect_s3_class(result, "data.frame")
+    expect_true(NROW(result) == 0)
+
+    result <- pausingIndex(GRanges(), gr)
+    expect_s3_class(result, "data.frame")
+    expect_true(NROW(result) == 0)
+
+    result <- pausingIndex(gr, GRanges())
+    expect_s3_class(result, "data.frame")
+    expect_true(NROW(result) == 1)
+    result$GeneID <- NULL
+    expect_true(all(result == 0))
+})
+
+test_that("pausingIndex returns correct result ", {
+    ## Use man page example
+    features <- GRanges("chr7:2394474-2420377:+")
+    result <- pausingIndex(features, reads[[1]])
+    expected <- data.frame(
+        Pause = 0.5,
+        Body = 0.01260892,
+        Fisher = 5.257256e-7,
+        GeneID = factor("1"),
+        CIlower = 25.87514,
+        CIupper = 60.68879,
+        PauseCounts = 25,
+        BodyCounts = 313,
+        uPCounts = 1,
+        uGCounts = 337
+    )
+    expect_equal(result, expected, tolerance = 1e-6)
+
+    ## Labelled genes
+    symbol <- "my_gene"
+    mcols(features) <- DataFrame(symbol = symbol)
+    result <- pausingIndex(features, reads[[1]])
+    expected$GeneID <- factor(symbol)
+    expect_equal(result, expected, tolerance = 1e-6)
+})
