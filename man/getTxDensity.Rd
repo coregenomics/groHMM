@@ -4,8 +4,7 @@
 \alias{getTxDensity}
 \title{getTxDensity Calculates transcript density.}
 \usage{
-getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
-  samplingRatio = 0.1, ...)
+getTxDensity(tx, annox, plot = FALSE, scale = 1000L, ...)
 }
 \arguments{
 \item{tx}{GRanges of transcripts.}
@@ -17,11 +16,6 @@ getTxDensity(tx, annox, plot = FALSE, scale = 1000L, nSampling = 0L,
 \item{scale}{Numeric. Scaled size of a gene for transcript density
 calculation.
 Default: 1000L}
-
-\item{nSampling}{Numeric. Number of sub-sampling.  Default: 0L}
-
-\item{samplingRatio}{Numeric. Ratio of sampling for annotations.
-Default: 0.1}
 
 \item{...}{Extra argument passed to mclapply.}
 }

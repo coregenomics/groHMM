@@ -36,9 +36,6 @@
 #' @param scale Numeric. Scaled size of a gene for transcript density
 #' calculation.
 #' Default: 1000L
-#' @param nSampling Numeric. Number of sub-sampling.  Default: 0L
-#' @param samplingRatio Numeric. Ratio of sampling for annotations.
-#' Default: 0.1
 #' @param ... Extra argument passed to mclapply.
 #' @return Returns a list of FTD, TTD, PostTTS, and TUA.
 #' @author Minho Chae
@@ -50,8 +47,7 @@
 #' width=seq(900, 1200, by=100)), strand=rep("+", 4))
 #' ## Not run:
 #' # density <- getTxDensity(tx, annox)
-getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
-    samplingRatio=0.1, ...) {
+getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, ...) {
     ol <- findOverlaps(tx, annox)
 
     ## Count tx
@@ -142,21 +138,7 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, nSampling=0L,
     message("OK")
 
     M <- sapply(sccvg, function(x) as.integer(x))
-    sSize <- round(length(ol) * samplingRatio)
-    if (nSampling > 0) {
-        message("Sampling ... ", appendLF=FALSE)
-        allSamples <- mclapply(1:nSampling, function(x) {
-            inx <- sample(1:length(ol), size=sSize, replace=TRUE)
-            onesample <- M[, inx]
-            Rle(apply(onesample, 1, sum))
-        }
-        , ...)
-        mat <- sapply(allSamples, function(x) as.integer(x))
-        profile <- apply(mat, 1, mean) / sSize
-        message("OK")
-    } else {
-        profile <- apply(M, 1, sum) / length(ol)
-    }
+    profile <- apply(M, 1, sum) / length(ol)
     if (plot) {
         ## nocov start
         plot(
