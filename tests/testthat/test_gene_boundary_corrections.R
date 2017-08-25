@@ -165,3 +165,15 @@ test_that("makeConsensusAnnotations output is non-overlapping and condensed", {
     expect_true(isDisjoint(result))
     expect_equal(result, expected)
 })
+
+test_that("makeConsensusAnnotations drops missing gene_id values", {
+    annox_ <- GRanges(c("chr7:1000-2000", "chr7:3000-4000"),
+                      gene_id=CharacterList(list(character(0), "1")))
+    expect_warning(makeConsensusAnnotations(annox_), "dropped")
+})
+
+test_that("makeConsensusAnnotations drops multiple gene_id values", {
+    annox_ <- GRanges(c("chr7:1000-2000", "chr7:3000-4000"),
+                      gene_id=CharacterList(list(c("1", "2"), "1")))
+    expect_warning(makeConsensusAnnotations(annox_), "dropped")
+})

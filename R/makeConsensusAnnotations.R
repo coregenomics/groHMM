@@ -53,6 +53,22 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     ## Check for gene_id column
     if (! any(colnames(mcols(ar)) %in% "gene_id"))
         stop("Missing gene_id column")
+    ## Drop rows missing gene_id values
+    missing <- elementNROWS(mcols(ar)[, "gene_id"]) == 0
+    if (any(missing)) {
+        ar <- ar[!missing, ]
+        warning(
+            sum(missing),
+            " ranges do not have gene_id and they are dropped")
+    }
+    ## Drop multiple gene_id values
+    many <- elementNROWS(mcols(ar)[, "gene_id"]) > 1
+    if (any(many)) {
+        ar <- ar[!many, ]
+        warning(
+            sum(many),
+            " ranges have multiple gene_id and they are dropped")
+    }
 
     ar_list <- split(ar, unlist(mcols(ar)[, "gene_id"]))
     singles <- unlist(ar_list[elementNROWS(ar_list) == 1])
