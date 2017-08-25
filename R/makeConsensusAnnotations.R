@@ -50,22 +50,9 @@
 #' # tx <- tx[grep("random", as.character(seqnames(tx)), invert=TRUE), ]
 #' # ca <- makeConsensusAnnotations(tx)
 makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
-    # check missing gene_id
-    missing <- elementNROWS(mcols(ar)[, "gene_id"]) == 0
-    if (any(missing)) {
-        ar <- ar[!missing, ]
-        warning(
-            sum(missing),
-            " ranges do not have gene_id and they are dropped")
-    }
-
-    many <- elementNROWS(mcols(ar)[, "gene_id"]) > 1
-    if (any(many)) {
-        ar <- ar[!many, ]
-        warning(
-            sum(many),
-            " ranges have multiple gene_id and they are dropped")
-    }
+    ## Check for gene_id column
+    if (! any(colnames(mcols(ar)) %in% "gene_id"))
+        stop("Missing gene_id column")
 
     ar_list <- split(ar, unlist(mcols(ar)[, "gene_id"]))
     singles <- unlist(ar_list[elementNROWS(ar_list) == 1])
