@@ -44,3 +44,23 @@ test_that("getTxDensity splits combined transcript", {
     )
     expect_equal(result, expected, tolerance = 1e-3)
 })
+
+test_that("getLIValues linearly interpolates single value", {
+    vals <- 9
+    n <- 5
+    expect_equal(getLIValues(vals, n), rep(vals, n))
+})
+
+test_that("evaluateHMMInAnnotations returns data.frame", {
+    expect_type(evaluateHMMInAnnotations(tx, annox), "list")
+})
+
+test_that("evaluateHMMInAnnotations reports merged", {
+    result <- evaluateHMMInAnnotations(tx, annox)$eval
+    expect_true(result$merged == 1)
+})
+
+test_that("evaluateHMMInAnnotations reports dissociated", {
+    result <- evaluateHMMInAnnotations(annox, tx)$eval
+    expect_true(result$dissociated == 1)
+})
