@@ -1,5 +1,16 @@
 context("Gene expression")
 
+reads_ <- GRanges("chr7",
+                  IRanges(start=c(1000:1003, 1100:1101),
+                          width=rep(1, 6)),
+                  strand=rep(c("+", "-"), 3))
+features <- GRanges(c("chr7:1000-1000:+",
+                      "chr7:1001-1001:-"))
+values <- c(0, 0.5, 1.5, 0.5, 0)
+expected <- list(sense = Rle(values, c(7, 2, 4, 2, 5)),
+                 antisense = Rle(values, c(6, 2, 4, 2, 6)))
+
+
 test_that("expressedGenes returns data.frame", {
     expect_s3_class(expressedGenes(annox, tx), "data.frame")
     expect_warning(expressedGenes(annox, GRanges()), "empty")
@@ -107,4 +118,23 @@ test_that("pausingIndex returns correct result ", {
     result <- pausingIndex(features, reads[[1]])
     expected$GeneID <- factor(symbol)
     expect_equal(result, expected, tolerance = 1e-6)
+})
+
+test_that("runMetaGene validates anchorType", {
+    expect_error(runMetaGene(annox, tx, anchorType="bad_value"), "anchorType")
+})
+
+test_that("runMetaGene returns correct run length encodings", {
+    ## Use example
+    result <- runMetaGene(features, reads_, size=4, up=10)
+    expect_equal(result, expected)
+
+    result <- runMetaGene(features, reads_, size=4, up=10, anchorType="TTS")
+    expect_equal(result, expected)
+})
+
+test_that("metaGene ensures reads or coverage as input", {
+    expect_error(metaGene(annox, reads=NULL), "reads")
+    expect_error(metaGene(annox, plusCVG=NULL), "plusCVG")
+    expect_error(metaGene(annox, minusCVG=NULL), "minusCVG")
 })
