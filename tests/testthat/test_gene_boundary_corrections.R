@@ -121,3 +121,47 @@ test_that("breakInterval honors 'strand'", {
     expect_equal(end(res)[1], brPos)
     expect_equal(start(res)[2], brPos + gap)
 })
+
+test_that("makeConsensusAnnotations errors on missing 'gene_id'", {
+    expect_error(makeConsensusAnnotations(tx), "gene_id")
+})
+
+test_that("makeConsensusAnnotations output is non-overlapping and condensed", {
+    annox_ <- GRanges(
+        c(
+            "chr7:1000-6000:+",         # multi overlapping isoform
+            "chr7:2000-6000:+",         # multi overlapping isoform
+            "chr7:1000-12000:+",        # multi overlapping isoform
+            "chr7:15000-17000:+",       # single overlapping isoform
+            "chr7:16000-17000:+",       # single overlapping isoform
+            "chr7:20000-22000:+",       # non-overlapping isoform
+            "chr7:22010-23000:+",       # non-overlapping isoform
+            "chr7:25000-26000:+",       # mixed strand isoform
+            "chr7:25000-27000:-",       # mixed strand isoform
+            "chr7:29000-32000:+",       # mixed chrom isoform
+            "chr8:29000-33000:+",       # mixed chrom isoform
+            "chr7:40000-45000:+",       # + overlapping annotation
+            "chr7:44000-50000:+",       # + overlapping annotation
+            "chr7:50000-55000:-",       # - overlapping annotation
+            "chr7:54000-60000:-"        # - overlapping annotation
+        ),
+        gene_id=c(rep(1, 3), rep(2:5, each=2), 6:9))
+    result <- sort(makeConsensusAnnotations(annox_))
+    names(result) <- NULL
+    expected <- sort(GRanges(
+        c(
+            "chr7:1000-6000:+",         # most hit isoform for multi overlapping
+            "chr7:16000-17000:+",       # shorter isoform for single overlapping
+            "chr7:20000-22000:+",       # longer isoform for non-overlapping
+            "chr7:25000-27000:-",       # longer isoform for mixed strand
+            "chr8:29000-33000:+",       # longer isoform for mixed chrom
+            "chr7:40000-43999:+",       # trimmed + overlapping annotation
+            "chr7:44000-50000:+",       # unchanged + overlapping annotation
+            "chr7:50000-55000:-",       # unchanged - overlapping annotation
+            "chr7:55001-60000:-"        # trimmed - overlapping annotation
+        ),
+        gene_id=1:9))
+    expect_s4_class(result, "GRanges")
+    expect_true(isDisjoint(result))
+    expect_equal(result, expected)
+})
