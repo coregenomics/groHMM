@@ -29,7 +29,7 @@
 #' Supports parallel processing using mclapply in the 'parallel' package.
 #' To change the number of processors set the option 'mc.cores'.
 #'
-#'  Reference: Hah N, Danko CG, Core L, Waterfall JJ, Siepel A, Lis JT,
+#' Reference: Hah N, Danko CG, Core L, Waterfall JJ, Siepel A, Lis JT,
 #' Kraus WL. A rapid, extensive, and transient transcriptional response to
 #' estrogen signaling in breast cancer cells. Cell. 2011 May 13;145(4):622-34.
 #' doi: 10.1016/j.cell.2011.03.042.
