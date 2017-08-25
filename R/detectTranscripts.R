@@ -47,8 +47,6 @@
 #' Default: 5.
 #' @param size Log probability of t... .  Default: -5.
 #' @param threshold Threshold change in total likelihood, below which EM exits.
-#' @param debug If set to TRUE, provides additional print options.
-#' Default: FALSE
 #' @return Returns a list of emisParams, transParams, viterbiStates, and
 #' transcripts.  The transcript element is a GRanges object representing the
 #' predicted genomic coordinates of transcripts on both the + and - strand.
@@ -63,7 +61,7 @@
 ## CGD: TODO: Test switch over to gamma, rather than dGamma?!
 
 detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
-    LtProbB=-200, UTS=5, size=50, threshold=0.1, debug=TRUE) {
+    LtProbB=-200, UTS=5, size=50, threshold=0.1) {
 
     stopifnot(!is.null(reads) | (!is.null(Fp) & !is.null(Fm)))
 
@@ -116,7 +114,7 @@ detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
         "RBaumWelchEM", HMM$nstates, FT, as.integer(1),
         HMM$ePrDist, HMM$ePrVars, HMM$tProb, HMM$iProb,
         as.double(threshold), c(TRUE, FALSE), c(FALSE, TRUE),
-        as.integer(1), TRUE, PACKAGE="groHMM")
+        as.integer(1), FALSE, PACKAGE="groHMM")
     ## Update Transitions, Emissions.
 
     ## Translate these into transcript positions.
@@ -151,11 +149,6 @@ detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
         ID=paste(ANS$chrom, "_", ANS$start, ANS$strand, sep=""))
     names(BWem) <- c(
         "emisParams", "transParams", "viterbiStates", "transcripts")
-
-    if (debug) {
-        print(BWem[[1]])
-        print(BWem[[2]])
-    }
 
     return(BWem)
 }

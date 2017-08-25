@@ -6,7 +6,7 @@
 Markov model (HMM).}
 \usage{
 detectTranscripts(reads = NULL, Fp = NULL, Fm = NULL, LtProbA = -5,
-  LtProbB = -200, UTS = 5, size = 50, threshold = 0.1, debug = TRUE)
+  LtProbB = -200, UTS = 5, size = 50, threshold = 0.1)
 }
 \arguments{
 \item{reads}{A GRanges object representing a set of mapped reads.}
@@ -29,9 +29,6 @@ Default: 5.}
 \item{size}{Log probability of t... .  Default: -5.}
 
 \item{threshold}{Threshold change in total likelihood, below which EM exits.}
-
-\item{debug}{If set to TRUE, provides additional print options.
-Default: FALSE}
 }
 \value{
 Returns a list of emisParams, transParams, viterbiStates, and
