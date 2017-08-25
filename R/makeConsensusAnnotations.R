@@ -136,7 +136,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
                 ## first range's end is truncated
             } else {
                 start(x[2, ]) <- end(x[1, ]) + minGap
-                ## sencond range's end is truncated
+                ## second range's end is truncated
             }
             x
         }))
