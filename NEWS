@@ -19,15 +19,22 @@ NEW FEATURES
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
-    * Drop readBed() and writeWiggle() reimplementation of rtracklayer
-      import.bed(), and export.bw() / export.wig().
-    * Drop total least squares fit functions which were marked as unreliable and
-      unused: tlsDeming(), tlsLoess(), and tlsSvd().
-    * Drop broken NonMap/UnMAQ argument of polymeraseWave() and pausingIndex().
-    * Drop buggy resampling arguments of getTxDensity().
-    * Verbose flag now works for HMM using C functions.  The large volume of C
-      messages can be silenced as originally intended instead of always being
-      verbose.
+    * Remove functions:
+      - readBed() and writeWiggle() reimplement rtracklayer import.bed(), and
+        export.bw() / export.wig().
+      - tlsDeming(), tlsLoess(), and tlsSvd() total least squares fit functions,
+        commented as unreliable by the author and not used anywhere in the code
+        base.
+      - Redundant runMetaGene-like functions metaGeneMatrix() and metaGene_nL().
+      - averagePlot() does not have a sufficiently broad use case.
+    * Remove function arguments:
+      - Broken NonMap/UnMAQ argument of polymeraseWave() and pausingIndex().
+      - Buggy resampling arguments of getTxDensity().
+      - Debug parameters from many functions.  For troubleshooting faults, it is
+        much more informative to use debugonce(), browser(), etc per
+        adv-r.had.co.nz and improve the now included unit tests.
+    * Verbose flag now works for C functions.  The large volume of C messages
+      can be silenced as originally intended instead of always being verbose.
     * Replace sweave package vignette with Rmd for easier user interaction.
       Less effort should be needed to maintain the vignette due to simpler
       syntax, and fewer obtuse LaTeX errors.
@@ -56,10 +63,6 @@ BUG FIXES AND IMPROVEMENTS
     * New maintainer in response to dead upstream.
     * Add contributor instructions in README.
     * Add GitHub continuous integration using Travis-CI, covr, and codecov.
-      - Removed debugging parameters and their corresponding debug print
-        statements from functions.  For troubleshooting faults, it is better to
-        use debugonce(), browser(), etc per adv-r.had.co.nz and improve the now
-        included unit tests.
     * Fix R check errors, warnings and notes:
       - Fix RgammaMLE() namespace collision between R and C functions by
         renaming C function to Rgamma().
