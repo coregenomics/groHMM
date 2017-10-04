@@ -150,13 +150,8 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
                     " elapsed: :elapsed eta: :eta"))
         pb$tick(0)
     } ## nocov end
-    ##    rows <-lapply(seq_along(NROW(genes)), function(i) {
-    rows <- data.frame(
-        StartWave=rep(NA, NROW(genes)), EndWave=rep(NA, NROW(genes)),
-        Rate=rep(NA, NROW(genes)), minOfMax=rep(NA, NROW(genes)),
-        minOfAvg=rep(NA, NROW(genes)))
 
-    for (i in seq_along(NROW(genes))) {
+    rows <- bplapply(seq_along(genes), function(i) {
         ## Define the gene in terms of the windowed size.
         chrom <- as.character(seqnames(genes[i]))
         if (all(strand(genes[i]) == "+")) {
@@ -301,7 +296,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             minMax <- min(MovMax[c(
                 min(which(ansVitervi == 1)):
                 max(which(ansVitervi == 1)))])
-            minWindLTMed <- (medDns < minMax)
+            minWindLTMed <- as.numeric(medDns < minMax)
             ## True if min(wave) > med(wave.upstream)
             avgDns <- median(MovMean[
                 max(which(ansVitervi == 1) + round(windowScale)):
@@ -311,16 +306,16 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
                 min(which(ansVitervi == 1)):
                 max(which(ansVitervi == 1))
             ])
-            minMeanWindLTMed <- (avgDns < minAvg)
+            minMeanWindLTMed <- as.numeric(avgDns < minAvg)
         }
 
-        ## data.frame(
-        ## StartWave=STRTwave, EndWave=ENDwave, Rate=ANS, minOfMax=minWindLTMed,
-        ## minOfAvg=minMeanWindLTMed)
-        rows[i, ] <- c(STRTwave, ENDwave, ANS, minWindLTMed, minMeanWindLTMed)
-    }#)#, BPPARAM=BPPARAM)
+        data.frame(
+            StartWave=STRTwave, EndWave=ENDwave, Rate=ANS,
+            minOfMax=minWindLTMed, minOfAvg=minMeanWindLTMed)
+    }
+    , BPPARAM=BPPARAM)
 
     cbind.data.frame(
-        rbind.data.frame(rows),
+        do.call("rbind.data.frame", rows),
         as.data.frame(mcols(genes)))
 }
