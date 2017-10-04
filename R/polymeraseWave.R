@@ -111,9 +111,10 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         stop("filterWindowSize must be a multiple of size")
 
     ## Subset genes to those with reads within the search distances.
-    search <- resize(
+    search_unsafe <- suppressWarnings(resize(
         promoters(genes, upstream=upstreamDist),
-        width=width(genes) + upstreamDist + approxDist)
+        width=width(genes) + upstreamDist + approxDist))
+    search <- trim(search_unsafe)
     has_reads <-
         search %over% reads1 |
         search %over% reads2
@@ -121,7 +122,16 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         message(
             "Dropping ", NROW(genes) - sum(has_reads), " of ", NROW(genes),
             " genes with no reads within or nearby")
-    genes <- genes[has_reads]
+    too_close_to_edge <- search_unsafe != search
+    if (any(too_close_to_edge))
+        message(
+            "Dropping ", sum(too_close_to_edge), " of ", NROW(genes),
+            " genes too close to chromosome edge")
+    genes <- genes[has_reads & ! too_close_to_edge]
+    if (NROW(genes) == 0) {
+        message("No genes left to check")
+        return(data.frame())
+    }
 
     Fp1 <- windowAnalysis(reads = reads1, strand = "+", windowSize = size)
     Fp2 <- windowAnalysis(reads = reads2, strand = "+", windowSize = size)

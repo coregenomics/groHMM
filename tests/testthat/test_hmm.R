@@ -105,6 +105,20 @@ test_that("polymeraseWave normal exponental distribution assumption", {
     expect_equal(pw, expected, tolerance = 1e-7)
 })
 
+test_that("polymeraseWave gene resize honors seqinfo boundaries", {
+    seqinfo(genes) <- seqinfo(reads)
+    ## Resize to be 1 base too big.
+    dist_to_end <- (seqlengths(genes) - end(genes) - approxDist)
+    genes <- shift(genes, dist_to_end)
+    suppressWarnings(reads <- endoapply(shift(reads, dist_to_end), trim))
+    expect_silent(polymeraseWave(reads[[1]], reads[[2]], genes, approxDist,
+                                 progress=FALSE))
+    genes <- shift(genes, approxDist)
+    expect_message(polymeraseWave(reads[[1]], reads[[2]], genes, approxDist,
+                                  progress=FALSE),
+                   "too close to chromosome edge")
+})
+
 test_that("detectTranscripts generates sensible transcripts", {
     ## Runtime is about a minute :/
     reads_ <- unlist(endoapply(reads, head, 200))
