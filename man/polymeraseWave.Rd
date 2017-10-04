@@ -51,8 +51,8 @@ filterWindowSize.  Default: 10 kb.}
 Default: BiocParallel::bpparam()}
 }
 \value{
-Returns either a data.frame with Pol II wave end positions,
-or a List() structure with additional data, as specified by returnVal.
+Returns list with Pol II wave end positions and any BiocParallel
+errors caught.
 }
 \description{
 The model is a three state hidden Markov model (HMM).  States represent:
@@ -81,6 +81,7 @@ Initiation, Pausing, and Elongation Rate in Cells. Mol Cell.
 }
 \examples{
 library(GenomicAlignments)
+library(BiocParallel)
 genes <- GRanges("chr7", IRanges(2394474,2420377), strand="+",
                  SYMBOL="CYP2W1", ID="54905")
 reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
@@ -88,8 +89,12 @@ reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
 reads2 <- as(readGAlignments(system.file("extdata", "S40mR1.bam",
                              package="groHMM")), "GRanges")
 approxDist <- 2000*10
-# Not run:
-# pw <- polymeraseWave(reads1, reads2, genes, approxDist)
+## Distributions often fail to fit.  Therefore don't stop on error.
+bpparam <- SerialParam(stop.on.error = FALSE)
+bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
+## Summarize successful fits
+df <- rbind.data.frame(bpresult[bpok(bpresult)]))
+df
 }
 \author{
 Charles G. Danko

@@ -73,11 +73,12 @@
 #' @param progress Whether to show progress bar.  Default: TRUE
 #' @param BPPARAM Registered backend for BiocParallel.
 #' Default: BiocParallel::bpparam()
-#' @return Returns either a data.frame with Pol II wave end positions,
-#' or a List() structure with additional data, as specified by returnVal.
+#' @return Returns list with Pol II wave end positions and any BiocParallel
+#' errors caught.
 #' @author Charles G. Danko
 #' @examples
 #' library(GenomicAlignments)
+#' library(BiocParallel)
 #' genes <- GRanges("chr7", IRanges(2394474,2420377), strand="+",
 #'                  SYMBOL="CYP2W1", ID="54905")
 #' reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
@@ -85,8 +86,12 @@
 #' reads2 <- as(readGAlignments(system.file("extdata", "S40mR1.bam",
 #'                              package="groHMM")), "GRanges")
 #' approxDist <- 2000*10
-#' # Not run:
-#' # pw <- polymeraseWave(reads1, reads2, genes, approxDist)
+#' ## Distributions often fail to fit.  Therefore don't stop on error.
+#' bpparam <- SerialParam(stop.on.error = FALSE)
+#' bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
+#' ## Summarize successful fits
+#' df <- rbind.data.frame(bpresult[bpok(bpresult)]))
+#' df
 ##  Given GRO-seq data, identifies the location of the polymerase wave in up-
 ##  or down-regulated genes.  This version is based on a full Baum-Welch EM
 ##  implementation.
@@ -151,7 +156,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
         pb$tick(0)
     } ## nocov end
 
-    rows <- bplapply(seq_along(genes), function(i) {
+    bptry(bplapply(seq_along(genes), function(i) {
         ## Define the gene in terms of the windowed size.
         chrom <- as.character(seqnames(genes[i]))
         if (all(strand(genes[i]) == "+")) {
@@ -309,13 +314,9 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             minMeanWindLTMed <- as.numeric(avgDns < minAvg)
         }
 
-        data.frame(
-            StartWave=STRTwave, EndWave=ENDwave, Rate=ANS,
-            minOfMax=minWindLTMed, minOfAvg=minMeanWindLTMed)
+        c(list(StartWave=STRTwave, EndWave=ENDwave, Rate=ANS,
+               minOfMax=minWindLTMed, minOfAvg=minMeanWindLTMed),
+          as(mcols(genes[i]), "list"))
     }
-    , BPPARAM=BPPARAM)
-
-    cbind.data.frame(
-        do.call("rbind.data.frame", rows),
-        as.data.frame(mcols(genes)))
+    , BPPARAM=BPPARAM))
 }

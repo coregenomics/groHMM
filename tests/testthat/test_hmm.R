@@ -3,21 +3,20 @@ context("HMM transcript and polymerase wave detection")
 ## Fixtures
 approxDist <- 20000
 
-expected <- data.frame(
+expected <- list(list(
     StartWave = 9350,
     EndWave = 33750,
     Rate = 24400,
     minOfMax = as.numeric(NA),
     minOfAvg = as.numeric(NA),
     SYMBOL = "CYP2W1",
-    ID = "54905",
-    stringsAsFactors = FALSE
-)
+    ID = "54905"
+))
 
-test_that("polymeraseWave returns expected data.frame", {
+test_that("polymeraseWave returns expected list", {
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE)
-    expect_s3_class(pw, "data.frame")
+    expect_is(pw, "list")
     expect_equal(pw, expected, tolerance = 1e-7)
 })
 
@@ -26,7 +25,7 @@ test_that("polymeraseWave returns identical value on opposite strand", {
     reads <- invertStrand(reads)
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE)
-    expect_s3_class(pw, "data.frame")
+    expect_is(pw, "list")
     ## Needing to allow for +/- 1 tolerance here points to a subtle integer
     ## error elsewhere in the code.
     expect_equal(pw, expected, tolerance = 1)
@@ -75,11 +74,12 @@ test_that("polymeraseWave generates a progress bar", {
 })
 
 test_that("polymeraseWave raises error for invalid distribution", {
-    expect_error(
-        polymeraseWave(
-            reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
-            emissionDistAssumption="paranormal"),
-        "emissionDistAssumption")
+    bpparam <- SerialParam(stop.on.error = FALSE)
+    pw <- polymeraseWave(
+        reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
+        emissionDistAssumption="paranormal", BPPARAM=bpparam)
+    expect_false(bpok(pw))
+    expect_match(pw[[1]]$message, "emissionDistAssumption")
 })
 
 test_that("polymeraseWave TSmooth induces smoothing", {
@@ -88,7 +88,7 @@ test_that("polymeraseWave TSmooth induces smoothing", {
         emissionDistAssumption="norm", TSmooth=20)
     expect_equal(pw, expected, tolerance = 1e-7)
 
-    expected[, c("StartWave", "EndWave", "Rate", "minOfMax", "minOfAvg")] <-
+    expected[[1]][c("StartWave", "EndWave", "Rate", "minOfMax", "minOfAvg")] <-
         c(10500, 12850, 2350, 0, 1)
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
@@ -97,7 +97,7 @@ test_that("polymeraseWave TSmooth induces smoothing", {
 })
 
 test_that("polymeraseWave normal exponental distribution assumption", {
-    expected[, c("EndWave", "Rate", "minOfMax", "minOfAvg")] <-
+    expected[[1]][c("EndWave", "Rate", "minOfMax", "minOfAvg")] <-
         c(10050, 700, 0, 1)
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,

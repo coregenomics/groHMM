@@ -9,13 +9,15 @@ NEW FEATURES
         limit use of data.frame objects.
       - Drop functionality such as readBed() and writeWiggle() already present
         in the rtracklayer package maintained by the Bioconductor core team.
-    * polymeraseWave() now has a progress bar and has faster processing from
-      several changes:
+    * polymeraseWave() is more reliable and has faster processing from several
+      changes:
       - Multi-core processing.
       - Less memory usage.
       - HMM calculations 10x faster not including muti-core processing.
       - Genes are ignored if they have no reads within or nearby instead of
         blindly processing all annotated genes.
+      - Errors from failure to fit distributions, etc are returned to the user
+        via BiocParallel error handler bptry().
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
