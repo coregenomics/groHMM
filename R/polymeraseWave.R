@@ -90,7 +90,7 @@
 #' bpparam <- SerialParam(stop.on.error = FALSE)
 #' bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
 #' ## Summarize successful fits
-#' df <- rbind.data.frame(bpresult[bpok(bpresult)]))
+#' df <- rbind.data.frame(bpresult[bpok(bpresult)])
 #' df
 ##  Given GRO-seq data, identifies the location of the polymerase wave in up-
 ##  or down-regulated genes.  This version is based on a full Baum-Welch EM

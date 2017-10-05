@@ -93,7 +93,7 @@ approxDist <- 2000*10
 bpparam <- SerialParam(stop.on.error = FALSE)
 bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
 ## Summarize successful fits
-df <- rbind.data.frame(bpresult[bpok(bpresult)]))
+df <- rbind.data.frame(bpresult[bpok(bpresult)])
 df
 }
 \author{
