@@ -73,8 +73,8 @@
 #' @param progress Whether to show progress bar.  Default: TRUE
 #' @param BPPARAM Registered backend for BiocParallel.
 #' Default: BiocParallel::bpparam()
-#' @return Returns list with Pol II wave end positions and any BiocParallel
-#' errors caught.
+#' @return Returns list of GRanges with Pol II wave positions and any
+#' BiocParallel errors caught.
 #' @author Charles G. Danko
 #' @examples
 #' library(GenomicAlignments)
@@ -86,12 +86,14 @@
 #' reads2 <- as(readGAlignments(system.file("extdata", "S40mR1.bam",
 #'                              package="groHMM")), "GRanges")
 #' approxDist <- 2000*10
-#' ## Distributions often fail to fit.  Therefore don't stop on error.
+#' ## Often, HMMs fails to converge or distributions fail to fit. Therefore
+#' ## don't stop on error.  SerialParam is being used here for building, but
+#' ## MulticoreParam or SnowParam are of course more desirable in practice.
 #' bpparam <- SerialParam(stop.on.error = FALSE)
 #' bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
-#' ## Summarize successful fits
-#' df <- rbind.data.frame(bpresult[bpok(bpresult)])
-#' df
+#' ## Collect successful fits.
+#' gr <- unlist(List(bpresult[bpok(bpresult)]))
+#' gr
 ##  Given GRO-seq data, identifies the location of the polymerase wave in up-
 ##  or down-regulated genes.  This version is based on a full Baum-Welch EM
 ##  implementation.
@@ -135,7 +137,7 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
     genes <- genes[has_reads & ! too_close_to_edge]
     if (NROW(genes) == 0) {
         message("No genes left to check")
-        return(data.frame())
+        return(list(GRanges()))
     }
 
     Fp1 <- windowAnalysis(reads = reads1, strand = "+", windowSize = size)
@@ -312,11 +314,17 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
                 max(which(ansVitervi == 1))
             ])
             minMeanWindLTMed <- as.numeric(avgDns < minAvg)
-        }
 
-        c(list(StartWave=STRTwave, EndWave=ENDwave, Rate=ANS,
-               minOfMax=minWindLTMed, minOfAvg=minMeanWindLTMed),
-          as(mcols(genes[i]), "list"))
+            gr <- genes[i]
+            gr <- shift(gr, STRTwave)
+            width(gr) <- ENDwave - STRTwave + 1
+            mcols(gr)$rate <- ANS
+            mcols(gr)$min_of_max <- minWindLTMed
+            mcols(gr)$min_of_avg <- minMeanWindLTMed
+            gr
+        } else {
+            stop("HMM failed to converge on anything useful.")
+        }
     }
     , BPPARAM=BPPARAM))
 }

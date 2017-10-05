@@ -45,6 +45,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
     * getTxDensity() is faster and returns exact values instead of trapezoidal
       approximation.
     * windowAnalysis() now has no upper limit on stepSize.
+    * polymeraseWave() returns GRanges instead of relative wave positions.
 
 BUG FIXES AND IMPROVEMENTS
 
@@ -52,7 +53,8 @@ BUG FIXES AND IMPROVEMENTS
       of empty ranges.
     * Fix corner cases of breakTranscriptsOnGenes() and combineTranscripts()
       failing when no break or join errors are detected.
-    * Fix polymeraseWave processing genes beyond chromosome boundaries.
+    * Fix polymeraseWave processing genes beyond chromosome boundaries and raise
+      error when HMM fails to converge.
     * Fix makeConsensusAnnotations not correctly validating presence of gene_id
       column.
     * One can now control makeConsensusAnnotations() multi-core parallelism.

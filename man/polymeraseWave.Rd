@@ -51,8 +51,8 @@ filterWindowSize.  Default: 10 kb.}
 Default: BiocParallel::bpparam()}
 }
 \value{
-Returns list with Pol II wave end positions and any BiocParallel
-errors caught.
+Returns list of GRanges with Pol II wave positions and any
+BiocParallel errors caught.
 }
 \description{
 The model is a three state hidden Markov model (HMM).  States represent:
@@ -89,12 +89,14 @@ reads1 <- as(readGAlignments(system.file("extdata", "S0mR1.bam",
 reads2 <- as(readGAlignments(system.file("extdata", "S40mR1.bam",
                              package="groHMM")), "GRanges")
 approxDist <- 2000*10
-## Distributions often fail to fit.  Therefore don't stop on error.
+## Often, HMMs fails to converge or distributions fail to fit. Therefore
+## don't stop on error.  SerialParam is being used here for building, but
+## MulticoreParam or SnowParam are of course more desirable in practice.
 bpparam <- SerialParam(stop.on.error = FALSE)
 bpresult <- polymeraseWave(reads1, reads2, genes, approxDist, BPPARAM=bpparam)
-## Summarize successful fits
-df <- rbind.data.frame(bpresult[bpok(bpresult)])
-df
+## Collect successful fits.
+gr <- unlist(List(bpresult[bpok(bpresult)]))
+gr
 }
 \author{
 Charles G. Danko

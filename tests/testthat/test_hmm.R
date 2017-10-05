@@ -2,30 +2,33 @@ context("HMM transcript and polymerase wave detection")
 
 ## Fixtures
 approxDist <- 20000
-
-expected <- list(list(
-    StartWave = 9350,
-    EndWave = 33750,
-    Rate = 24400,
-    minOfMax = as.numeric(NA),
-    minOfAvg = as.numeric(NA),
+expected <- list(GRanges(
+    seqnames = "chr7",
+    ranges = IRanges(
+        2394474 + 9350,
+        2394474 + 33750),
+    strand = "+",
     SYMBOL = "CYP2W1",
-    ID = "54905"
+    ID = "54905",
+    rate = as.numeric(24400),
+    min_of_max = as.numeric(NA),
+    min_of_avg = as.numeric(NA)
 ))
 
-test_that("polymeraseWave returns expected list", {
+test_that("polymeraseWave returns expected GRanges", {
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE)
-    expect_is(pw, "list")
+    expect_s4_class(pw[[1]], "GRanges")
     expect_equal(pw, expected, tolerance = 1e-7)
 })
 
 test_that("polymeraseWave returns identical value on opposite strand", {
     genes <- invertStrand(genes)
     reads <- invertStrand(reads)
+    expected[[1]] <- invertStrand(expected[[1]])
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE)
-    expect_is(pw, "list")
+    expect_s4_class(pw[[1]], "GRanges")
     ## Needing to allow for +/- 1 tolerance here points to a subtle integer
     ## error elsewhere in the code.
     expect_equal(pw, expected, tolerance = 1)
@@ -88,8 +91,11 @@ test_that("polymeraseWave TSmooth induces smoothing", {
         emissionDistAssumption="norm", TSmooth=20)
     expect_equal(pw, expected, tolerance = 1e-7)
 
-    expected[[1]][c("StartWave", "EndWave", "Rate", "minOfMax", "minOfAvg")] <-
-        c(10500, 12850, 2350, 0, 1)
+    start(expected[[1]]) <- 2394474 + 10500
+    end(expected[[1]]) <- 2394474 + 12850
+    mcols(expected[[1]])$rate <- 2350
+    mcols(expected[[1]])$min_of_max <- 0
+    mcols(expected[[1]])$min_of_avg <- 1
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
         emissionDistAssumption="norm", TSmooth="3RS3R")
@@ -97,8 +103,10 @@ test_that("polymeraseWave TSmooth induces smoothing", {
 })
 
 test_that("polymeraseWave normal exponental distribution assumption", {
-    expected[[1]][c("EndWave", "Rate", "minOfMax", "minOfAvg")] <-
-        c(10050, 700, 0, 1)
+    end(expected[[1]]) <- 2394474 + 10050
+    mcols(expected[[1]])$rate <- 700
+    mcols(expected[[1]])$min_of_max <- 0
+    mcols(expected[[1]])$min_of_avg <- 1
     pw <- polymeraseWave(
         reads[[1]], reads[[2]], genes, approxDist, progress=FALSE,
         emissionDistAssumption="normExp")
