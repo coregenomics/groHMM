@@ -5,8 +5,8 @@ approxDist <- 20000
 expected <- list(GRanges(
     seqnames = "chr7",
     ranges = IRanges(
-        2394474 + 9350,
-        2394474 + 33750),
+        2394474 - 9350,
+        2420377 - 10853),
     strand = "+",
     SYMBOL = "CYP2W1",
     ID = "54905",
@@ -91,8 +91,8 @@ test_that("polymeraseWave TSmooth induces smoothing", {
         emissionDistAssumption="norm", TSmooth=20)
     expect_equal(pw, expected, tolerance = 1e-7)
 
-    start(expected[[1]]) <- 2394474 + 10500
-    end(expected[[1]]) <- 2394474 + 12850
+    start(expected[[1]]) <- 2394474 - 10500
+    end(expected[[1]]) <- 2420377 - 34053
     mcols(expected[[1]])$rate <- 2350
     mcols(expected[[1]])$min_of_max <- 0
     mcols(expected[[1]])$min_of_avg <- 1
@@ -103,7 +103,7 @@ test_that("polymeraseWave TSmooth induces smoothing", {
 })
 
 test_that("polymeraseWave normal exponental distribution assumption", {
-    end(expected[[1]]) <- 2394474 + 10050
+    end(expected[[1]]) <- 2420377 - 34553
     mcols(expected[[1]])$rate <- 700
     mcols(expected[[1]])$min_of_max <- 0
     mcols(expected[[1]])$min_of_avg <- 1
