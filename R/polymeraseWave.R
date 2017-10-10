@@ -71,6 +71,7 @@
 #' that define a moving window.  The moving window size is specified by
 #' filterWindowSize.  Default: 10 kb.
 #' @param progress Whether to show progress bar.  Default: TRUE
+#' @param within Whether the wave must be within the gene.  Default: TRUE
 #' @param BPPARAM Registered backend for BiocParallel.
 #' Default: BiocParallel::bpparam()
 #' @return Returns list of GRanges with Pol II wave positions and any
@@ -111,7 +112,7 @@
 ## GREB1 <- data.frame(chr="chr2", start=11591693, end=11700363, str="+")
 polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
     upstreamDist = 10000, TSmooth=NA, emissionDistAssumption = "gamma",
-    filterWindowSize = 10000, progress=TRUE,
+    filterWindowSize = 10000, progress=TRUE, within=TRUE,
     BPPARAM = BiocParallel::bpparam()) {
     ## Parameter checks.
     if ( (filterWindowSize / size) %% 1 != 0)
@@ -289,8 +290,8 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
                 max(k - windowScale, 1):
                 min(k + windowScale, n_gene)], na.rm = TRUE)
         }
-        if ( (DTs >= 1) & (DTe > 1) & (DTs < DTe) &
-            (DTe < n_gene) & (DTs < n_gene)) {
+        within_gene <- ifelse(within, DTe < n_gene, TRUE)
+        if ( (DTs >= 1) & (DTe > 1) & (DTs < DTe) & within_gene) {
             ## Iff converges to something useful.
             ANS <- (DTe - DTs) * size
             STRTwave <- DTs * size

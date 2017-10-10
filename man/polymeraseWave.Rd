@@ -7,7 +7,7 @@ up- or down- regulated genes.}
 \usage{
 polymeraseWave(reads1, reads2, genes, approxDist, size = 50,
   upstreamDist = 10000, TSmooth = NA, emissionDistAssumption = "gamma",
-  filterWindowSize = 10000, progress = TRUE,
+  filterWindowSize = 10000, progress = TRUE, within = TRUE,
   BPPARAM = BiocParallel::bpparam())
 }
 \arguments{
@@ -46,6 +46,8 @@ that define a moving window.  The moving window size is specified by
 filterWindowSize.  Default: 10 kb.}
 
 \item{progress}{Whether to show progress bar.  Default: TRUE}
+
+\item{within}{Whether the wave must be within the gene.  Default: TRUE}
 
 \item{BPPARAM}{Registered backend for BiocParallel.
 Default: BiocParallel::bpparam()}

@@ -46,6 +46,8 @@ SIGNIFICANT USER-VISIBLE CHANGES
       approximation.
     * windowAnalysis() now has no upper limit on stepSize.
     * polymeraseWave() returns GRanges instead of relative wave positions.
+    * polymeraseWave() has a new within argument to find waves beyond annotated
+      gene boundaries.
 
 BUG FIXES AND IMPROVEMENTS
 
