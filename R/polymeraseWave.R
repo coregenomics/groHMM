@@ -315,8 +315,10 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             ])
             minMeanWindLTMed <- as.numeric(avgDns < minAvg)
 
-            gr <- genes[i] + STRTwave
-            width(gr) <- ENDwave - STRTwave + 1
+            gr <- genes[i]
+            offset <- start(gr)
+            ranges(gr) <- IRanges(STRTwave, ENDwave)
+            gr <- shift(gr, offset)
             mcols(gr)$rate <- ANS
             mcols(gr)$min_of_max <- minWindLTMed
             mcols(gr)$min_of_avg <- minMeanWindLTMed
