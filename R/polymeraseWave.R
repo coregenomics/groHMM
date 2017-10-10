@@ -322,8 +322,9 @@ polymeraseWave <- function(reads1, reads2, genes, approxDist, size = 50,
             mcols(gr)$min_of_avg <- minMeanWindLTMed
             gr
         } else {
+            ## nocov start
             stop("HMM failed to converge on anything useful.")
-        }
+        } ## nocov end
     }
     , BPPARAM=BPPARAM))
 }
