@@ -22,20 +22,18 @@
 #' Function identifies expressed features using the methods introduced in
 #' Core, Waterfall, Lis; Science, Dec. 2008.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors use the argument 'mc.cores'.
-#'
 #' @param features A GRanges object representing a set of genomic coordinates.
 #' The meta-plot will be centered on the start position.
 #' @param reads A GRanges object representing a set of mapped reads.
 #' @param Lambda Measurement of assay noise.  Default: 0.04 reads/ kb in a
 #' library of 10,751,533 mapped reads. (background computed in Core,
 #' Waterfall, Lis. (2008) Science.).
-#' @param ... Extra argument passed to mclapply
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns a data.frame representing the expression p.values for
 #' features of interest.
 #' @author Charles G. Danko
-expressedGenes <- function(features, reads, Lambda=NULL, ...) {
+expressedGenes <- function(features, reads, Lambda=NULL, BPPARAM=bpparam()) {
     ## Order -- Make sure, b/c this is one of our main assumptions.  Otherwise
     ## violated for DBTSS.
     reads <- .normArgRanges(reads)
@@ -46,9 +44,9 @@ expressedGenes <- function(features, reads, Lambda=NULL, ...) {
         Lambda <- 0.04 * NROW(reads) / 10751533 / 1000
 
     ## Run parallel version.
-    mcp <- mclapply(
+    mcp <- bplapply(
         seq_along(C), expressedGenes_foreachChrom, C=C, features=features,
-        reads=reads, Lambda=Lambda, ...)
+        reads=reads, Lambda=Lambda, BPPARAM=BPPARAM)
 
     ## Unlist...
     ANSpvalue <- rep(0, NROW(features))

@@ -5,7 +5,7 @@
 \title{makeConsensusAnnotations Makes a consensus annotation}
 \usage{
 makeConsensusAnnotations(ar, minGap = 1L, minWidth = 1000L,
-  column = "gene_id", ...)
+  column = "gene_id", BPPARAM = bpparam())
 }
 \arguments{
 \item{ar}{GRanges of annotations to be collapsed.}
@@ -17,7 +17,8 @@ Default: 1L}
 
 \item{column}{Column by which to group transcripts.}
 
-\item{...}{Extra argument passed to mclapply.}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns GRanges object of annotations.
@@ -30,10 +31,6 @@ redundant intervals are used to represent a genomic interval for a gene,
 i.e., a gene id.
 Remaining unresolved annotations are further reduced by truncating 3'
 end of annotations.
-}
-\details{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors, use the argument 'mc.cores'.
 }
 \examples{
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)

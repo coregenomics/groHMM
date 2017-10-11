@@ -4,7 +4,7 @@
 \alias{getTxDensity}
 \title{getTxDensity Calculates transcript density.}
 \usage{
-getTxDensity(tx, annox, plot = FALSE, scale = 1000L, ...)
+getTxDensity(tx, annox, plot = FALSE, scale = 1000L, BPPARAM = bpparam())
 }
 \arguments{
 \item{tx}{GRanges of transcripts.}
@@ -17,7 +17,8 @@ getTxDensity(tx, annox, plot = FALSE, scale = 1000L, ...)
 calculation.
 Default: 1000L}
 
-\item{...}{Extra argument passed to mclapply.}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns a list of FTD, TTD, PostTTS, and TUA.
@@ -27,11 +28,6 @@ Calculates transcript density for transcripts which overlaps with
 annotations.
 For 'combined' or 'broken up' errors,
 best overlapped transcripts or annotations are used.
-}
-\details{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors
-set the option 'mc.cores'.
 }
 \examples{
 library(GenomicRanges)

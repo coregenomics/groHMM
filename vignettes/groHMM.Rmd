@@ -138,16 +138,7 @@ using the UCSC `r Rpackage("liftOver")` tool.
 In order to make the package size more manageable,
 we have included data from chromosome 7 only in 0 and 10 min. conditions.
 `r Rpackage("groHMM")` supports parallel processing
-and the number of cores to use can be set using the `mc.cores` option:
-
-```{r library groHMM, eval=TRUE, message=FALSE}
-library(groHMM)
-options(mc.cores=getCores(4))
-```
-
-```{r single core for vignette build, eval=TRUE, echo=FALSE}
-options(mc.cores=getCores(1))
-```
+via BiocParallel.
 
 `r Rpackage("groHMM")` uses the `GRanges` class
 from the `r Biocpkg("GenomicRanges")` package
@@ -163,6 +154,7 @@ The example data included in this package can be loaded into `R`
 using the following commands.
 
 ```{r load data, eval=TRUE, message=FALSE}
+library(groHMM)
 library(GenomicAlignments)
 
 S0mR1 <- as(readGAlignments(system.file(
@@ -273,8 +265,7 @@ These consensus annotations are used for the evaluation of HMM calling.
 
 ```{r make consensus annotations, eval=TRUE, message=FALSE}
 # Collapse overlapping annotations
-kgConsensus <- makeConsensusAnnotations(
-    kgChr7, mc.cores=getOption("mc.cores"))
+kgConsensus <- makeConsensusAnnotations(kgChr7)
 
 library(org.Hs.eg.db)
 map <- select(
@@ -327,12 +318,12 @@ tune <- data.frame(
 Fp <- windowAnalysis(Sall, strand="+", windowSize=50)
 Fm <- windowAnalysis(Sall, strand="-", windowSize=50)
 
-# evals <- mclapply(seq_len(9), function(x) {
+# evals <- bplapply(seq_len(9), function(x) {
 #     hmm <- detectTranscripts(
 #         Fp=Fp, Fm=Fm, LtProbB=tune$LtProbB[x],UTS=tune$UTS[x])
 #     e <- evaluateHMMInAnnotations(hmm$transcripts, kgConsensus)
 #     e$eval
-# }, mc.cores=getOption("mc.cores"),  mc.silent=TRUE)
+# })
 tune <- cbind(tune, do.call(rbind, evals))  # evals from the previous run
 tune
 which.min(tune$total)
@@ -399,7 +390,7 @@ conExpressed <- getExpressedAnnotations(features=kgConsensus,reads=Sall)
 
 ```{r density, fig.cap="Transcript Density Plot", eval=TRUE, message=FALSE}
 td <- getTxDensity(
-    txHMM, conExpressed, plot=TRUE, mc.cores=getOption("mc.cores"))
+    txHMM, conExpressed, plot=TRUE)
 u <- par("usr")
 lines(
     c(u[1], 0, 0, 1000, 1000, u[2]),
@@ -446,7 +437,7 @@ ce <- GRanges(
     G$chrom, IRanges(G$txStart, G$txEnd), strand=G$strand, access=G$name,
     gene_id=G$name2)
 ceConsensus <- makeConsensusAnnotations(
-    ce, keytype="gene_id", mc.cores=getOption("mc.cores"))
+    ce, keytype="gene_id")
 ```
 
 As for transcript calling,
@@ -478,7 +469,7 @@ txFinal <- combineTranscripts(txBroken, kgConsensus)
 ```
 
 ```{r plotTxDensity_final, eval=FALSE}
-tdFinal <- getTxDensity(txFinal, conExpressed, mc.cores=getOption("mc.cores"))
+tdFinal <- getTxDensity(txFinal, conExpressed)
 ```
 
 ## Differential Analysis with edgeR
@@ -585,10 +576,10 @@ expReads <- mean(c(NROW(S0m), NROW(S40m)))
 # Metagene around TSS
 mg0m <- runMetaGene(
     features=upGenes, reads=S0m, size=100, normCounts=expReads / NROW(S0m),
-    sampling=FALSE, mc.cores=getOption("mc.cores"))
+    sampling=FALSE)
 mg40m <- runMetaGene(
     features=upGenes, reads=S40m, size=100, normCounts=expReads / NROW(S40m),
-    sampling=FALSE, mc.cores=getOption("mc.cores"))
+    sampling=FALSE)
 
 plotMetaGene <- function(POS=c(-10000:+9999), mg, MIN, MAX) {
     plot(

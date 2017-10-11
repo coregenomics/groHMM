@@ -26,17 +26,14 @@
 #' For 'combined' or 'broken up' errors,
 #' best overlapped transcripts or annotations are used.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors
-#' set the option 'mc.cores'.
-#'
 #' @param tx GRanges of transcripts.
 #' @param annox GRanges of non-overlapping annotations.
 #' @param plot Logical.  If TRUE, plot transcript density.  Default: FALSE
 #' @param scale Numeric. Scaled size of a gene for transcript density
 #' calculation.
 #' Default: 1000L
-#' @param ... Extra argument passed to mclapply.
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns a list of FTD, TTD, PostTTS, and TUA.
 #' @author Minho Chae
 #' @examples
@@ -47,7 +44,8 @@
 #' width=seq(900, 1200, by=100)), strand=rep("+", 4))
 #' ## Not run:
 #' # density <- getTxDensity(tx, annox)
-getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, ...) {
+getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L,
+    BPPARAM=bpparam()) {
     ol <- findOverlaps(tx, annox)
 
     ## Count tx
@@ -99,16 +97,16 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, ...) {
     up <- 1L
     down <- 2L
     message("Calculate overlapping ... ", appendLF=FALSE)
-    promo  <- unlist(GRangesList(mclapply(subjectHits(ol), function(x) {
+    promo  <- unlist(GRangesList(bplapply(subjectHits(ol), function(x) {
         w <- width(annox[x, ])
         promoters(annox[x, ], upstream=round(w*up), downstream=round(w*down))
     }
-    , ... )))
+    , BPPARAM=BPPARAM)))
 
     pintx <- pintersect(promo, olTx)
 
     ## Get the overlapped coverage
-    olcvg <- mclapply(1:length(ol), function(x) {
+    olcvg <- bplapply(1:length(ol), function(x) {
         t <- olTx[x, ]
         p <- promo[x, ]
         i <- pintx[x, ]
@@ -125,16 +123,16 @@ getTxDensity <- function(tx, annox, plot=FALSE, scale=1000L, ...) {
         else
             rev(Rle(rTF[start(p):end(p)]))
     }
-    , ...)
+    , BPPARAM=BPPARAM)
     message("OK")
 
     message("Scale overlapping ... ", appendLF=FALSE)
     ## Get the scaled coverage
     cvgWidth <- round(up * scale) + round(down * scale)
-    sccvg <- mclapply(olcvg, function(x) {
+    sccvg <- bplapply(olcvg, function(x) {
         getLIValues(x, cvgWidth)
     }
-    , ... )
+    , BPPARAM=BPPARAM)
     message("OK")
 
     M <- sapply(sccvg, function(x) as.integer(x))

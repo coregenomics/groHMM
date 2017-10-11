@@ -5,7 +5,7 @@
 \title{Function identifies expressed features using the methods introduced in
 Core, Waterfall, Lis; Science, Dec. 2008.}
 \usage{
-expressedGenes(features, reads, Lambda = NULL, ...)
+expressedGenes(features, reads, Lambda = NULL, BPPARAM = bpparam())
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.
@@ -17,15 +17,16 @@ The meta-plot will be centered on the start position.}
 library of 10,751,533 mapped reads. (background computed in Core,
 Waterfall, Lis. (2008) Science.).}
 
-\item{...}{Extra argument passed to mclapply}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns a data.frame representing the expression p.values for
 features of interest.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors use the argument 'mc.cores'.
+Function identifies expressed features using the methods introduced in
+Core, Waterfall, Lis; Science, Dec. 2008.
 }
 \author{
 Charles G. Danko

@@ -41,9 +41,6 @@ fixed-step wiggle-format passed in a list (Fp and Fm).
 Either reads or BOTH Fp and Fm must be specified.
 }
 \details{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors set the option 'mc.cores'.
-
 Reference: Hah N, Danko CG, Core L, Waterfall JJ, Siepel A, Lis JT,
 Kraus WL. A rapid, extensive, and transient transcriptional response to
 estrogen signaling in breast cancer cells. Cell. 2011 May 13;145(4):622-34.

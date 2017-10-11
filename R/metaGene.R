@@ -22,9 +22,6 @@
 #' Returns a histogram of the number of reads in each section of a moving
 #' window centered on a certain feature.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors, set the option 'mc.cores'.
-#'
 #' @param features A GRanges object representing a set of genomic coordinates.
 #' The meta-plot will be centered on the transcription start site (TSS)
 #' @param reads A GRanges object representing a set of mapped reads.
@@ -36,7 +33,8 @@
 #' Default: 10 kb.
 #' @param down Distance downstream of each features to align and histogram.
 #' If NULL, same as up. Default: NULL.
-#' @param ... Extra argument passed to mclapply
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns a integer-Rle representing the 'typical' signal
 #' centered on a point of interest.
 #' @author Charles G. Danko and Minho Chae
@@ -47,7 +45,7 @@
 #'  width=rep(1, 6)), strand="+")
 #' mg <- metaGene(features, reads, size=4, up=10)
 metaGene <- function(features, reads=NULL, plusCVG=NULL, minusCVG=NULL,
-    size=100L, up=10000L, down=NULL, ...) {
+    size=100L, up=10000L, down=NULL, BPPARAM=bpparam()) {
     seqlevels(features) <- seqlevelsInUse(features)
     ## Check 'reads'
     if (is.null(reads)) {
@@ -62,9 +60,10 @@ metaGene <- function(features, reads=NULL, plusCVG=NULL, minusCVG=NULL,
 
     featureList <- split(features, seqnames(features))
 
-    H <- mclapply(
+    H <- bplapply(
         seqlevels(features), metaGene_foreachChrom, featureList=featureList,
-        plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up, down=down, ...)
+        plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up, down=down,
+        BPPARAM=BPPARAM)
     M <- sapply(seq_len(length(H)), function(x) as.integer(H[[x]]))
 
     return(Rle(apply(M, 1, sum)))
@@ -94,9 +93,6 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 
 #' Runs meta gene analysis for sense and anti-sense direction.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors, set the option 'mc.cores'.
-#'
 #' @param features GRanges A GRanges object representing a set of genomic
 #' coordinates, i.e., set of genes.
 #' @param reads GRanges of reads.
@@ -114,7 +110,8 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 #' Default: FALSE
 #' @param nSampling Numeric. Number of sub-sampling.  Default: 1000L
 #' @param samplingRatio Numeric. Ratio of sampling for features.  Default: 0.1
-#' @param ... Extra argument passed to mclapply.
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return A list of integer-Rle for sense and anti-sense.
 #' @author Minho Chae
 #' @examples
@@ -127,7 +124,7 @@ metaGene_foreachChrom <- function(chrom, featureList, plusCVG, minusCVG,
 #' # mg <- runMetaGene(features, reads, size=4, up=10)
 runMetaGene <- function(features, reads, anchorType="TSS", size=100L,
     normCounts=1L, up=10000L, down=NULL, sampling=FALSE, nSampling=1000L,
-    samplingRatio=0.1, ...) {
+    samplingRatio=0.1, BPPARAM=bpparam()) {
     # Check 'anchorType'
     if (!anchorType %in% c("TSS", "TTS")) {
         stop("'anchorType' must be either 'TSS' or 'TTS'")
@@ -152,12 +149,13 @@ runMetaGene <- function(features, reads, anchorType="TSS", size=100L,
     if (sampling) {
         sense <- samplingMetaGene(
             features=f, plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up,
-            down=down, nSampling=nSampling, samplingRatio=samplingRatio, ...)
+            down=down, nSampling=nSampling, samplingRatio=samplingRatio,
+            BPPARAM=BPPARAM)
         ## nocov end
     } else {
         sense <- metaGene(
             features=f, plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up,
-            down=down, ...)
+            down=down, BPPARAM=BPPARAM)
         sense <- sense/length(features)
     }
 
@@ -166,12 +164,13 @@ runMetaGene <- function(features, reads, anchorType="TSS", size=100L,
     if (sampling) {
         antisense <- samplingMetaGene(
             features=fRev, plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up,
-            down=down, nSampling=nSampling, samplingRatio=samplingRatio, ...)
+            down=down, nSampling=nSampling, samplingRatio=samplingRatio,
+            BPPARAM=BPPARAM)
         ## nocov end
     } else {
         antisense <- metaGene(
             features=fRev, plusCVG=plusCVG, minusCVG=minusCVG, size=size, up=up,
-            down=down, ...)
+            down=down, BPPARAM=BPPARAM)
         antisense <- antisense/length(features)
     }
 
@@ -182,23 +181,23 @@ runMetaGene <- function(features, reads, anchorType="TSS", size=100L,
 
 
 samplingMetaGene <- function(features, plusCVG, minusCVG, size=100L, up=10000L,
-    down=NULL, nSampling=1000L, samplingRatio=0.1, ...) {
+    down=NULL, nSampling=1000L, samplingRatio=0.1, BPPARAM=bpparam()) {
     ## nocov start
     samplingSize <- round(length(features)*samplingRatio)
 
-    metaList <- mclapply(1:length(features), function(x) {
+    metaList <- bplapply(1:length(features), function(x) {
         metaGene(features=features[x, ], plusCVG=plusCVG, minusCVG=minusCVG,
         size=size, up=up, down=down)
     }
-    , ...)
+    , BPPARAM=BPPARAM)
 
-    allSamples <- mclapply(1:nSampling, function(x) {
+    allSamples <- bplapply(1:nSampling, function(x) {
         inx <- sample(1:length(features), size=samplingSize, replace=TRUE)
         onesample <- metaList[inx]
         mat <- sapply(onesample, function(x) as.integer(x))
         Rle(apply(mat, 1, sum))
     }
-    , ...)
+    , BPPARAM=BPPARAM)
 
     M <- sapply(allSamples, function(x) as.integer(x))
     return(Rle(apply(M, 1, median)) / samplingSize)

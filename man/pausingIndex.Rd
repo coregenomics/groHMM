@@ -5,7 +5,8 @@
 \title{Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
 INDEX.}
 \usage{
-pausingIndex(features, reads, size = 50, up = 1000, down = 1000, ...)
+pausingIndex(features, reads, size = 50, up = 1000, down = 1000,
+  BPPARAM = bpparam())
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.}
@@ -18,7 +19,8 @@ pausingIndex(features, reads, size = 50, up = 1000, down = 1000, ...)
 
 \item{down}{Distance downstream of each f to align and histogram (NULL).}
 
-\item{...}{Extra argument passed to mclapply}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns a data.frame of the pausing indices for the input genes.
@@ -26,8 +28,8 @@ Returns a data.frame of the pausing indices for the input genes.
 Returns the pausing index for different genes.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors, use the argument 'mc.cores'.
+Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
+INDEX.
 }
 \examples{
 library(GenomicAlignments)

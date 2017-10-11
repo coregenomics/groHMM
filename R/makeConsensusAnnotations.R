@@ -29,15 +29,13 @@
 #' Remaining unresolved annotations are further reduced by truncating 3'
 #' end of annotations.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors, use the argument 'mc.cores'.
-#'
 #' @param ar GRanges of annotations to be collapsed.
 #' @param minGap Minimum gap between overlapped annotations after truncated.
 #' Default: 1L
 #' @param minWidth Minimum width of consensus annotations. Default: 1000L
 #' @param column Column by which to group transcripts.
-#' @param ... Extra argument passed to mclapply.
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns GRanges object of annotations.
 #' @author Minho Chae
 #' @examples
@@ -48,7 +46,7 @@
 #'     filter=list(tx_chrom="chr7"))
 #' ca <- makeConsensusAnnotations(tx)
 makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L,
-    column="gene_id", ...) {
+    column="gene_id", BPPARAM=bpparam()) {
     ## Check for gene ID column
     if (! any(colnames(mcols(ar)) %in% column))
         stop("Missing gene ID column")
@@ -74,7 +72,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L,
     isoforms <- ar_list[elementNROWS(ar_list) > 1]
 
     message("Reduce isoforms(", length(isoforms), ") ... ", appendLF=FALSE)
-    isoforms <- GRangesList(mclapply(isoforms, function(x) {
+    isoforms <- GRangesList(bplapply(isoforms, function(x) {
         ## For mixed strands or chrom, choose the longest
         if ( (length(seqlevelsInUse(x)) > 1) ||
             (length(unique(strand(x))) > 1)) {
@@ -102,7 +100,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L,
         }
         return(result)
     }
-    , ...))
+    , BPPARAM=BPPARAM))
     isoforms <- unlist(isoforms)
     message("OK")
 

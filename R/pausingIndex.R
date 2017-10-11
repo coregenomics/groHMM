@@ -57,15 +57,13 @@ approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
 #' Returns the pausing index for different genes.  TODO: DESCRIBE THE PAUSING
 #' INDEX.
 #'
-#' Supports parallel processing using mclapply in the 'parallel' package.
-#' To change the number of processors, use the argument 'mc.cores'.
-#'
 #' @param features A GRanges object representing a set of genomic coordinates.
 #' @param reads A GRanges object representing a set of mapped reads.
 #' @param size The size of the moving window.
 #' @param up Distance upstream of each f to align and histogram.
 #' @param down Distance downstream of each f to align and histogram (NULL).
-#' @param ... Extra argument passed to mclapply
+#' @param BPPARAM Registered backend for BiocParallel.
+#' Default: BiocParallel::bpparam()
 #' @return Returns a data.frame of the pausing indices for the input genes.
 #' @author Charles G. Danko and Minho Chae.
 #' @return Returns the pausing index for different genes.
@@ -94,7 +92,8 @@ approx_ratios_CI <- function(num.counts, denom.counts, alpha=0.05) {
 ##      transcription, and negative numbers specify upstream sequence.
 ##      This is likely useful for rate; perhaps for identifying internal
 ##      paused-peaks...
-pausingIndex <- function(features, reads, size=50, up=1000, down=1000, ...) {
+pausingIndex <- function(features, reads, size=50, up=1000, down=1000,
+    BPPARAM=bpparam()) {
     ## make sure reads are sorted
     reads <- reads[order(as.character(seqnames(reads)), start(reads)), ]
     f <- data.frame(chrom=as.character(seqnames(features)),
@@ -161,9 +160,10 @@ pausingIndex <- function(features, reads, size=50, up=1000, down=1000, ...) {
     gRIGHT[MINU_INDX]   <- c_tss[MINU_INDX] - down
 
     ## Run parallel version.
-    mcp <- mclapply(
+    mcp <- bplapply(
         c(1:NROW(C)), pausingIndex_foreachChrom, C=C, f=f, p=p, gLEFT=gLEFT,
-        gRIGHT=gRIGHT, c_tss=c_tss, size=size, up=up, down=down, ...)
+        gRIGHT=gRIGHT, c_tss=c_tss, size=size, up=up, down=down,
+        BPPARAM=BPPARAM)
 
     ## Unlist and re-order values for printing in a nice data.frame.
     for (i in 1:NROW(C)) {

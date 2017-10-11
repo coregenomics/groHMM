@@ -6,7 +6,7 @@
 \usage{
 runMetaGene(features, reads, anchorType = "TSS", size = 100L,
   normCounts = 1L, up = 10000L, down = NULL, sampling = FALSE,
-  nSampling = 1000L, samplingRatio = 0.1, ...)
+  nSampling = 1000L, samplingRatio = 0.1, BPPARAM = bpparam())
 }
 \arguments{
 \item{features}{GRanges A GRanges object representing a set of genomic
@@ -36,14 +36,14 @@ Default: FALSE}
 
 \item{samplingRatio}{Numeric. Ratio of sampling for features.  Default: 0.1}
 
-\item{...}{Extra argument passed to mclapply.}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 A list of integer-Rle for sense and anti-sense.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors, set the option 'mc.cores'.
+Runs meta gene analysis for sense and anti-sense direction.
 }
 \examples{
 library(GenomicRanges)

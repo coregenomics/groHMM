@@ -6,7 +6,7 @@
 window centered on a certain feature.}
 \usage{
 metaGene(features, reads = NULL, plusCVG = NULL, minusCVG = NULL,
-  size = 100L, up = 10000L, down = NULL, ...)
+  size = 100L, up = 10000L, down = NULL, BPPARAM = bpparam())
 }
 \arguments{
 \item{features}{A GRanges object representing a set of genomic coordinates.
@@ -27,15 +27,16 @@ Default: 10 kb.}
 \item{down}{Distance downstream of each features to align and histogram.
 If NULL, same as up. Default: NULL.}
 
-\item{...}{Extra argument passed to mclapply}
+\item{BPPARAM}{Registered backend for BiocParallel.
+Default: BiocParallel::bpparam()}
 }
 \value{
 Returns a integer-Rle representing the 'typical' signal
 centered on a point of interest.
 }
 \description{
-Supports parallel processing using mclapply in the 'parallel' package.
-To change the number of processors, set the option 'mc.cores'.
+Returns a histogram of the number of reads in each section of a moving
+window centered on a certain feature.
 }
 \examples{
 library(GenomicRanges)
