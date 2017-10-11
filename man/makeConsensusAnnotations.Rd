@@ -38,6 +38,9 @@ tx <- transcripts(
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     columns=c("gene_id", "tx_id", "tx_name"),
     filter=list(tx_chrom="chr7"))
+## Workaround Travis-CI issue 7052
+if (!is.na(Sys.getenv("TRAVIS", NA)))
+    BiocParallel::register(BiocParallel::SerialParam())
 ca <- makeConsensusAnnotations(tx)
 }
 \author{

@@ -153,6 +153,11 @@ such as genes, exons, or transcripts.
 The example data included in this package can be loaded into `R`
 using the following commands.
 
+```{r Workaround Travis-CI issue 7052}
+if (!is.na(Sys.getenv("TRAVIS", NA)))
+    BiocParallel::register(BiocParallel::SerialParam())
+```
+
 ```{r load data, eval=TRUE, message=FALSE}
 library(groHMM)
 library(GenomicAlignments)
