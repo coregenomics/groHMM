@@ -441,8 +441,7 @@ G <- read.table("refgene.bed", header=TRUE, stringsAsFactors=FALSE, sep="\t")
 ce <- GRanges(
     G$chrom, IRanges(G$txStart, G$txEnd), strand=G$strand, access=G$name,
     gene_id=G$name2)
-ceConsensus <- makeConsensusAnnotations(
-    ce, keytype="gene_id")
+ceConsensus <- makeConsensusAnnotations(ce)
 ```
 
 As for transcript calling,
