@@ -119,7 +119,7 @@ devtools::install_github(
     "coregenomics/groHMM",
     ref="1.99.x",
     repos=BiocInstaller::biocinstallRepos(),
-    dependencies="Suggests")
+    dependencies=TRUE)
 ```
 
 # Workflow
