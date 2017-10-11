@@ -36,6 +36,7 @@
 #' @param minGap Minimum gap between overlapped annotations after truncated.
 #' Default: 1L
 #' @param minWidth Minimum width of consensus annotations. Default: 1000L
+#' @param column Column by which to group transcripts.
 #' @param ... Extra argument passed to mclapply.
 #' @return Returns GRanges object of annotations.
 #' @author Minho Chae
@@ -46,28 +47,29 @@
 #'     columns=c("gene_id", "tx_id", "tx_name"),
 #'     filter=list(tx_chrom="chr7"))
 #' ca <- makeConsensusAnnotations(tx)
-makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
-    ## Check for gene_id column
-    if (! any(colnames(mcols(ar)) %in% "gene_id"))
-        stop("Missing gene_id column")
-    ## Drop rows missing gene_id values
-    missing <- elementNROWS(mcols(ar)[, "gene_id"]) == 0
+makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L,
+    column="gene_id", ...) {
+    ## Check for gene ID column
+    if (! any(colnames(mcols(ar)) %in% column))
+        stop("Missing gene ID column")
+    ## Drop rows missing gene ID values
+    missing <- elementNROWS(mcols(ar)[, column]) == 0
     if (any(missing)) {
         ar <- ar[!missing, ]
         warning(
             sum(missing),
-            " ranges do not have gene_id and they are dropped")
+            " ranges do not have gene ID and they are dropped")
     }
-    ## Drop multiple gene_id values
-    many <- elementNROWS(mcols(ar)[, "gene_id"]) > 1
+    ## Drop multiple gene ID values
+    many <- elementNROWS(mcols(ar)[, column]) > 1
     if (any(many)) {
         ar <- ar[!many, ]
         warning(
             sum(many),
-            " ranges have multiple gene_id and they are dropped")
+            " ranges have multiple gene ID and they are dropped")
     }
 
-    ar_list <- split(ar, unlist(mcols(ar)[, "gene_id"]))
+    ar_list <- split(ar, unlist(mcols(ar)[, column]))
     singles <- unlist(ar_list[elementNROWS(ar_list) == 1])
     isoforms <- ar_list[elementNROWS(ar_list) > 1]
 
@@ -76,16 +78,16 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
         ## For mixed strands or chrom, choose the longest
         if ( (length(seqlevelsInUse(x)) > 1) ||
             (length(unique(strand(x))) > 1)) {
-            result <- x[which.max(width(x)), "gene_id"]
+            result <- x[which.max(width(x)), column]
         } else {
             dx <- disjoin(x)
-            mcols(dx)$gene_id <- mcols(x)$gene_id[1]
+            mcols(dx)[, column] <- mcols(x)[1, column]
             olcnt <- countOverlaps(dx, x)
             ## Use the disjoint ranges covered more than once
             multi <- dx[olcnt > 1]
             if (length(multi) == 0) {
                 ## For non-overlapping isoforms, choose the longest
-                result <- x[which.max(width(x)), "gene_id"]
+                result <- x[which.max(width(x)), column]
             } else if (length(multi) == 1) {
                 result <- multi
             } else {
@@ -96,7 +98,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
                     result <- reduced[which.max(width(reduced)), ]
 
             }
-            mcols(result)$gene_id <- mcols(x)$gene_id[1]
+            mcols(result)[, column] <- mcols(x)[1, column]
         }
         return(result)
     }
@@ -120,7 +122,7 @@ makeConsensusAnnotations <- function(ar, minGap=1L, minWidth=1000L, ...) {
     if (length(o) != 0)
         isoforms <- isoforms[-queryHits(o), ]
 
-    noiso <- sort(c(isoforms, singles[, "gene_id"]))
+    noiso <- sort(c(isoforms, singles[, column]))
     message("Truncate overlapped ranges ... ", appendLF=FALSE)
     ## with different gene_ids
     while (!isDisjoint(noiso)) {

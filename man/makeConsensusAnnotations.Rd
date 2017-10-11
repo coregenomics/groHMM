@@ -4,7 +4,8 @@
 \alias{makeConsensusAnnotations}
 \title{makeConsensusAnnotations Makes a consensus annotation}
 \usage{
-makeConsensusAnnotations(ar, minGap = 1L, minWidth = 1000L, ...)
+makeConsensusAnnotations(ar, minGap = 1L, minWidth = 1000L,
+  column = "gene_id", ...)
 }
 \arguments{
 \item{ar}{GRanges of annotations to be collapsed.}
@@ -13,6 +14,8 @@ makeConsensusAnnotations(ar, minGap = 1L, minWidth = 1000L, ...)
 Default: 1L}
 
 \item{minWidth}{Minimum width of consensus annotations. Default: 1000L}
+
+\item{column}{Column by which to group transcripts.}
 
 \item{...}{Extra argument passed to mclapply.}
 }

@@ -57,8 +57,9 @@ BUG FIXES AND IMPROVEMENTS
       failing when no break or join errors are detected.
     * Fix polymeraseWave processing genes beyond chromosome boundaries and raise
       error when HMM fails to converge.
-    * Fix makeConsensusAnnotations not correctly validating presence of gene_id
-      column.
+    * Fix makeConsensusAnnotations not correctly validating presence of gene ID
+      column.  Additionally the gene ID column no longer uses the "gene_id"
+      magic string and is configurable via the column argument.
     * One can now control makeConsensusAnnotations() multi-core parallelism.
       Remove the hard coded 10 CPU cores.
     * Move all packages from Depends to Imports to fix Travis-CI bootstrap

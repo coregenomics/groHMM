@@ -122,8 +122,8 @@ test_that("breakInterval honors 'strand'", {
     expect_equal(start(res)[2], brPos + gap)
 })
 
-test_that("makeConsensusAnnotations errors on missing 'gene_id'", {
-    expect_error(makeConsensusAnnotations(tx), "gene_id")
+test_that("makeConsensusAnnotations errors on missing 'gene ID'", {
+    expect_error(makeConsensusAnnotations(tx), "Missing gene .* column")
 })
 
 test_that("makeConsensusAnnotations output is non-overlapping and condensed", {
@@ -166,13 +166,13 @@ test_that("makeConsensusAnnotations output is non-overlapping and condensed", {
     expect_equal(result, expected)
 })
 
-test_that("makeConsensusAnnotations drops missing gene_id values", {
+test_that("makeConsensusAnnotations drops missing gene ID values", {
     annox_ <- GRanges(c("chr7:1000-2000", "chr7:3000-4000"),
                       gene_id=CharacterList(list(character(0), "1")))
     expect_warning(makeConsensusAnnotations(annox_), "dropped")
 })
 
-test_that("makeConsensusAnnotations drops multiple gene_id values", {
+test_that("makeConsensusAnnotations drops multiple gene ID values", {
     annox_ <- GRanges(c("chr7:1000-2000", "chr7:3000-4000"),
                       gene_id=CharacterList(list(c("1", "2"), "1")))
     expect_warning(makeConsensusAnnotations(annox_), "dropped")
