@@ -26,7 +26,6 @@ Imports:
     IRanges (>= 2.5.27),
     MASS,
     methods,
-    parallel,
     progress,
     rtracklayer,
     S4Vectors (>= 0.9.25),
