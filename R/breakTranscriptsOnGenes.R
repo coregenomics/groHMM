@@ -103,6 +103,10 @@ breakTranscriptsOnGenes <- function(tx, annox, strand="+", geneSize=5000,
     ## Validate inputs
     tx <- .normArgRanges(tx, errorOnEmpty = TRUE)
     annox <- .normArgRanges(annox)
+    if (!isDisjoint(annox)) {
+        stop("Annotations cannot have any overlaps. ",
+             "Did you run ", sQuote("makeConsensusAnnotations"), "?")
+    }
 
     tx <- tx[strand(tx) == strand, ]
     annox <- annox[strand(annox) == strand, ]
