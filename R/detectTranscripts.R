@@ -70,7 +70,6 @@ detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
     }
 
     nFp <- NROW(Fp)
-    nFm <- NROW(Fm)
     CHRp <- as.character(names(Fp))
     CHRm <- as.character(names(Fm))
 
@@ -93,11 +92,11 @@ detectTranscripts <- function(reads=NULL, Fp=NULL, Fm=NULL, LtProbA=-5,
     ## Cast counts to a real, and combine +/- strand into one list variable.
     ##  Treat like separate training sequences (they really are).
     FT <- list()    # MHC; 7/2/2014, bioconductor complains F thinking as False
-    for (i in 1:nFp) FT[[i]] <- as.double(Fp[[i]]+1)
+    for (i in seq_along(Fp)) FT[[i]] <- as.double(Fp[[i]]+1)
     ## CGD: 3-3-13: Still legacy.  Switch to integrating gamma between read and
     ## read+1
 
-    for (i in 1:nFm) FT[[i+nFp]] <- as.double(Fm[[i]]+1)
+    for (i in seq_along(Fm)) FT[[i+nFp]] <- as.double(Fm[[i]]+1)
     ## CGD: 3-3-13: Still legacy.  Switch to integrating gamma between read and
     ## read+1
 

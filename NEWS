@@ -52,7 +52,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
 BUG FIXES AND IMPROVEMENTS
 
     * Fix windowAnalysis() "subscript out of bounds" error, and add corner case
-      of empty ranges.
+      of empty ranges.  Fix regression of only returning single chromosome.
     * Fix corner cases of breakTranscriptsOnGenes() and combineTranscripts()
       failing when no break or join errors are detected.
     * Fix breakTranscriptsOnGenes() failing to validate assumption that

@@ -44,31 +44,30 @@ windowAnalysis <- function(reads, strand="*", windowSize=stepSize,
     stepSize=windowSize, chrom=NULL) {
     reads <- .normArgRanges(reads, warnOnEmpty=FALSE)
 
+    ## Subset
+    if (!is.null(chrom))
+        reads <- reads[seqnames(reads) == chrom, ]
+    if (strand == "*") {
+        ## Change reads' strand
+        strand(reads) <- "*"
+    } else {
+        reads <- reads[strand(reads) == strand]
+    }
     if (length(reads) == 0)
         return(list())
 
+    ## Validate
     if (!(windowSize > 0 & (windowSize <= max(end(reads)))))
         stop("'windowSize' is out of range!")
 
     if (! stepSize > 0)
         stop("'stepSize' is out of range!")
 
-    if (!is.null(chrom))
-        reads <- reads[seqnames(reads) == chrom, ]
-
     seqlevels(reads) <- seqlevelsInUse(reads)
     readsList <- split(reads, seqnames(reads))
 
-    # Change reads' strand
-    readsList <- endoapply(readsList, function(x) {
-            if (strand == "*")
-                strand(x) <- "*"
-            else
-                x <- x[strand(x) == strand, ]
-            x
-    })
-
     lapply(readsList, function(x) {
+        seqlevels(x) <- seqlevelsInUse(x)
         cov <- coverage(x)[[1]]
         to <- (length(cov) %/% windowSize)*windowSize
         starts <- seq(1, to, stepSize)

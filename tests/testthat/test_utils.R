@@ -7,8 +7,11 @@ test_that("windowAnalysis returns list", {
 })
 
 test_that("windowAnalysis returns correct Rle value", {
-    expected <- list(chr7 = Rle(c(0, 1, 100), c(9, 1, 290)))
-    result <- windowAnalysis(reads = tx, windowSize = 100)
+    seqlevels(tx) <- c("chr7", "chr8")
+    tx_78 <- c(tx, GRanges(c("chr8:1000-30000"), strand="-"))
+    expected <- list(chr7 = Rle(c(0, 1, 100), c(9, 1, 290)),
+                     chr8 = Rle(c(0, 1, 100), c(9, 1, 290)))
+    result <- windowAnalysis(reads = tx_78, windowSize = 100)
     expect_equal(expected, result)
 })
 
