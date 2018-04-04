@@ -29,7 +29,7 @@ date: "`r doc_date()`"
 bibliography: "groHMM.bib"
 package: "groHMM"
 output:
-  BiocStyle::html_document2
+  BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{groHMM Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
