@@ -8,15 +8,13 @@
 Install the groHMM latest version using:
 
 ``` R
-devtools::install_github("coregenomics/groHMM",
-                         ref = "1.99.x",
-                         repos = BiocInstaller::biocinstallRepos())
+devtools::install_github("coregenomics/groHMM@1.99.x")
 ```
 
-If the above command fails, install Bioconductor and the `devtools` package.
+If the above command fails with something like `Error in loadNamespace(name) : there is no package called ‘devtools’
+`, install the `devtools` package first:
 
 ``` R
-source("https://bioconductor.org/biocLite.R")
 install.packages("devtools")
 ```
 
