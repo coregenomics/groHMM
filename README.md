@@ -41,7 +41,7 @@ then install the dependencies:
 
 ``` R
 source("https://bioconductor.org/biocLite.R")
-install.packages(devtools)
+install.packages("devtools")
 devtools::install(repos = BiocInstaller::biocinstallRepos(),
                   dependencies = TRUE)
 ```
