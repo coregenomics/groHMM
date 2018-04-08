@@ -3,7 +3,7 @@ context("Utilities")
 test_that("windowAnalysis returns list", {
     result <- windowAnalysis(reads = tx, windowSize = 100)
     expect_is(result, "list")
-    lapply(result, expect_is, "Rle")
+    expect_is(result[[1]], "Rle")
 })
 
 test_that("windowAnalysis returns correct Rle value", {
