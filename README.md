@@ -42,8 +42,7 @@ then install the dependencies:
 ``` R
 source("https://bioconductor.org/biocLite.R")
 install.packages("devtools")
-devtools::install(repos = BiocInstaller::biocinstallRepos(),
-                  dependencies = TRUE)
+devtools::install(dependencies = TRUE)
 ```
 
 ### Unit tests and coverage
