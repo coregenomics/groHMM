@@ -96,7 +96,20 @@ and keep a separate R library for each installation.
 ``` bash
 cd
 git clone https://github.com/llnl/spack.git
-spack/bin/spack install r@$(date -d -I yesterday)
+# Add spack to your PATH.
+echo >> ~/.bashrc
+echo "export PATH=`readlink -e spack/bin`:\$PATH" >> ~/.bashrc
+source ~/.bashrc
+# Find the version of R-devel you want at
+# https://cran.r-project.org/src/base-prerelease/ and add it to the
+# package file.  In my case I needed to add the line:
+#
+#     version(
+#         'date-2018-04-07',
+#         url=('https://cran.r-project.org/src/base-prerelease/'
+#              'R-devel_2018-04-07_r74551.tar.gz'))
+spack edit r
+spack install --no-checksum r@2018-04-07  # Change to your version
 ```
 
 Install environmental-modules to load our new r module:
@@ -109,7 +122,7 @@ Note the version of r that you have loaded.
 We will add the version to our `R-devel` launcher script.
 
 ``` bash
-spack/bin/spack find r
+spack find r
 ```
 
 Create a file `/usr/local/bin/R-devel`:
@@ -118,7 +131,7 @@ Create a file `/usr/local/bin/R-devel`:
 #!/bin/bash
 . /etc/profile.d/modules.sh
 . ~/spack/bin/spack/setup-env.sh
-spack load r@2017-08-01  # Change version to match `spack find r`
+spack load r@2017-04-07  # Change version to match `spack find r`
 exec R "$@"
 ```
 
@@ -129,4 +142,4 @@ as your associated `R` shell.
 If you use RStudio or RStudio server,
 to use `R-devel` as your interpreter
 with environmental variables or Rprofile hacks
-you're on your own `(^_~)`
+you're on your own `<3`
